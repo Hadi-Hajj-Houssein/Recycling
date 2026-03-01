@@ -1,29 +1,25 @@
-<!-- Log in -->
-
+<!-- Sign up -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <title>Login</title>
+  <title>Sign Up</title>
 </head>
-
 <body>
-  <form>
-    <label for="username">Username: </label>
-    <input type="text" id="username" name="username" placeholder="Enter your username">
-
-    <label for="adress">Adress: </label>
-    <input type="text" id="adress" name="adress" placeholder="Enter your adress">    
+  <!-- POINT THIS TO PORT 8000 -->
+  <form method="POST" action="http://127.0.0.1:8000/signup">
     
+    <label for="username">Username (Email): </label>
+    <input type="text" id="username" name="username" required placeholder="Enter your email">
+
+    <!-- Removed Address because your DB User table doesn't have it yet -->
+
     <label for="password">Password: </label>
-    <input type="text" id="password" name="password" placeholder="Enter your password">
+    <input type="password" id="password" name="password" required placeholder="Enter your password">
 
     <label for="confirmPassword">Confirm password: </label>
-    <input type="text" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password">
-    
-    
+    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+
     <button type="submit">Sign up</button>
   </form>
 </body>
-
 </html>

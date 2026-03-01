@@ -1,22 +1,20 @@
 <!-- Log in -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <title>Login</title>
 </head>
-
 <body>
-  <form>
-    <label for="username">Username: </label>
-    <input type="text" id="username" name="username" placeholder="Enter your username">
+  <!-- POINT THIS TO PORT 8000 -->
+  <form method="POST" action="http://127.0.0.1:8000/login">
     
+    <label for="username">Username (Email): </label>
+    <input type="text" id="username" name="username" required placeholder="Enter your email">
+
     <label for="password">Password: </label>
-    <input type="text" id="password" name="password" placeholder="Enter your password">
-    
+    <input type="password" id="password" name="password" required placeholder="Enter your password">
+
     <button type="submit">Log in</button>
   </form>
 </body>
-
 </html>
