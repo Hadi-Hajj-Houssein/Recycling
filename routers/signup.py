@@ -21,7 +21,7 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
     confirmPassword: str = Form(...),db: Session = Depends(get_db)):
 
     try:
-        #input done 
+        #input done
         if len(password) < 8 or len(password) > 72:
             raise HTTPException(status_code = 400 , detail ="password between 8 and 72 characters")
         if password != confirmPassword:
