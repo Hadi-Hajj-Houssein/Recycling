@@ -9,6 +9,8 @@ sys.path.insert(0, root_dir)
 from alembic import context
 from db_main import Base
 from models.user import User
+from models.home import Home
+from models.user_home_link import User_Home
 
 
 # this is the Alembic Config object, which provides

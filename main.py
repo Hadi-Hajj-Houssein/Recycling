@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import signup, login 
 from db_main import engine, Base
 
+#table imports
+from models.user import User
+from models.home import Home
+from models.user_home_link import User_Home
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(debug = True )
