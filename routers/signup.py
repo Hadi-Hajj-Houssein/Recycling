@@ -46,4 +46,3 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
         print(f"!!! DATABASE ERROR !!!: {str(e)}") # LOOK AT YOUR TERMINAL FOR THIS
         raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
 
-
