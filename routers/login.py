@@ -6,7 +6,7 @@ from models.user import User
 router = APIRouter()
 hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 
-
+ 
 
 def get_db():
     db = SessionLocal()

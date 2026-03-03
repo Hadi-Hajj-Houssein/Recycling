@@ -5,9 +5,9 @@ from db_main import SessionLocal
 from models.user import User
 router = APIRouter()
 hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
+from pydantic import EmailStr
 
-
-
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_db():
     db = SessionLocal()
     try:
@@ -16,24 +16,28 @@ def get_db():
         db.close()
 
 @router.post("/signup")
-def signup(username: str = Form(...), 
+def signup(email: EmailStr = Form(...),username: str = Form(...), 
     password: str = Form(...), 
     confirmPassword: str = Form(...),db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == username).first()
+
+
+    #input done 
     if len(password) < 8:
-        raise HTTPException(status_code=400, detail="Password too short (min 8)")
+        raise HTTPException(status_code = 400 , detail ="password short   < 8 ")
     if password != confirmPassword:
-        raise HTTPException(status_code=400, detail="Passwords do not match")
-    if db.query(User).filter(User.email == username).first():
+        raise HTTPException(status_code = 400 , detail ="password != confirm password ")
+
+    if(db.query(User).filter(User.email == email).first()):
         raise HTTPException(status_code=400, detail="Email already registered")
-    hashed_pw = hash.hash(password)
-    new_user = User(email=username, password=hashed_pw, amount=0.0)
-    
+    if db.query(User).filter(User.username == username).first():
+        raise HTTPException(status_code=400, detail="Username already taken")
+
+    hashed_pw = pwd_context.hash(password)
+    new_user = User(email=email, username=username, password=hashed_pw, amount=0.0)
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-
     return {"message": "User created successfully", "user_id": new_user.id}
-
 
 

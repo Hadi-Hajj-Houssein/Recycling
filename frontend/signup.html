@@ -425,13 +425,19 @@
 
             <form method="POST" action="http://127.0.0.1:8000/signup" id="signupForm">
                 <div class="form-group">
-                    <label for="username">Email Address</label>
+                    <label for="user_name">Username</label>
                     <div class="input-wrapper">
-                        <input type="email" id="username" name="username" required placeholder="you@example.com">
-                        <i class="fas fa-envelope"></i>
+                        <input type="text" id="user_name" name="username" required placeholder="Choose a username">
+                        <i class="fas fa-user"></i>
                     </div>
                 </div>
-
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" required placeholder="you@example.com">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="input-wrapper">
