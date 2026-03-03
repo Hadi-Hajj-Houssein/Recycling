@@ -20,24 +20,30 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
     password: str = Form(...), 
     confirmPassword: str = Form(...),db: Session = Depends(get_db)):
 
+    try:
+        #input done 
+        if len(password) < 8 or len(password) > 72:
+            raise HTTPException(status_code = 400 , detail ="password between 8 and 72 characters")
+        if password != confirmPassword:
+            raise HTTPException(status_code = 400 , detail ="password != confirm password ")
 
-    #input done 
-    if len(password) < 8:
-        raise HTTPException(status_code = 400 , detail ="password short   < 8 ")
-    if password != confirmPassword:
-        raise HTTPException(status_code = 400 , detail ="password != confirm password ")
+        if(db.query(User).filter(User.email == email).first()):
+            raise HTTPException(status_code=400, detail="Email already registered")
+        if db.query(User).filter(User.username == username).first():
+            raise HTTPException(status_code=400, detail="Username already taken")
 
-    if(db.query(User).filter(User.email == email).first()):
-        raise HTTPException(status_code=400, detail="Email already registered")
-    if db.query(User).filter(User.username == username).first():
-        raise HTTPException(status_code=400, detail="Username already taken")
+        hashed_pw = pwd_context.hash(password)
+        new_user = User(email=email, username=username, password=hashed_pw, amount=0.0)
 
-    hashed_pw = pwd_context.hash(password)
-    new_user = User(email=email, username=username, password=hashed_pw, amount=0.0)
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        print(f"--- DATABASE SUCCESS: Created {new_user.username} with ID {new_user.id} ---")
+        return {"message": "User created successfully", "user_id": new_user.id}
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return {"message": "User created successfully", "user_id": new_user.id}
+    except Exception as e:
+        db.rollback()
+        print(f"!!! DATABASE ERROR !!!: {str(e)}") # LOOK AT YOUR TERMINAL FOR THIS
+        raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
 
 
