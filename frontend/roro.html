@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> fa5b5efa3dfcfb5e342fd19058a29dc557f45c05
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,7 +92,7 @@
             66% { transform: translate(-20px, 20px) scale(0.9); }
         }
 
-        /* Navbar */
+        /* Navbar (Simplified - No Buttons) */
         .navbar {
             position: fixed;
             top: 0;
@@ -178,53 +181,6 @@
         .nav-links a:hover { color: #fff; }
         .nav-links a:hover::after { width: 100%; }
 
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn-login {
-            padding: 10px 26px;
-            border: 2px solid rgba(46, 204, 113, 0.4);
-            background: transparent;
-            color: #2ecc71;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .btn-login:hover {
-            border-color: #2ecc71;
-            background: rgba(46, 204, 113, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(46, 204, 113, 0.15);
-        }
-
-        .btn-signup {
-            padding: 10px 26px;
-            border: none;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: #fff;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-        }
-
-        .btn-signup:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(46, 204, 113, 0.5);
-        }
-
         /* Hamburger */
         .hamburger {
             display: none;
@@ -250,7 +206,7 @@
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-        /* Mobile Menu */
+        /* Mobile Menu (Simplified - No Buttons) */
         .mobile-menu {
             display: none;
             position: fixed;
@@ -286,29 +242,6 @@
         }
 
         .mobile-menu a:hover { color: #2ecc71; }
-
-        .mobile-menu .mobile-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-            width: 200px;
-        }
-
-        .mobile-menu .mobile-btns a {
-            text-align: center;
-            padding: 14px 30px;
-            border-radius: 50px;
-            font-size: 15px;
-        }
-
-        .mobile-menu .mobile-btns .btn-login {
-            border: 2px solid rgba(46, 204, 113, 0.5);
-        }
-
-        .mobile-menu .mobile-btns .btn-signup {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-        }
 
         /* Animations */
         @keyframes fadeInUp {
@@ -707,6 +640,9 @@
             margin-bottom: 26px;
             line-height: 1.6;
             max-width: 280px;
+            min-height: 44px; /* Ensure consistent height */
+            display: flex;
+            align-items: center;
         }
 
         /* Feature list */
@@ -871,7 +807,7 @@
         @media (max-width: 768px) {
             .navbar { padding: 14px 24px; }
             .navbar.scrolled { padding: 10px 24px; }
-            .nav-links, .nav-buttons { display: none; }
+            .nav-links { display: none; }
             .hamburger { display: flex; }
             .mobile-menu { display: flex; }
 
@@ -884,6 +820,7 @@
             .role-card { padding: 40px 28px 36px; }
             .role-icon-wrapper { width: 78px; height: 78px; }
             .role-icon-wrapper i { font-size: 30px; }
+            .role-card .role-subtitle { min-height: auto; }
 
             .steps-indicator { gap: 0; }
             .step-connector { width: 40px; margin: 0 10px; }
@@ -918,10 +855,6 @@
             <li><a href="index.html#testimonials">Reviews</a></li>
             <li><a href="index.html#cta">Contact</a></li>
         </ul>
-        <div class="nav-buttons">
-            <a href="login.html" class="btn-login">Log In</a>
-            <a href="signup.html" class="btn-signup">Sign Up</a>
-        </div>
         <button class="hamburger" id="hamburger" aria-label="Menu">
             <span></span><span></span><span></span>
         </button>
@@ -931,10 +864,6 @@
         <a href="index.html#features" class="mobile-link">How It Works</a>
         <a href="index.html#testimonials" class="mobile-link">Reviews</a>
         <a href="index.html#cta" class="mobile-link">Contact</a>
-        <div class="mobile-btns">
-            <a href="login.html" class="btn-login">Log In</a>
-            <a href="signup.html" class="btn-signup">Sign Up</a>
-        </div>
     </div>
 
     <section class="role-page">
@@ -1001,7 +930,7 @@
                 </div>
                 <div class="role-tag buyer-tag">Business</div>
                 <h2>Sign Up as Company</h2>
-                <p class="role-subtitle">Recycled materials from users and grow your sustainable supply chain.</p>
+                <p class="role-subtitle">Source recycled materials from users and grow your supply chain.</p>
                 <ul class="role-features">
                     <li><i class="fas fa-check buyer-check"></i> Browse available materials</li>
                     <li><i class="fas fa-check buyer-check"></i> Manage pickup schedules</li>
