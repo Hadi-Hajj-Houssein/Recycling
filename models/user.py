@@ -10,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String(300),unique=True, nullable=False)
     password = Column(String(256), nullable=False)
-    username = Column(String(450), nullable=False) 
+    company_name = Column(String(450), nullable=False) 
     amount = Column(Float)
-    homes = relationship("Home", secondary="user_home_link", back_populates="residents")
+    homes = relationship("models.home.Home", secondary="user_home_link", back_populates="residents")
 

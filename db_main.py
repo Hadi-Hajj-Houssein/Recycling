@@ -1,13 +1,9 @@
-# hay la ma kel marra a3mil base = declarative base 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base , sessionmaker
-db_URL = "postgresql+psycopg2://postgres:123@localhost:5432/Recycling"
+from sqlalchemy import create_engine # khbar db 
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:123@localhost/Recycling"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-engine = create_engine(db_URL, pool_pre_ping=True)
-session  = sessionmaker(bind = engine, autocommit = False)
-SessionLocal =sessionmaker(
-    autocommit =False,
-    autoflush =False,
-    bind =engine
-)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 Base = declarative_base()
