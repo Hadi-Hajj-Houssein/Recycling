@@ -887,7 +887,7 @@
             <div class="donut-legend">
                 <div class="legend-item"><div class="legend-dot" style="background:#2ecc71;"></div><span>Plastic</span><span class="legend-value">38%</span></div>
                 <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div><span>Paper</span><span class="legend-value">28%</span></div>
-                <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></span><span>Glass</span><span class="legend-value">20%</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></div><span>Glass</span><span class="legend-value">20%</span></div>
                 <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div><span>Metal</span><span class="legend-value">14%</span></div>
             </div>
         </div>
@@ -895,133 +895,145 @@
 </div>
 
             <!-- Activity + Sidebar -->
-            <div class="dashboard-grid">
-                <div class="card animate-in">
-                    <div class="card-header">
-                        <h3>Recent Activity</h3>
-                        <button class="card-action">View All</button>
-                    </div>
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-icon pickup"><i class="fas fa-truck"></i></div>
-                            <div class="activity-details"><h4>Pickup Completed</h4><p>15kg plastic collected by GreenCycle Co.</p></div>
-                            <div class="activity-time">2h ago</div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon reward"><i class="fas fa-gift"></i></div>
-                            <div class="activity-details"><h4>Reward Unlocked!</h4><p>You earned the "Eco Champion" badge</p></div>
-                            <div class="activity-time">5h ago</div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon recycle"><i class="fas fa-box"></i></div>
-                            <div class="activity-details"><h4>Items Logged</h4><p>8kg paper, 3kg glass added</p></div>
-                            <div class="activity-time">1d ago</div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon pickup"><i class="fas fa-calendar-check"></i></div>
-                            <div class="activity-details"><h4>Pickup Scheduled</h4><p>EcoWaste Ltd. — Jan 28, 10:00 AM</p></div>
-                            <div class="activity-time">2d ago</div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon alert"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div class="activity-details"><h4>Pickup Rescheduled</h4><p>CleanEarth Inc. moved to Feb 2</p></div>
-                            <div class="activity-time">3d ago</div>
-                        </div>
-                    </div>
+<div class="dashboard-grid">
+    <div class="card animate-in">
+        <div class="card-header">
+            <!-- CHANGED: Recent Activity → Collection Activity -->
+            <h3>Collection Activity</h3>
+            <button class="card-action">View All</button>
+        </div>
+        <div class="activity-list">
+            <!-- CHANGED: All items reflect COMPANY actions -->
+            <div class="activity-item">
+                <div class="activity-icon pickup"><i class="fas fa-truck"></i></div>
+                <div class="activity-details"><h4>Pickup Completed</h4><p>Driver #3 collected 15kg plastic from 123 Main St</p></div>
+                <div class="activity-time">2h ago</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon reward"><i class="fas fa-gift"></i></div>
+                <div class="activity-details"><h4>New Pickup Request</h4><p>456 Oak Ave: 8kg paper, 3kg glass scheduled</p></div>
+                <div class="activity-time">5h ago</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon recycle"><i class="fas fa-box"></i></div>
+                <div class="activity-details"><h4>Driver Assigned</h4><p>Driver #1 assigned to Route A - Downtown</p></div>
+                <div class="activity-time">1d ago</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon pickup"><i class="fas fa-calendar-check"></i></div>
+                <div class="activity-details"><h4>Pickup Confirmed</h4><p>789 Pine St pickup confirmed for Jan 28, 10:00 AM</p></div>
+                <div class="activity-time">2d ago</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon alert"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="activity-details"><h4>Pickup Rescheduled</h4><p>Customer at 321 Elm St moved pickup to Feb 2</p></div>
+                <div class="activity-time">3d ago</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:18px;">
+        <div class="card animate-in">
+            <div class="card-header"><h3>Next Collection</h3><button class="card-action">Manage</button></div>
+            <div class="upcoming-pickup">
+                <div class="pickup-date">
+                    <div class="date-box"><div class="day">28</div><div class="month">Jan</div></div>
+                    <!-- CHANGED: EcoWaste Ltd. → Route A - Downtown -->
+                    <div class="pickup-info"><h4>Route A - Downtown</h4><p>10:00 AM — 12:00 PM</p></div>
                 </div>
-
-                <div style="display:flex;flex-direction:column;gap:18px;">
-                    <div class="card animate-in">
-                        <div class="card-header"><h3>Next Pickup</h3><button class="card-action">Manage</button></div>
-                        <div class="upcoming-pickup">
-                            <div class="pickup-date">
-                                <div class="date-box"><div class="day">28</div><div class="month">Jan</div></div>
-                                <div class="pickup-info"><h4>EcoWaste Ltd.</h4><p>10:00 AM — 12:00 PM</p></div>
-                            </div>
-                            <div class="pickup-items">
-                                <span class="pickup-tag">🥤 Plastic 8kg</span>
-                                <span class="pickup-tag">📄 Paper 5kg</span>
-                                <span class="pickup-tag">🍶 Glass 3kg</span>
-                            </div>
-                        </div>
-                        <div class="progress-section">
-                            <div class="progress-header"><span>Monthly Goal</span><strong>72%</strong></div>
-                            <div class="progress-track">
-                                <div class="progress-fill" style="width:72%;background:linear-gradient(90deg,var(--green),var(--teal));"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card animate-in">
-                        <div class="card-header"><h3>🏆 Leaderboard</h3><button class="card-action">Full List</button></div>
-                        <div class="leaderboard-list">
-                            <div class="leaderboard-item">
-                                <div class="rank gold">1</div>
-                                <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#f1c40f,#e67e22);">MR</div>
-                                <div class="leaderboard-info"><h4>Mark Rivera</h4><p>4,520 kg</p></div>
-                                <div class="leaderboard-score">2,180 pts</div>
-                            </div>
-                            <div class="leaderboard-item">
-                                <div class="rank silver">2</div>
-                                <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#bdc3c7,#95a5a6);">SJ</div>
-                                <div class="leaderboard-info"><h4>Sarah Johnson</h4><p>3,890 kg</p></div>
-                                <div class="leaderboard-score">1,850 pts</div>
-                            </div>
-                            <div class="leaderboard-item">
-                                <div class="rank bronze">3</div>
-                                <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#e67e22,#d35400);">AL</div>
-                                <div class="leaderboard-info"><h4>Aisha Lee</h4><p>3,210 kg</p></div>
-                                <div class="leaderboard-score">1,540 pts</div>
-                            </div>
-                            <div class="leaderboard-item you">
-                                <div class="rank">7</div>
-                                <div class="leaderboard-avatar" id="leaderboardAvatar" style="background:linear-gradient(135deg,var(--green),var(--teal));">JD</div>
-                                <div class="leaderboard-info"><h4 id="leaderboardName">You (Jane Doe)</h4><p>2,847 kg</p></div>
-                                <div class="leaderboard-score">1,240 pts</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="pickup-items">
+                    <span class="pickup-tag">🥤 Plastic 8kg</span>
+                    <span class="pickup-tag">📄 Paper 5kg</span>
+                    <span class="pickup-tag">🍶 Glass 3kg</span>
                 </div>
             </div>
-
-            <!-- Impact -->
-            <div class="dashboard-grid" style="margin-top:18px;">
-                <div class="card animate-in">
-                    <div class="card-header"><h3>🌍 Your Environmental Impact</h3><button class="card-action">Learn More</button></div>
-                    <div class="impact-grid">
-                        <div class="impact-item"><span class="impact-emoji">🌳</span><div class="impact-value">18</div><div class="impact-label">Trees Saved</div></div>
-                        <div class="impact-item"><span class="impact-emoji">💧</span><div class="impact-value">12,400 L</div><div class="impact-label">Water Saved</div></div>
-                        <div class="impact-item"><span class="impact-emoji">⚡</span><div class="impact-value">340 kWh</div><div class="impact-label">Energy Saved</div></div>
-                        <div class="impact-item"><span class="impact-emoji">🏭</span><div class="impact-value">890 kg</div><div class="impact-label">CO₂ Reduced</div></div>
-                    </div>
-                </div>
-                <div class="card animate-in">
-                    <div class="card-header"><h3>⭐ Eco Points</h3><button class="card-action">Redeem</button></div>
-                    <div style="text-align:center;margin-bottom:24px;">
-                        <div style="font-size:42px;font-weight:800;color:var(--green);line-height:1;">1,240</div>
-                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Available Points</div>
-                    </div>
-                    <div class="progress-section">
-                        <div class="progress-header"><span>Level 7 → Level 8</span><strong>760 pts to go</strong></div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width:62%;background:linear-gradient(90deg,var(--yellow),var(--orange));"></div>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:10px;margin-top:20px;">
-                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                            <div style="font-size:16px;margin-bottom:4px;">🥉</div><div style="font-size:11px;color:var(--text-muted);">5 Badges</div>
-                        </div>
-                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                            <div style="font-size:16px;margin-bottom:4px;">🔥</div><div style="font-size:11px;color:var(--text-muted);">12 Day Streak</div>
-                        </div>
-                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                            <div style="font-size:16px;margin-bottom:4px;">🎯</div><div style="font-size:11px;color:var(--text-muted);">Level 7</div>
-                        </div>
-                    </div>
+            <div class="progress-section">
+                <!-- CHANGED: Monthly Goal → Monthly Target -->
+                <div class="progress-header"><span>Monthly Target</span><strong>72%</strong></div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width:72%;background:linear-gradient(90deg,var(--green),var(--teal));"></div>
                 </div>
             </div>
         </div>
-    </main>
+
+        <div class="card animate-in">
+            <div class="card-header"><h3>🏆 Top Collectors</h3><button class="card-action">Full List</button></div>
+            <div class="leaderboard-list">
+                <!-- CHANGED: User names → Driver names & IDs -->
+                <div class="leaderboard-item">
+                    <div class="rank gold">1</div>
+                    <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#f1c40f,#e67e22);">AL</div>
+                    <div class="leaderboard-info"><h4>Driver #1 (Alex)</h4><p>4,520 kg collected</p></div>
+                    <div class="leaderboard-score">98% efficiency</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank silver">2</div>
+                    <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#bdc3c7,#95a5a6);">SJ</div>
+                    <div class="leaderboard-info"><h4>Driver #2 (Sam)</h4><p>3,890 kg collected</p></div>
+                    <div class="leaderboard-score">96% efficiency</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank bronze">3</div>
+                    <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#e67e22,#d35400);">JR</div>
+                    <div class="leaderboard-info"><h4>Driver #3 (Jordan)</h4><p>3,210 kg collected</p></div>
+                    <div class="leaderboard-score">94% efficiency</div>
+                </div>
+                <div class="leaderboard-item you">
+                    <div class="rank">7</div>
+                    <!-- IDs preserved for JS -->
+                    <div class="leaderboard-avatar" id="leaderboardAvatar" style="background:linear-gradient(135deg,var(--green),var(--teal));">GC</div>
+                    <div class="leaderboard-info"><h4 id="leaderboardName">Your Team (Green Collect)</h4><p>2,847 kg this month</p></div>
+                    <div class="leaderboard-score">1,240 pts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Impact -->
+<div class="dashboard-grid" style="margin-top:18px;">
+    <div class="card animate-in">
+        <!-- CHANGED: Your -> Company -->
+        <div class="card-header"><h3>🌍 Company Environmental Impact</h3><button class="card-action">Detailed Analytics</button></div>
+        <div class="impact-grid">
+            <!-- Labels changed to reflect total company contribution -->
+            <div class="impact-item"><span class="impact-emoji">🌳</span><div class="impact-value">18</div><div class="impact-label">Total Trees Saved</div></div>
+            <div class="impact-item"><span class="impact-emoji">💧</span><div class="impact-value">12,400 L</div><div class="impact-label">Total Water Saved</div></div>
+            <div class="impact-item"><span class="impact-emoji">⚡</span><div class="impact-value">340 kWh</div><div class="impact-label">Total Energy Saved</div></div>
+            <div class="impact-item"><span class="impact-emoji">🏭</span><div class="impact-value">890 kg</div><div class="impact-label">Total CO₂ Reduced</div></div>
+        </div>
+    </div>
+    <div class="card animate-in">
+        <!-- CHANGED: Eco Points -> Collection Score -->
+        <div class="card-header"><h3>⭐ Collection Score</h3><button class="card-action">Export Data</button></div>
+        <div style="text-align:center;margin-bottom:24px;">
+            <div style="font-size:42px;font-weight:800;color:var(--green);line-height:1;">1,240</div>
+            <!-- CHANGED: Available Points -> Operational Score -->
+            <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Operational Score</div>
+        </div>
+        <div class="progress-section">
+            <!-- CHANGED: Level -> Partnership Tier -->
+            <div class="progress-header"><span>Silver Tier → Gold Partner</span><strong>760 pts to go</strong></div>
+            <div class="progress-track">
+                <div class="progress-fill" style="width:62%;background:linear-gradient(90deg,var(--yellow),var(--orange));"></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+                <!-- CHANGED: Badges -> Verified Pickups -->
+                <div style="font-size:16px;margin-bottom:4px;">🏅</div><div style="font-size:11px;color:var(--text-muted);">152 Pickups</div>
+            </div>
+            <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+                <!-- CHANGED: Streak -> Service Streak -->
+                <div style="font-size:16px;margin-bottom:4px;">🚛</div><div style="font-size:11px;color:var(--text-muted);">98% Reliability</div>
+            </div>
+            <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+                <!-- CHANGED: Level -> Partner Level -->
+                <div style="font-size:16px;margin-bottom:4px;">🏢</div><div style="font-size:11px;color:var(--text-muted);">Certified</div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script>
         // ═══════ AUTH CHECK ═══════
@@ -1034,55 +1046,62 @@
             }
         })();
 
-        // ═══════ LOAD USER DATA ═══════
-        function loadUserData() {
-            const userData = JSON.parse(localStorage.getItem('ecoUser') || '{}');
-            const name = userData.name || userData.username || 'User';
-            const email = userData.email || 'user@example.com';
-            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        // ═══════ LOAD COMPANY DATA ═══════
+function loadCompanyData() {
+    // Changed: ecoUser → ecoCompany (localStorage key)
+    const companyData = JSON.parse(localStorage.getItem('ecoCompany') || '{}');
+    
+    // Changed: Load company fields instead of personal fields
+    const name = companyData.companyName || companyData.name || 'Green Collect Ltd';
+    const email = companyData.adminEmail || 'admin@ecocollect.com';
+    
+    // Changed: Initials based on company name (e.g., Green Collect → GC)
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-            // Update all name displays
-            document.getElementById('sidebarName').textContent = name;
-            document.getElementById('dropdownName').textContent = name;
-            document.getElementById('dropdownEmail').textContent = email;
-            document.getElementById('leaderboardName').textContent = 'You (' + name + ')';
+    // Update all name displays (IDs preserved!)
+    document.getElementById('sidebarName').textContent = name;
+    document.getElementById('dropdownName').textContent = name;
+    document.getElementById('dropdownEmail').textContent = email;
+    
+    // Changed: Leaderboard shows team/company info instead of "You (Name)"
+    document.getElementById('leaderboardName').textContent = 'Your Team (' + name + ')';
 
-            // Update all avatars
-            ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = initials;
-            });
+    // Update all avatars (IDs preserved!)
+    ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = initials;
+    });
 
-            // Update greeting
-            const hour = new Date().getHours();
-            const firstName = name.split(' ')[0];
-            const greetEl = document.getElementById('greeting');
-            if (hour < 12) greetEl.textContent = 'Good Morning, ' + firstName + ' 👋';
-            else if (hour < 17) greetEl.textContent = 'Good Afternoon, ' + firstName + ' ☀️';
-            else greetEl.textContent = 'Good Evening, ' + firstName + ' 🌙';
-        }
+    // Update greeting (Changed: More professional for company dashboard)
+    const hour = new Date().getHours();
+    const greetEl = document.getElementById('greeting');
+    if (hour < 12) greetEl.textContent = 'Good Morning, Collector 👋';
+    else if (hour < 17) greetEl.textContent = 'Good Afternoon, Collector ☀️';
+    else greetEl.textContent = 'Good Evening, Collector 🌙';
+}
 
-        loadUserData();
+loadCompanyData();
 
-        // ═══════ DATE ═══════
-        const now = new Date();
-        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
+       // ═══════ DATE ═══════
+const now = new Date();
+document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+});
 
-        // ═══════ LOGOUT ═══════
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('ecoUser');
-            window.location.href = 'login.html';
-        }
+// ═══════ LOGOUT ═══════
+function logout() {
+    localStorage.removeItem('isLoggedIn');
+    // Changed: Clear company data instead of user data
+    localStorage.removeItem('ecoCompany');
+    window.location.href = 'login.html';
+}
 
-        document.getElementById('logoutSidebar').addEventListener('click', (e) => {
-            e.preventDefault();
-            logout();
-        });
+document.getElementById('logoutSidebar').addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+});
 
-        document.getElementById('logoutDropdown').addEventListener('click', logout);
+document.getElementById('logoutDropdown').addEventListener('click', logout);
 
         // ═══════ PROFILE DROPDOWN ═══════
         function toggleDropdown() {
@@ -1147,117 +1166,122 @@
   });
 });
 
-        // ═══════ BAR CHART ═══════
-        const barData = [
-            { label: 'Jan', value: 120 }, { label: 'Feb', value: 180 },
-            { label: 'Mar', value: 250 }, { label: 'Apr', value: 200 },
-            { label: 'May', value: 310 }, { label: 'Jun', value: 280 },
-            { label: 'Jul', value: 350 }, { label: 'Aug', value: 290 },
-            { label: 'Sep', value: 380 }, { label: 'Oct', value: 420 },
-            { label: 'Nov', value: 360 }, { label: 'Dec', value: 190 },
-        ];
+        // ═══════ BAR CHART: MONTHLY TOTAL COLLECTIONS ═══════
+// 👇 Variable name `barData` PRESERVED. Values now = company total collected kg per month, not user personal recycling
+const barData = [
+    // Optional: values increased to realistic volumes for a collection company, you can adjust to your actual data
+    { label: 'Jan', value: 1200 }, { label: 'Feb', value: 1800 },
+    { label: 'Mar', value: 2500 }, { label: 'Apr', value: 2000 },
+    { label: 'May', value: 3100 }, { label: 'Jun', value: 2800 },
+    { label: 'Jul', value: 3500 }, { label: 'Aug', value: 2900 },
+    { label: 'Sep', value: 3800 }, { label: 'Oct', value: 4200 },
+    { label: 'Nov', value: 3600 }, { label: 'Dec', value: 1900 },
+];
 
-        const maxVal = Math.max(...barData.map(d => d.value));
-        const barChart = document.getElementById('barChart');
+const maxVal = Math.max(...barData.map(d => d.value));
+const barChart = document.getElementById('barChart');
 
-        barData.forEach((d, i) => {
-            const group = document.createElement('div');
-            group.className = 'chart-bar-group';
+barData.forEach((d, i) => {
+    const group = document.createElement('div');
+    group.className = 'chart-bar-group';
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'chart-bar-wrapper';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chart-bar-wrapper';
 
-            const bar = document.createElement('div');
-            bar.className = 'chart-bar';
-            bar.setAttribute('data-value', d.value + 'kg');
-            bar.style.height = '0%';
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.setAttribute('data-value', d.value + 'kg');
+    bar.style.height = '0%';
 
-            setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
+    setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
 
-            if (i === now.getMonth()) {
-                bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
-                bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
-            }
+    if (i === now.getMonth()) {
+        bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
+        bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
+    }
 
-            wrapper.appendChild(bar);
-            const label = document.createElement('div');
-            label.className = 'chart-label';
-            label.textContent = d.label;
-            group.appendChild(wrapper);
-            group.appendChild(label);
-            barChart.appendChild(group);
-        });
+    wrapper.appendChild(bar);
+    const label = document.createElement('div');
+    label.className = 'chart-label';
+    label.textContent = d.label;
+    group.appendChild(wrapper);
+    group.appendChild(label);
+    barChart.appendChild(group);
+});
 
-        // ═══════ DONUT CHART ═══════
-        const donutChart = document.getElementById('donutChart');
-        const segments = [
-            { percent: 38, color: '#2ecc71' },
-            { percent: 28, color: '#3498db' },
-            { percent: 20, color: '#f1c40f' },
-            { percent: 14, color: '#9b59b6' },
-        ];
+// ═══════ DONUT CHART: COLLECTED MATERIALS BREAKDOWN ═══════
+// 👇 Variable name `segments` PRESERVED. Values now = company wide material breakdown, not user personal
+const donutChart = document.getElementById('donutChart');
+const segments = [
+    { percent: 38, color: '#2ecc71' },
+    { percent: 28, color: '#3498db' },
+    { percent: 20, color: '#f1c40f' },
+    { percent: 14, color: '#9b59b6' },
+];
 
-        const svgNS = 'http://www.w3.org/2000/svg';
-        const svg = document.createElementNS(svgNS, 'svg');
-        svg.setAttribute('viewBox', '0 0 100 100');
-        svg.style.cssText = 'width:100%;height:100%;transform:rotate(-90deg);position:absolute;';
+const svgNS = 'http://www.w3.org/2000/svg';
+const svg = document.createElementNS(svgNS, 'svg');
+svg.setAttribute('viewBox', '0 0 100 100');
+svg.style.cssText = 'width:100%;height:100%;transform:rotate(-90deg);position:absolute;';
 
-        const radius = 40;
-        const circumference = 2 * Math.PI * radius;
-        let offset = 0;
+const radius = 40;
+const circumference = 2 * Math.PI * radius;
+let offset = 0;
 
-        segments.forEach((seg, i) => {
-            const circle = document.createElementNS(svgNS, 'circle');
-            circle.setAttribute('cx', '50');
-            circle.setAttribute('cy', '50');
-            circle.setAttribute('r', radius.toString());
-            circle.setAttribute('fill', 'none');
-            circle.setAttribute('stroke', seg.color);
-            circle.setAttribute('stroke-width', '12');
-            circle.setAttribute('stroke-linecap', 'round');
+segments.forEach((seg, i) => {
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttribute('cx', '50');
+    circle.setAttribute('cy', '50');
+    circle.setAttribute('r', radius.toString());
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', seg.color);
+    circle.setAttribute('stroke-width', '12');
+    circle.setAttribute('stroke-linecap', 'round');
 
-            const dashLength = (seg.percent / 100) * circumference;
-            circle.setAttribute('stroke-dashoffset', (-offset).toString());
-            circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
-            circle.style.transition = 'stroke-dasharray 1s ease';
+    const dashLength = (seg.percent / 100) * circumference;
+    circle.setAttribute('stroke-dashoffset', (-offset).toString());
+    circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
+    circle.style.transition = 'stroke-dasharray 1s ease';
 
-            setTimeout(() => {
-                circle.setAttribute('stroke-dasharray', `${dashLength - 3} ${circumference}`);
-            }, 500 + i * 150);
+    setTimeout(() => {
+        circle.setAttribute('stroke-dasharray', `${dashLength - 3} ${circumference}`);
+    }, 500 + i * 150);
 
-            offset += dashLength;
-            svg.appendChild(circle);
-        });
+    offset += dashLength;
+    svg.appendChild(circle);
+});
 
-        donutChart.insertBefore(svg, donutChart.firstChild);
+donutChart.insertBefore(svg, donutChart.firstChild);
 
-        // ═══════ RESPONSIVE ═══════
-        function handleResize() {
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            if (window.innerWidth <= 1024 && window.innerWidth > 768) {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
-            }
+// ═══════ RESPONSIVE ═══════
+// ✅ 100% UNCHANGED, sidebar behavior works identically for company dashboard
+function handleResize() {
+    if (window.innerWidth > 768) {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    if (window.innerWidth <= 1024 && window.innerWidth > 768) {
+        sidebar.classList.add('collapsed');
+        mainContent.classList.add('expanded');
+    }
+}
+
+window.addEventListener('resize', handleResize);
+handleResize();
+
+// ═══════ SCROLL ANIMATIONS ═══════
+// ✅ 100% UNCHANGED
+const animObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
         }
+    });
+}, { threshold: 0.05 });
 
-        window.addEventListener('resize', handleResize);
-        handleResize();
-
-        // ═══════ SCROLL ANIMATIONS ═══════
-        const animObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, { threshold: 0.05 });
-
-        document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
-    </script>
+document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
+</script>
 </body>
 </html>
