@@ -12,7 +12,7 @@ from models.user import User
 from models.home import Home
 from models.user_home_link import User_Home
 from models.company import Company
-
+from models.Add_Recyclable import Recyclables
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

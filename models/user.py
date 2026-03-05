@@ -13,4 +13,5 @@ class User(Base):
     company_name = Column(String(450), nullable=False) 
     amount = Column(Float)
     homes = relationship("models.home.Home", secondary="user_home_link", back_populates="residents")
+    recyclables = relationship("Recyclables", uselist=False, back_populates="user")
 
