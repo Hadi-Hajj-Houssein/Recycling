@@ -6,6 +6,7 @@ from models.user import User
 from models.home import Home
 from models.user_home_link import User_Home
 from models.company import Company
+from models.recyclables import Recyclables
 Base.metadata.create_all(bind=engine)
 app = FastAPI(debug=True)
 origins = ["http://127.0.0.1:5500", "http://localhost:5500"]
