@@ -160,6 +160,32 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 .modal-close:hover { background:rgba(231,76,60,0.1); color:var(--red); }
 .modal-body { padding:0 28px 20px; }
 .modal-footer { padding:0 28px 28px; display:flex; gap:10px; justify-content:flex-end; }
+.submit-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #6acc84;
+  color: #0f2016;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.submit-btn:hover {
+  background: #86e09d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(106, 204, 132, 0.2);
+}
+
+/* Pressed / click effect */
+.submit-btn:active {
+  transform: translateY(0);
+  background: #58bb73;
+}
 
 /* Type Grid */
 .type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:22px; }
@@ -336,76 +362,67 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
         <h2 id="modalTitle">Add Recyclable</h2>
         <p id="modalSubtitle">Log a new item for recycling pickup</p>
       </div>
-      <button class="modal-close" id="closeModal"><i class="fas fa-times"></i></button>
+      <button class="modal-close" id="closeModal" type="button"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
       <form action="http://127.0.0.1:8000/recyclables/item" method="POST" id="recyclableForm">
 
-  <!-- required because type-option is DIVs (not form inputs) -->
-  <input type="hidden" name="material_type" id="materialType" value="plastic">
+        <!-- required because type-option is DIVs (not form inputs) -->
+        <input type="hidden" name="material_type" id="materialType" value="plastic">
 
-  <div class="form-group">
-    <label class="form-label">Material Type</label>
-    <div class="type-grid">
-      <div class="type-option selected" data-type="plastic"><span class="type-emoji">🥤</span><div class="type-name">Plastic</div></div>
-      <div class="type-option" data-type="paper"><span class="type-emoji">📄</span><div class="type-name">Paper</div></div>
-      <div class="type-option" data-type="glass"><span class="type-emoji">🍶</span><div class="type-name">Glass</div></div>
-      <div class="type-option" data-type="metal"><span class="type-emoji">🔧</span><div class="type-name">Metal</div></div>
-      <div class="type-option" data-type="electronics"><span class="type-emoji">💻</span><div class="type-name">Electronics</div></div>
-      <div class="type-option" data-type="organic"><span class="type-emoji">🌿</span><div class="type-name">Organic</div></div>
+        <div class="form-group">
+          <label class="form-label">Material Type</label>
+          <div class="type-grid">
+            <div class="type-option selected" data-type="plastic"><span class="type-emoji">🥤</span><div class="type-name">Plastic</div></div>
+            <div class="type-option" data-type="paper"><span class="type-emoji">📄</span><div class="type-name">Paper</div></div>
+            <div class="type-option" data-type="glass"><span class="type-emoji">🍶</span><div class="type-name">Glass</div></div>
+            <div class="type-option" data-type="metal"><span class="type-emoji">🔧</span><div class="type-name">Metal</div></div>
+            <div class="type-option" data-type="electronics"><span class="type-emoji">💻</span><div class="type-name">Electronics</div></div>
+            <div class="type-option" data-type="organic"><span class="type-emoji">🌿</span><div class="type-name">Organic</div></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Estimated Weight</label>
+          <div class="weight-display"><span class="weight-val" id="weightVal">5.0</span><span class="weight-unit"> kg</span></div>
+          <input type="range" class="weight-slider" id="weightSlider" name="weight_kg"
+                 min="0.5" max="50" step="0.5" value="5">
+          <div class="weight-labels"><span>0.5 kg</span><span>25 kg</span><span>50 kg</span></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Condition</label>
+            <div class="form-select-wrap">
+              <select class="form-select" id="itemCondition" name="condition">
+                <option value="clean">🟢 Clean</option>
+                <option value="slightly_dirty">🟡 Slightly Dirty</option>
+                <option value="dirty">🔴 Needs Cleaning</option>
+              </select>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Status</label>
+            <div class="form-select-wrap">
+              <select class="form-select" id="itemStatus" name="status">
+                <option value="pending">⏳ Pending Pickup</option>
+                <option value="scheduled">📅 Scheduled</option>
+                <option value="collected">✅ Collected</option>
+              </select>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" style="margin-top: 20px; width: 100%;">Save</button>
+
+      </form>
     </div>
   </div>
-
-  <div class="form-group">
-    <label class="form-label">Item Name</label>
-    <input type="text" class="form-input" id="itemName" name="item_name"
-           placeholder="e.g. Plastic bottles, Cardboard boxes…" required>
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Description <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
-    <textarea class="form-textarea" id="itemDesc" name="description"
-              placeholder="Add any details about the item…"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Estimated Weight</label>
-    <div class="weight-display"><span class="weight-val" id="weightVal">5.0</span><span class="weight-unit"> kg</span></div>
-    <input type="range" class="weight-slider" id="weightSlider" name="weight_kg"
-           min="0.5" max="50" step="0.5" value="5">
-    <div class="weight-labels"><span>0.5 kg</span><span>25 kg</span><span>50 kg</span></div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group" style="margin-bottom:0">
-      <label class="form-label">Condition</label>
-      <div class="form-select-wrap">
-        <select class="form-select" id="itemCondition" name="condition">
-          <option value="clean">🟢 Clean</option>
-          <option value="slightly_dirty">🟡 Slightly Dirty</option>
-          <option value="dirty">🔴 Needs Cleaning</option>
-        </select>
-        <i class="fas fa-chevron-down"></i>
-      </div>
-    </div>
-
-    <div class="form-group" style="margin-bottom:0">
-      <label class="form-label">Status</label>
-      <div class="form-select-wrap">
-        <select class="form-select" id="itemStatus" name="status">
-          <option value="pending">⏳ Pending Pickup</option>
-          <option value="scheduled">📅 Scheduled</option>
-          <option value="collected">✅ Collected</option>
-        </select>
-        <i class="fas fa-chevron-down"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- make sure you have a submit button inside the form -->
-  <button type="submit">Save</button>
-
-</form>
+</div>
 
 <script>
   // update hidden input when user clicks a card
@@ -543,36 +560,44 @@ function renderCards(){
 }
 
 // MODAL
-function openModal(id){
-  editingId=id||null;
-  if(editingId){
-    var it=items.find(function(x){return x.id===editingId;});
-    if(!it) return;
-    document.getElementById('modalTitle').textContent='Edit Recyclable';
-    document.getElementById('modalSubtitle').textContent='Update the details of this item';
-    document.getElementById('saveBtnText').textContent='Save Changes';
-    document.getElementById('itemName').value=it.name;
-    document.getElementById('itemDesc').value=it.desc||'';
-    document.getElementById('weightSlider').value=it.weight;
+function openModal(id) {
+  editingId = id || null;
+
+  if (editingId) {
+    var it = items.find(function (x) { return x.id === editingId; });
+    if (!it) return;
+
+    document.getElementById('modalTitle').textContent = 'Edit Recyclable';
+    document.getElementById('modalSubtitle').textContent = 'Update the details of this item';
+
+    var saveBtnText = document.getElementById('saveBtnText');
+    if (saveBtnText) saveBtnText.textContent = 'Save Changes';
+
+    document.getElementById('weightSlider').value = it.weight;
     updateSlider(it.weight);
-    document.getElementById('itemCondition').value=it.condition;
-    document.getElementById('itemStatus').value=it.status;
+    document.getElementById('itemCondition').value = it.condition;
+    document.getElementById('itemStatus').value = it.status;
     setType(it.type);
   } else {
-    document.getElementById('modalTitle').textContent='Add Recyclable';
-    document.getElementById('modalSubtitle').textContent='Log a new item for recycling pickup';
-    document.getElementById('saveBtnText').textContent='Add Item';
-    document.getElementById('itemName').value='';
-    document.getElementById('itemDesc').value='';
-    document.getElementById('weightSlider').value=5;
+    document.getElementById('modalTitle').textContent = 'Add Recyclable';
+    document.getElementById('modalSubtitle').textContent = 'Log a new item for recycling pickup';
+
+    var saveBtnText2 = document.getElementById('saveBtnText');
+    if (saveBtnText2) saveBtnText2.textContent = 'Add Item';
+
+    document.getElementById('weightSlider').value = 5;
     updateSlider(5);
-    document.getElementById('itemCondition').value='clean';
-    document.getElementById('itemStatus').value='pending';
+    document.getElementById('itemCondition').value = 'clean';
+    document.getElementById('itemStatus').value = 'pending';
     setType('plastic');
   }
+
   document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  setTimeout(function(){document.getElementById('itemName').focus();},350);
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(function () {
+    document.getElementById('weightSlider').focus();
+  }, 350);
 }
 
 function closeModal(){
