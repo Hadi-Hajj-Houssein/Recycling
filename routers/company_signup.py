@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from db_main import SessionLocal
 from models.company import Company
+from models.user import User
 router = APIRouter()
 hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 from pydantic import EmailStr
