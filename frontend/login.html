@@ -625,7 +625,7 @@
         }
 
         // Form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             hideMessages();
 
@@ -668,34 +668,34 @@
                 return;
             }
 
-            // Check if user exists in localStorage (registered via signup)
-            const storedUsers = JSON.parse(localStorage.getItem('ecoUsers') || '[]');
-            const foundUser = storedUsers.find(u => u.email === email.value);
 
-            if (foundUser && foundUser.password !== password.value) {
-                showError('Incorrect password. Please try again.');
-                password.classList.add('error-input');
-                password.focus();
-                return;
-            }
-
-            // Show loading
+            // Real login
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
             btn.disabled = true;
 
-            // Simulate login delay
-            setTimeout(() => {
+            const formData = new FormData();
+            formData.append('username', email.value);
+            formData.append('password', password.value);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.detail || 'Invalid email or password');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right"></i>';
+                    return;
+                }
+
                 // Save session
-                const user = foundUser || {
-                    name: email.value.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                localStorage.setItem('ecoUser', JSON.stringify({
                     email: email.value,
                     username: email.value.split('@')[0],
-                };
-
-                localStorage.setItem('ecoUser', JSON.stringify({
-                    name: user.name || user.username,
-                    email: user.email,
-                    username: user.username,
                     loginTime: new Date().toISOString()
                 }));
                 localStorage.setItem('isLoggedIn', 'true');
@@ -707,13 +707,19 @@
                     localStorage.removeItem('rememberedEmail');
                 }
 
-                showSuccess('Login successful! Redirecting to dashboard...');
-
+                showSuccess('Login successful! Redirecting...');
+                localStorage.setItem('userRole', data.role);
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = data.role === 'company' ? 'company_dashboard.html' : 'dashboard.html';
                 }, 1000);
-            }, 1500);
-        });
+
+        } catch (err) {
+            showError('Backend server is offline');
+            btn.disabled = false;
+            btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right"></i>';
+        } 
+    });
+        
 
         // Auto-fill remembered email
         window.addEventListener('DOMContentLoaded', () => {

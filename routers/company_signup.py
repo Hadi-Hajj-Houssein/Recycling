@@ -2,6 +2,7 @@ from fastapi import APIRouter , Depends , HTTPException , Form
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from db_main import SessionLocal
+from models.user import User
 from models.company import Company
 from models.user import User
 router = APIRouter()
@@ -46,8 +47,9 @@ def signup(email: EmailStr = Form(...),company_name: str = Form(...),
         print(f"--- DATABASE SUCCESS: Created {new_company.company_name} with ID {new_company.id} ---")
         return {"message": "Company created successfully", "company_id": new_company.id}
 
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
         print(f"!!! DATABASE ERROR !!!: {str(e)}") 
         raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
-
