@@ -34,6 +34,10 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
         if db.query(User).filter(User.username == username).first():
             raise HTTPException(status_code=400, detail="Username already taken")
 
+        #check for cross email use in company table
+        if db.query(Company).filter(Company.email == email).first():
+            raise HTTPException(status_code=400, detail="Email already registered as a company")
+
         hashed_pw = pwd_context.hash(password)
         new_user = User(email=email, username=username, password=hashed_pw, amount=0.0)
 

@@ -287,17 +287,24 @@
 
         .toggle-password {
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
             background: none;
             border: none;
-            color: rgba(255,255,255,0.25);
             cursor: pointer;
-            font-size: 15px;
-            transition: color 0.3s ease;
-            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 16px;
+            padding: 0;
+            z-index: 2;
         }
+
+        
 
         .toggle-password:hover { color: #2ecc71; }
 
