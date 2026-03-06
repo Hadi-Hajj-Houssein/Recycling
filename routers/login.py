@@ -24,6 +24,7 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
             data={"sub": str(user.id), "role": "user"},
             expires_minutes=15
         )
+        print (token)
         return {
             "access_token": token,
             "token_type": "bearer",

@@ -568,182 +568,182 @@
     </div>
 
     <script>
-        // Toggle password visibility
-        function togglePass(fieldId, btn) {
-            const field = document.getElementById(fieldId);
-            const icon = btn.querySelector('i');
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                field.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
+    // Toggle password visibility
+    function togglePass(fieldId, btn) {
+        const field = document.getElementById(fieldId);
+        const icon = btn.querySelector('i');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    // Show error
+    function showError(msg) {
+        const err = document.getElementById('formError');
+        document.getElementById('errorText').textContent = msg;
+        err.classList.add('show');
+        document.getElementById('formSuccess').classList.remove('show');
+    }
+
+    // Show success
+    function showSuccess(msg) {
+        const suc = document.getElementById('formSuccess');
+        document.getElementById('successText').textContent = msg;
+        suc.classList.add('show');
+        document.getElementById('formError').classList.remove('show');
+    }
+
+    // Hide messages
+    function hideMessages() {
+        document.getElementById('formError').classList.remove('show');
+        document.getElementById('formSuccess').classList.remove('show');
+    }
+
+    // ✅ FIX #4: Added "event" as parameter
+    function socialLogin(provider, event) {
+        const btn = event.target.closest('.btn-social');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        const user = {
+            name: 'Jane Doe',
+            email: provider.toLowerCase() + '.user@example.com',
+            username: 'jane_doe',
+            loginTime: new Date().toISOString(),
+            provider: provider
+        };
+        localStorage.setItem('ecoUser', JSON.stringify(user));
+        localStorage.setItem('isLoggedIn', 'true');
+
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 800);
+    }
+
+    // Form submission
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        hideMessages();
+
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const btn = document.getElementById('submitBtn');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        email.classList.remove('error-input');
+        password.classList.remove('error-input');
+
+        // Validate email
+        if (!email.value.trim()) {
+            showError('Please enter your email address');
+            email.classList.add('error-input');
+            email.focus();
+            return;
+        }
+
+        if (!emailRegex.test(email.value)) {
+            showError('Please enter a valid email address');
+            email.classList.add('error-input');
+            email.focus();
+            return;
+        }
+
+        // Validate password
+        if (!password.value) {
+            showError('Please enter your password');
+            password.classList.add('error-input');
+            password.focus();
+            return;
+        }
+
+        if (password.value.length < 3) {
+            showError('Password must be at least 3 characters');
+            password.classList.add('error-input');
+            password.focus();
+            return;
+        }
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        // ✅ FIX #1: Changed 'username' to 'email' — matches backend Form(...) field
+        formData.append('email', email.value);
+        formData.append('password', password.value);
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/login', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showError(data.detail || 'Invalid email or password');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right"></i>';
+                return;
             }
-        }
 
-        // Show error
-        function showError(msg) {
-            const err = document.getElementById('formError');
-            document.getElementById('errorText').textContent = msg;
-            err.classList.add('show');
-            document.getElementById('formSuccess').classList.remove('show');
-        }
-
-        // Show success
-        function showSuccess(msg) {
-            const suc = document.getElementById('formSuccess');
-            document.getElementById('successText').textContent = msg;
-            suc.classList.add('show');
-            document.getElementById('formError').classList.remove('show');
-        }
-
-        // Hide messages
-        function hideMessages() {
-            document.getElementById('formError').classList.remove('show');
-            document.getElementById('formSuccess').classList.remove('show');
-        }
-
-        // Social login shortcut
-        function socialLogin(provider) {
-            const btn = event.target.closest('.btn-social');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            // Save session
-            const user = {
-                name: 'Jane Doe',
-                email: provider.toLowerCase() + '.user@example.com',
-                username: 'jane_doe',
+            // ✅ FIX #2: Save the access token
+            localStorage.setItem('access_token', data.access_token);
+            console.log(data.access_token)
+            // ✅ FIX #3: Save user info WITH id and role
+            localStorage.setItem('ecoUser', JSON.stringify({
+                email: email.value,
+                username: email.value.split('@')[0],
                 loginTime: new Date().toISOString(),
-                provider: provider
-            };
-            localStorage.setItem('ecoUser', JSON.stringify(user));
+                id: data.user_id || data.company_id,
+                role: data.role
+            }));
             localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', data.role);
 
+            // Remember me
+            if (document.getElementById('rememberMe').checked) {
+                localStorage.setItem('rememberedEmail', email.value);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+
+            showSuccess('Login successful! Redirecting...');
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 800);
-        }
-
-        // Form submission
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            hideMessages();
-
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-            const btn = document.getElementById('submitBtn');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            // Remove old error styles
-            email.classList.remove('error-input');
-            password.classList.remove('error-input');
-
-            // Validate email
-            if (!email.value.trim()) {
-                showError('Please enter your email address');
-                email.classList.add('error-input');
-                email.focus();
-                return;
-            }
-
-            if (!emailRegex.test(email.value)) {
-                showError('Please enter a valid email address');
-                email.classList.add('error-input');
-                email.focus();
-                return;
-            }
-
-            // Validate password
-            if (!password.value) {
-                showError('Please enter your password');
-                password.classList.add('error-input');
-                password.focus();
-                return;
-            }
-
-            if (password.value.length < 3) {
-                showError('Password must be at least 3 characters');
-                password.classList.add('error-input');
-                password.focus();
-                return;
-            }
-
-
-            // Real login
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-            btn.disabled = true;
-
-            const formData = new FormData();
-            formData.append('username', email.value);
-            formData.append('password', password.value);
-
-            try {
-                const response = await fetch('http://127.0.0.1:8000/login', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    showError(data.detail || 'Invalid email or password');
-                    btn.disabled = false;
-                    btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right"></i>';
-                    return;
-                }
-
-                // Save session
-                localStorage.setItem('ecoUser', JSON.stringify({
-                    email: email.value,
-                    username: email.value.split('@')[0],
-                    loginTime: new Date().toISOString()
-                }));
-                localStorage.setItem('isLoggedIn', 'true');
-
-                // Remember me
-                if (document.getElementById('rememberMe').checked) {
-                    localStorage.setItem('rememberedEmail', email.value);
-                } else {
-                    localStorage.removeItem('rememberedEmail');
-                }
-
-                showSuccess('Login successful! Redirecting...');
-                localStorage.setItem('userRole', data.role);
-                setTimeout(() => {
-                    window.location.href = data.role === 'company' ? 'company_dashboard.html' : 'dashboard.html';
-                }, 1000);
+                window.location.href = data.role === 'company'
+                    ? 'company_dashboard.html'
+                    : 'dashboard.html';
+            }, 1000);
 
         } catch (err) {
             showError('Backend server is offline');
             btn.disabled = false;
             btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right"></i>';
-        } 
+        }
     });
-        
 
-        // Auto-fill remembered email
-        window.addEventListener('DOMContentLoaded', () => {
-            const remembered = localStorage.getItem('rememberedEmail');
-            if (remembered) {
-                document.getElementById('email').value = remembered;
-                document.getElementById('rememberMe').checked = true;
-            }
+    // Auto-fill remembered email
+    window.addEventListener('DOMContentLoaded', () => {
+        const remembered = localStorage.getItem('rememberedEmail');
+        if (remembered) {
+            document.getElementById('email').value = remembered;
+            document.getElementById('rememberMe').checked = true;
+        }
+    });
 
-        
-            
+    // Input focus animations
+    document.querySelectorAll('.form-group input').forEach(input => {
+        input.addEventListener('focus', function () {
+            this.closest('.input-wrapper').style.transform = 'scale(1.015)';
+            this.classList.remove('error-input');
+            hideMessages();
         });
-
-        // Input focus animations
-        document.querySelectorAll('.form-group input').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.closest('.input-wrapper').style.transform = 'scale(1.015)';
-                this.classList.remove('error-input');
-                hideMessages();
-            });
-            input.addEventListener('blur', function() {
-                this.closest('.input-wrapper').style.transform = 'scale(1)';
-            });
+        input.addEventListener('blur', function () {
+            this.closest('.input-wrapper').style.transform = 'scale(1)';
         });
-    </script>
+    });
+</script>
 </body>
 </html>
