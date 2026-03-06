@@ -287,17 +287,24 @@
 
         .toggle-password {
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
             background: none;
             border: none;
-            color: rgba(255,255,255,0.25);
             cursor: pointer;
-            font-size: 15px;
-            transition: color 0.3s ease;
-            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 16px;
+            padding: 0;
+            z-index: 2;
         }
+
+        
 
         .toggle-password:hover { color: #2ecc71; }
 
@@ -558,16 +565,14 @@
   function togglePass(fieldId, btn) {
     const field = document.getElementById(fieldId);
     const icon = btn.querySelector("i");
-    if (!field) return;
+    if (!field || !icon) return;
 
-    if (field.type === "password") {
-      field.type = "text";
-      icon?.classList?.replace("fa-eye", "fa-eye-slash");
-    } else {
-      field.type = "password";
-      icon?.classList?.replace("fa-eye-slash", "fa-eye");
+    const isPassword = field.type === "password";
+    field.type = isPassword ? "text" : "password";
+
+    icon.classList.toggle("fa-eye", !isPassword);
+    icon.classList.toggle("fa-eye-slash", isPassword);
     }
-  }
 
   function showError(msg) {
     document.getElementById("errorText").textContent = msg;
@@ -609,11 +614,7 @@
     const API_SIGNUP_URL = "http://127.0.0.1:8000/signup-user";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // If already logged in, redirect
-    if (localStorage.getItem("isLoggedIn") === "true") {
-      window.location.href = "dashboard.html";
-      return;
-    }
+   
 
     const form = document.getElementById("signupForm");
     const usernameEl = document.getElementById("username");
@@ -800,10 +801,10 @@
             loginTime: new Date().toISOString(),
           })
         );
-        localStorage.setItem("isLoggedIn", "true");
+        
 
         showSuccess("Account created successfully! Redirecting...");
-        setTimeout(() => (window.location.href = "dashboard.html"), 1200);
+        setTimeout(() => (window.location.href = "login.html"), 1200);
       } catch (err) {
         showError(err?.message || "Signup failed");
       } finally {

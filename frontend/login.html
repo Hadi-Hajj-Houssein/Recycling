@@ -417,17 +417,24 @@
 
         .toggle-password {
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
             background: none;
             border: none;
-            color: rgba(255,255,255,0.25);
             cursor: pointer;
-            font-size: 15px;
-            transition: color 0.3s ease;
-            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 16px;
+            padding: 0;
+            z-index: 2;
         }
+
+        
 
         .toggle-password:hover { color: #2ecc71; }
 
@@ -451,6 +458,19 @@
         @media (max-width: 400px) {
             .right-panel { padding: 24px 20px; }
             .form-options { flex-direction: column; gap: 12px; align-items: flex-start; }
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #0a1a0f inset !important;
+            -webkit-text-fill-color: #fff !important;
+            border-color: rgba(255,255,255,0.07) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        .form-group input:-webkit-autofill:focus {
+            border-color: #2ecc71 !important;
+            box-shadow: 0 0 0px 1000px #0a1a0f inset, 0 0 0 4px rgba(46, 204, 113, 0.08) !important;
         }
     </style>
 </head>
@@ -703,10 +723,8 @@
                 document.getElementById('rememberMe').checked = true;
             }
 
-            // If already logged in, redirect
-            if (localStorage.getItem('isLoggedIn') === 'true') {
-                window.location.href = 'dashboard.html';
-            }
+        
+            
         });
 
         // Input focus animations
