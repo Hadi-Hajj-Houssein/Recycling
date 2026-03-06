@@ -6,7 +6,7 @@ from models.user import User
 router = APIRouter()
 hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 
- 
+from functionalities.auth import create_access_token
 
 def get_db():
     db = SessionLocal()
@@ -21,10 +21,17 @@ def login(username: str = Form(...), password: str = Form(...), db: Session = De
     if not user:
         raise HTTPException(status_code = 400, detail = "Invalid email or password")
     
-    if not hash.verify(password,user.password):
-        raise HTTPException(status_code=400, detail="Invalid email or password")
-    
-    return {"message": "Login successful", "user_id": user.id, "balance": user.amount}
+    access_token  = create_access_token(sub = str(user.id),expires_minutes = 15)
+    return{
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+            "amount": user.amount
+        }
+    }
 
 
 
