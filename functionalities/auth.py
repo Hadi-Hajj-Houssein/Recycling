@@ -1,34 +1,23 @@
-# functionalities/auth.py
-from fastapi import Depends, HTTPException, status
+from datetime import datetime,timedelta,timezone
+from jose import jwt,JWTError
+from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt # You might need to pip install python-jose[cryptography]
-
-# CONFIGURATION (In a real app, put these in an .env file)
-SECRET_KEY = "YOUR_SECRET_KEY_HERE" # Must match the one you used to sign the token in login.py
+NGU = "~`3781678^&*^^roro!&%#^%&^!*)(&%$^*N!)(*M7nhadi42868&!)&#^$)(*!(&Btrgnhm(^!(THK*^(@$&^% ?/>,.,<<<>,6M7*&m@ t!*&oIUGHXharde#tp@$sNJS))))"
 ALGORITHM = "HS256"
-
-# This automatically looks for the "Authorization: Bearer <token>" header
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+def  create_acess_token(sub:str,expires_minutes:int = 15):
+    expire = datetime.now(timezone.utc) + timedelta(minutes = expires_minutes)
+    payload= {"sub":sub,"exp":expire}
+    return jwt.encode(payload,NGU,algorithm=ALGORITHM)
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    try:
-        # 1. Decode the token (Verify signature)
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        
-        # 2. Get the User ID (assuming you saved it as "sub" or "user_id" when logging in)
-        user_id: str = payload.get("sub") 
-        
-        if user_id is None:
-            raise credentials_exception
-            
-        # 3. Return the ID (or fetch the full user from DB if you prefer)
-        return user_id
-        
-    except JWTError:
-        raise credentials_exception
+def get_curr_user_id(token:str= Depends(oauth2_scheme)):
+    payload = decode_token(token)
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return int(user_id)
+
+
+
+def decode_token(token:str):
+    return jwt.decode(token,NGU,algorithms=[ALGORITHM] )

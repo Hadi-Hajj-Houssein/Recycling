@@ -21,7 +21,7 @@ def login(username: str = Form(...), password: str = Form(...), db: Session = De
     if not user:
         raise HTTPException(status_code = 400, detail = "Invalid email or password")
     
-    if not hash.verify(password, user.password):
+    if not hash.verify(password,user.password):
         raise HTTPException(status_code=400, detail="Invalid email or password")
     
     return {"message": "Login successful", "user_id": user.id, "balance": user.amount}
