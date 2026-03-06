@@ -484,7 +484,7 @@
 
             <form id="signupForm" novalidate>
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">Username</label> <!-- input -->
                     <div class="input-wrapper">
                         <i class="fas fa-user"></i>
                         <input type="text" id="username" name="username" required placeholder="Choose a username" autocomplete="username" minlength="3">
@@ -554,239 +554,264 @@
     </div>
 
     <script>
-        function togglePass(fieldId, btn) {
-            const field = document.getElementById(fieldId);
-            const icon = btn.querySelector('i');
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                field.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
+  // ---------- helpers ----------
+  function togglePass(fieldId, btn) {
+    const field = document.getElementById(fieldId);
+    const icon = btn.querySelector("i");
+    if (!field) return;
+
+    if (field.type === "password") {
+      field.type = "text";
+      icon?.classList?.replace("fa-eye", "fa-eye-slash");
+    } else {
+      field.type = "password";
+      icon?.classList?.replace("fa-eye-slash", "fa-eye");
+    }
+  }
+
+  function showError(msg) {
+    document.getElementById("errorText").textContent = msg;
+    document.getElementById("formError").classList.add("show");
+    document.getElementById("formSuccess").classList.remove("show");
+  }
+
+  function showSuccess(msg) {
+    document.getElementById("successText").textContent = msg;
+    document.getElementById("formSuccess").classList.add("show");
+    document.getElementById("formError").classList.remove("show");
+  }
+
+  function hideMessages() {
+    document.getElementById("formError").classList.remove("show");
+    document.getElementById("formSuccess").classList.remove("show");
+  }
+
+  // If you call socialSignup from HTML like onclick="socialSignup('Google', event)"
+  function socialSignup(provider, ev) {
+    const btn = ev?.target?.closest(".btn-social");
+    if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    // demo-only
+    const user = {
+      name: "Jane Doe",
+      email: provider.toLowerCase() + ".user@example.com",
+      username: "jane_doe",
+      loginTime: new Date().toISOString(),
+      provider: provider,
+    };
+    localStorage.setItem("ecoUser", JSON.stringify(user));
+    localStorage.setItem("isLoggedIn", "true");
+    setTimeout(() => (window.location.href = "dashboard.html"), 800);
+  }
+
+  // ---------- main ----------
+  window.addEventListener("DOMContentLoaded", () => {
+    const API_SIGNUP_URL = "http://127.0.0.1:8000/signup-user";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // If already logged in, redirect
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    const form = document.getElementById("signupForm");
+    const usernameEl = document.getElementById("username");
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
+    const confirmEl = document.getElementById("confirmPassword");
+    const termsEl = document.getElementById("termsCheck");
+    const btn = document.getElementById("submitBtn");
+
+    // strength UI (optional)
+    const strengthBar = document.getElementById("strengthBar");
+    const strengthText = document.getElementById("strengthText");
+
+    // basic null-checks (prevents silent failure)
+    if (!form || !usernameEl || !emailEl || !passwordEl || !confirmEl || !termsEl || !btn) {
+      console.error("Missing required form elements. Check your HTML IDs.");
+      return;
+    }
+
+    function checkMatch() {
+      const matchErr = document.getElementById("matchError");
+      if (!confirmEl.value) return;
+
+      if (confirmEl.value !== passwordEl.value) {
+        confirmEl.classList.add("error-input");
+        confirmEl.classList.remove("success-input");
+        matchErr?.classList?.add("show");
+      } else {
+        confirmEl.classList.remove("error-input");
+        confirmEl.classList.add("success-input");
+        matchErr?.classList?.remove("show");
+      }
+    }
+
+    // Password strength
+    passwordEl.addEventListener("input", function () {
+      const val = this.value;
+      let strength = 0;
+
+      // backend requires >= 8
+      if (val.length >= 8) strength++;
+      if (val.length >= 10) strength++;
+      if (/[A-Z]/.test(val)) strength++;
+      if (/[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+      const levels = [
+        { width: "0%", color: "#555", text: "" },
+        { width: "20%", color: "#e74c3c", text: "Very Weak" },
+        { width: "40%", color: "#e67e22", text: "Weak" },
+        { width: "60%", color: "#f1c40f", text: "Fair" },
+        { width: "80%", color: "#2ecc71", text: "Strong" },
+        { width: "100%", color: "#27ae60", text: "Very Strong" },
+      ];
+
+      const level = levels[strength] || levels[0];
+      if (strengthBar) {
+        strengthBar.style.width = level.width;
+        strengthBar.style.background = level.color;
+      }
+      if (strengthText) {
+        strengthText.textContent = level.text;
+        strengthText.style.color = level.color;
+      }
+
+      checkMatch();
+    });
+
+    confirmEl.addEventListener("input", checkMatch);
+
+    // Real-time blur validation
+    usernameEl.addEventListener("blur", function () {
+      const err = document.getElementById("usernameError");
+      const v = this.value.trim();
+      if (v && v.length < 3) {
+        this.classList.add("error-input");
+        err?.classList?.add("show");
+      } else if (v) {
+        this.classList.remove("error-input");
+        this.classList.add("success-input");
+        err?.classList?.remove("show");
+      }
+    });
+
+    emailEl.addEventListener("blur", function () {
+      const err = document.getElementById("emailError");
+      const v = this.value.trim();
+      if (v && !emailRegex.test(v)) {
+        this.classList.add("error-input");
+        err?.classList?.add("show");
+      } else if (v) {
+        this.classList.remove("error-input");
+        this.classList.add("success-input");
+        err?.classList?.remove("show");
+      }
+    });
+
+    // Input focus styling
+    document.querySelectorAll(".form-group input").forEach((input) => {
+      input.addEventListener("focus", function () {
+        this.closest(".input-wrapper")?.style && (this.closest(".input-wrapper").style.transform = "scale(1.015)");
+        this.classList.remove("error-input");
+        hideMessages();
+      });
+      input.addEventListener("blur", function () {
+        this.closest(".input-wrapper")?.style && (this.closest(".input-wrapper").style.transform = "scale(1)");
+      });
+    });
+
+    // Submit -> call FastAPI
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      hideMessages();
+
+      // clear errors
+      [usernameEl, emailEl, passwordEl, confirmEl].forEach((f) => f.classList.remove("error-input"));
+
+      const username = usernameEl.value.trim();
+      const email = emailEl.value.trim();
+      const password = passwordEl.value;
+      const confirmPassword = confirmEl.value;
+
+      // Validate
+      if (username.length < 3) {
+        showError("Username must be at least 3 characters");
+        usernameEl.classList.add("error-input");
+        usernameEl.focus();
+        return;
+      }
+
+      if (!emailRegex.test(email)) {
+        showError("Please enter a valid email address");
+        emailEl.classList.add("error-input");
+        emailEl.focus();
+        return;
+      }
+
+      // match backend rule
+      if (password.length < 8) {
+        showError("Password must be at least 8 characters");
+        passwordEl.classList.add("error-input");
+        passwordEl.focus();
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showError("Passwords do not match");
+        confirmEl.classList.add("error-input");
+        confirmEl.focus();
+        return;
+      }
+
+      if (!termsEl.checked) {
+        showError("Please accept the Terms of Service");
+        return;
+      }
+
+      // Loading state
+      const oldBtnHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+      btn.disabled = true;
+
+      try {
+        const fd = new FormData();
+        fd.append("email", email);
+        fd.append("username", username);
+        fd.append("password", password);
+        fd.append("confirmPassword", confirmPassword);
+
+        const res = await fetch(API_SIGNUP_URL, { method: "POST", body: fd });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          // FastAPI sends {detail: "..."}
+          throw new Error(data.detail || "Signup failed");
         }
 
-        function showError(msg) {
-            document.getElementById('errorText').textContent = msg;
-            document.getElementById('formError').classList.add('show');
-            document.getElementById('formSuccess').classList.remove('show');
-        }
+        // Store minimal info (NOT password)
+        localStorage.setItem(
+          "ecoUser",
+          JSON.stringify({
+            email,
+            username,
+            loginTime: new Date().toISOString(),
+          })
+        );
+        localStorage.setItem("isLoggedIn", "true");
 
-        function showSuccess(msg) {
-            document.getElementById('successText').textContent = msg;
-            document.getElementById('formSuccess').classList.add('show');
-            document.getElementById('formError').classList.remove('show');
-        }
-
-        function hideMessages() {
-            document.getElementById('formError').classList.remove('show');
-            document.getElementById('formSuccess').classList.remove('show');
-        }
-
-        function socialSignup(provider) {
-            const btn = event.target.closest('.btn-social');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            const user = {
-                name: 'Jane Doe',
-                email: provider.toLowerCase() + '.user@example.com',
-                username: 'jane_doe',
-                loginTime: new Date().toISOString(),
-                provider: provider
-            };
-            localStorage.setItem('ecoUser', JSON.stringify(user));
-            localStorage.setItem('isLoggedIn', 'true');
-
-            setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
-        }
-
-        // Password strength
-        const passwordInput = document.getElementById('password');
-        const strengthBar = document.getElementById('strengthBar');
-        const strengthText = document.getElementById('strengthText');
-
-        passwordInput.addEventListener('input', function() {
-            const val = this.value;
-            let strength = 0;
-            if (val.length >= 6) strength++;
-            if (val.length >= 10) strength++;
-            if (/[A-Z]/.test(val)) strength++;
-            if (/[0-9]/.test(val)) strength++;
-            if (/[^A-Za-z0-9]/.test(val)) strength++;
-
-            const levels = [
-                { width: '0%', color: '#555', text: '' },
-                { width: '20%', color: '#e74c3c', text: 'Very Weak' },
-                { width: '40%', color: '#e67e22', text: 'Weak' },
-                { width: '60%', color: '#f1c40f', text: 'Fair' },
-                { width: '80%', color: '#2ecc71', text: 'Strong' },
-                { width: '100%', color: '#27ae60', text: 'Very Strong 💪' }
-            ];
-
-            const level = levels[strength];
-            strengthBar.style.width = level.width;
-            strengthBar.style.background = level.color;
-            strengthText.textContent = level.text;
-            strengthText.style.color = level.color;
-            checkMatch();
-        });
-
-        // Confirm password
-        const confirmInput = document.getElementById('confirmPassword');
-
-        function checkMatch() {
-            const matchErr = document.getElementById('matchError');
-            if (confirmInput.value) {
-                if (confirmInput.value !== passwordInput.value) {
-                    confirmInput.classList.add('error-input');
-                    confirmInput.classList.remove('success-input');
-                    matchErr.classList.add('show');
-                } else {
-                    confirmInput.classList.remove('error-input');
-                    confirmInput.classList.add('success-input');
-                    matchErr.classList.remove('show');
-                }
-            }
-        }
-
-        confirmInput.addEventListener('input', checkMatch);
-
-        // Real-time field validation
-        document.getElementById('username').addEventListener('blur', function() {
-            const err = document.getElementById('usernameError');
-            if (this.value && this.value.length < 3) {
-                this.classList.add('error-input');
-                err.classList.add('show');
-            } else if (this.value) {
-                this.classList.remove('error-input');
-                this.classList.add('success-input');
-                err.classList.remove('show');
-            }
-        });
-
-        document.getElementById('email').addEventListener('blur', function() {
-            const err = document.getElementById('emailError');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (this.value && !emailRegex.test(this.value)) {
-                this.classList.add('error-input');
-                err.classList.add('show');
-            } else if (this.value) {
-                this.classList.remove('error-input');
-                this.classList.add('success-input');
-                err.classList.remove('show');
-            }
-        });
-
-        // Form submission
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            hideMessages();
-
-            const username = document.getElementById('username');
-            const email = document.getElementById('email');
-            const password = passwordInput;
-            const confirm = confirmInput;
-            const terms = document.getElementById('termsCheck');
-            const btn = document.getElementById('submitBtn');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            // Clear errors
-            [username, email, password, confirm].forEach(f => f.classList.remove('error-input'));
-
-            // Validate
-            if (!username.value.trim() || username.value.length < 3) {
-                showError('Username must be at least 3 characters');
-                username.classList.add('error-input');
-                username.focus();
-                return;
-            }
-
-            if (!emailRegex.test(email.value)) {
-                showError('Please enter a valid email address');
-                email.classList.add('error-input');
-                email.focus();
-                return;
-            }
-
-            if (password.value.length < 6) {
-                showError('Password must be at least 6 characters');
-                password.classList.add('error-input');
-                password.focus();
-                return;
-            }
-
-            if (password.value !== confirm.value) {
-                showError('Passwords do not match');
-                confirm.classList.add('error-input');
-                confirm.focus();
-                return;
-            }
-
-            if (!terms.checked) {
-                showError('Please accept the Terms of Service');
-                return;
-            }
-
-            // Check if email already registered
-            const storedUsers = JSON.parse(localStorage.getItem('ecoUsers') || '[]');
-            if (storedUsers.find(u => u.email === email.value)) {
-                showError('An account with this email already exists. Try logging in.');
-                email.classList.add('error-input');
-                return;
-            }
-
-            // Loading state
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                // Save user to localStorage
-                const newUser = {
-                    username: username.value.trim(),
-                    name: username.value.trim().replace(/\b\w/g, c => c.toUpperCase()),
-                    email: email.value.trim(),
-                    password: password.value,
-                    createdAt: new Date().toISOString()
-                };
-
-                storedUsers.push(newUser);
-                localStorage.setItem('ecoUsers', JSON.stringify(storedUsers));
-
-                // Auto login
-                localStorage.setItem('ecoUser', JSON.stringify({
-                    name: newUser.name,
-                    email: newUser.email,
-                    username: newUser.username,
-                    loginTime: new Date().toISOString()
-                }));
-                localStorage.setItem('isLoggedIn', 'true');
-
-                showSuccess('Account created successfully! Redirecting to dashboard...');
-
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1200);
-            }, 1500);
-        });
-
-        // If already logged in, redirect
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('isLoggedIn') === 'true') {
-                window.location.href = 'dashboard.html';
-            }
-        });
-
-        // Input focus
-        document.querySelectorAll('.form-group input').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.closest('.input-wrapper').style.transform = 'scale(1.015)';
-                this.classList.remove('error-input');
-                hideMessages();
-            });
-            input.addEventListener('blur', function() {
-                this.closest('.input-wrapper').style.transform = 'scale(1)';
-            });
-        });
-    </script>
-</body>
+        showSuccess("Account created successfully! Redirecting...");
+        setTimeout(() => (window.location.href = "dashboard.html"), 1200);
+      } catch (err) {
+        showError(err?.message || "Signup failed");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldBtnHtml || "Create Account";
+      }
+    });
+  });
+</script>
+    </body>
 </html>

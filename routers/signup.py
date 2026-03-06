@@ -17,11 +17,11 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/signup")
+@router.post("/signup-user")
 def signup(email: EmailStr = Form(...),username: str = Form(...), 
     password: str = Form(...), 
     confirmPassword: str = Form(...),db: Session = Depends(get_db)):
-
+    print("wsolet ")
     try:
         #input done
         if len(password) < 8 or len(password) > 72:
@@ -29,18 +29,18 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
         if password != confirmPassword:
             raise HTTPException(status_code = 400 , detail ="password != confirm password ")
 
-        if(db.query(Company).filter(Company.email == email).first()):
+        if(db.query(User).filter(User.email == email).first()):
             raise HTTPException(status_code=400, detail="Email already registered")
-        if db.query(Company).filter(Company.company_name == username).first():
+        if db.query(User).filter(User.username == username).first():
             raise HTTPException(status_code=400, detail="Username already taken")
 
         hashed_pw = pwd_context.hash(password)
-        new_user = Company(email=email, username=username, password=hashed_pw, amount=0.0)
+        new_user = User(email=email, username=username, password=hashed_pw, amount=0.0)
 
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        print(f"--- DATABASE SUCCESS: Created {new_user.company_name} with ID {new_user.id} ---")
+        print(f"--- DATABASE SUCCESS: Created {new_user.username} with ID {new_user.id} ---")
         return {"message": "User created successfully", "user_id": new_user.id}
 
     except Exception as e:

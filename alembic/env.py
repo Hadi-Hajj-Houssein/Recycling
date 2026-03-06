@@ -8,11 +8,12 @@ root_dir = os.path.dirname(current_dir)
 sys.path.insert(0, root_dir)
 from alembic import context
 from db_main import Base
+# Import ALL models so Alembic can detect them
 from models.user import User
-from models.home import Home
-from models.user_home_link import User_Home
 from models.company import Company
 from models.Add_Recyclable import Recyclables
+from models.home import Home
+from models.user_home_link import User_Home
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

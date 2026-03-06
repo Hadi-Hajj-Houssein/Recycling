@@ -1,9 +1,5 @@
-from sqlalchemy import Column , String , Integer , Float, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey
 from db_main import Base
-# from models.user import User
-# from models.home import Home
-# from sqlalchemy.orm import relationship
-# from sqlalchemy import ForeignKey
 
 class User_Home(Base):
     __tablename__ = 'user_home_link'

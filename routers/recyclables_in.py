@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from db_main import SessionLocal
 from models.user import User
-from models.company import Company
+from models.company import User
 
 router = APIRouter()
 hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
@@ -29,13 +29,13 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
         if password != confirmPassword:
             raise HTTPException(status_code = 400 , detail ="password != confirm password ")
 
-        if(db.query(Company).filter(Company.email == email).first()):
+        if(db.query(User).filter(User.email == email).first()):
             raise HTTPException(status_code=400, detail="Email already registered")
-        if db.query(Company).filter(Company.company_name == username).first():
+        if db.query(User).filter(User.company_name == username).first():
             raise HTTPException(status_code=400, detail="Username already taken")
 
         hashed_pw = pwd_context.hash(password)
-        new_user = Company(email=email, username=username, password=hashed_pw, amount=0.0)
+        new_user = User(email=email, username=username, password=hashed_pw, amount=0.0)
 
         db.add(new_user)
         db.commit()
