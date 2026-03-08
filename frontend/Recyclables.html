@@ -160,32 +160,6 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 .modal-close:hover { background:rgba(231,76,60,0.1); color:var(--red); }
 .modal-body { padding:0 28px 20px; }
 .modal-footer { padding:0 28px 28px; display:flex; gap:10px; justify-content:flex-end; }
-.submit-btn {
-  margin-top: 20px;
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: #6acc84;
-  color: #0f2016;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Hover effect */
-.submit-btn:hover {
-  background: #86e09d;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(106, 204, 132, 0.2);
-}
-
-/* Pressed / click effect */
-.submit-btn:active {
-  transform: translateY(0);
-  background: #58bb73;
-}
 
 /* Type Grid */
 .type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:22px; }
@@ -275,7 +249,7 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
     <div class="nav-section">
       <div class="nav-section-title">Main</div>
       <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
-      <a href="recyclables.html" class="nav-item active"><i class="fas fa-recycle"></i><span>My Recyclables</span><div class="badge" id="navBadge">0</div></a>
+      <a href="recyclables.html" class="nav-item active"><i class="fas fa-recycle"></i><span>My Recyclables</span><div class="badge" id="navBadge" style="display:none">0</div></a>
       <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
       <a href="#" class="nav-item"><i class="fas fa-building"></i><span>Companies</span></a>
     </div>
@@ -329,10 +303,10 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
     </div>
 
     <div class="summary-row">
-      <div class="summary-card animate-in"><div class="summary-icon green">🥤</div><div class="summary-info"><h3 id="sumPlastic">0 kg</h3><p>Plastic</p></div></div>
-      <div class="summary-card animate-in"><div class="summary-icon blue">📄</div><div class="summary-info"><h3 id="sumPaper">0 kg</h3><p>Paper</p></div></div>
-      <div class="summary-card animate-in"><div class="summary-icon yellow">🍶</div><div class="summary-info"><h3 id="sumGlass">0 kg</h3><p>Glass</p></div></div>
-      <div class="summary-card animate-in"><div class="summary-icon purple">🔧</div><div class="summary-info"><h3 id="sumOther">0 kg</h3><p>Metal & Other</p></div></div>
+      <div class="summary-card animate-in"><div class="summary-icon green">🥤</div><div class="summary-info"><h3 id="sumPlastic">0.0 kg</h3><p>Plastic</p></div></div>
+      <div class="summary-card animate-in"><div class="summary-icon blue">📄</div><div class="summary-info"><h3 id="sumPaper">0.0 kg</h3><p>Paper</p></div></div>
+      <div class="summary-card animate-in"><div class="summary-icon yellow">🍶</div><div class="summary-info"><h3 id="sumGlass">0.0 kg</h3><p>Glass</p></div></div>
+      <div class="summary-card animate-in"><div class="summary-icon purple">🔧</div><div class="summary-info"><h3 id="sumOther">0.0 kg</h3><p>Metal & Other</p></div></div>
     </div>
 
     <div class="filter-bar">
@@ -365,80 +339,63 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
       <button class="modal-close" id="closeModal" type="button"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
-      <form action="http://127.0.0.1:8000/recyclables/item" method="POST" id="recyclableForm">
 
-        <!-- required because type-option is DIVs (not form inputs) -->
-        <input type="hidden" name="material_type" id="materialType" value="plastic">
+      <!-- ✅ FIX: itemName and itemDesc fields added -->
+      <div class="form-group">
+        <label class="form-label">Item Name</label>
+        <input type="text" class="form-input" id="itemName" placeholder="e.g. Plastic Bottles" />
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">Material Type</label>
-          <div class="type-grid">
-            <div class="type-option selected" data-type="plastic"><span class="type-emoji">🥤</span><div class="type-name">Plastic</div></div>
-            <div class="type-option" data-type="paper"><span class="type-emoji">📄</span><div class="type-name">Paper</div></div>
-            <div class="type-option" data-type="glass"><span class="type-emoji">🍶</span><div class="type-name">Glass</div></div>
-            <div class="type-option" data-type="metal"><span class="type-emoji">🔧</span><div class="type-name">Metal</div></div>
-            <div class="type-option" data-type="electronics"><span class="type-emoji">💻</span><div class="type-name">Electronics</div></div>
-            <div class="type-option" data-type="organic"><span class="type-emoji">🌿</span><div class="type-name">Organic</div></div>
+      <div class="form-group">
+        <label class="form-label">Description <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+        <textarea class="form-textarea" id="itemDesc" placeholder="e.g. Collected from weekly purchases"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Material Type</label>
+        <div class="type-grid">
+          <div class="type-option selected" data-type="plastic"><span class="type-emoji">🥤</span><div class="type-name">Plastic</div></div>
+          <div class="type-option" data-type="paper"><span class="type-emoji">📄</span><div class="type-name">Paper</div></div>
+          <div class="type-option" data-type="glass"><span class="type-emoji">🍶</span><div class="type-name">Glass</div></div>
+          <div class="type-option" data-type="metal"><span class="type-emoji">🔧</span><div class="type-name">Metal</div></div>
+          <div class="type-option" data-type="electronics"><span class="type-emoji">💻</span><div class="type-name">Electronics</div></div>
+          <div class="type-option" data-type="organic"><span class="type-emoji">🌿</span><div class="type-name">Organic</div></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Estimated Weight</label>
+        <div class="weight-display"><span class="weight-val" id="weightVal">5.0</span><span class="weight-unit"> kg</span></div>
+        <input type="range" class="weight-slider" id="weightSlider" min="0.5" max="50" step="0.5" value="5">
+        <div class="weight-labels"><span>0.5 kg</span><span>25 kg</span><span>50 kg</span></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Condition</label>
+          <div class="form-select-wrap">
+            <select class="form-select" id="itemCondition">
+              <option value="clean">🟢 Clean</option>
+              <option value="slightly_dirty">🟡 Slightly Dirty</option>
+              <option value="dirty">🔴 Needs Cleaning</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
           </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Estimated Weight</label>
-          <div class="weight-display"><span class="weight-val" id="weightVal">5.0</span><span class="weight-unit"> kg</span></div>
-          <input type="range" class="weight-slider" id="weightSlider" name="weight_kg"
-                 min="0.5" max="50" step="0.5" value="5">
-          <div class="weight-labels"><span>0.5 kg</span><span>25 kg</span><span>50 kg</span></div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Condition</label>
-            <div class="form-select-wrap">
-              <select class="form-select" id="itemCondition" name="condition">
-                <option value="clean">🟢 Clean</option>
-                <option value="slightly_dirty">🟡 Slightly Dirty</option>
-                <option value="dirty">🔴 Needs Cleaning</option>
-              </select>
-              <i class="fas fa-chevron-down"></i>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Status</label>
-            <div class="form-select-wrap">
-              <select class="form-select" id="itemStatus" name="status">
-                <option value="pending">⏳ Pending Pickup</option>
-                <option value="scheduled">📅 Scheduled</option>
-                <option value="collected">✅ Collected</option>
-              </select>
-              <i class="fas fa-chevron-down"></i>
-            </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Status</label>
+          <div class="form-select-wrap">
+            <select class="form-select" id="itemStatus">
+              <option value="pending">⏳ Pending Pickup</option>
+              <option value="scheduled">📅 Scheduled</option>
+              <option value="collected">✅ Collected</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
           </div>
         </div>
+      </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="submit-btn" style="margin-top: 20px; width: 100%;">Save</button>
-
-      </form>
     </div>
-  </div>
-</div>
-
-<script>
-  // update hidden input when user clicks a card
-  document.querySelectorAll(".type-option").forEach(opt => {
-    opt.addEventListener("click", () => {
-      document.querySelectorAll(".type-option").forEach(o => o.classList.remove("selected"));
-      opt.classList.add("selected");
-      document.getElementById("materialType").value = opt.dataset.type;
-    });
-  });
-
-  // optional: keep slider text updated
-  const slider = document.getElementById("weightSlider");
-  const weightVal = document.getElementById("weightVal");
-  slider.addEventListener("input", () => weightVal.textContent = slider.value);
-</script>
     <div class="modal-footer">
       <button class="btn-secondary" id="cancelModal">Cancel</button>
       <button class="btn-primary" id="saveItem"><i class="fas fa-check"></i> <span id="saveBtnText">Add Item</span></button>
@@ -453,270 +410,343 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 </div>
 
 <script>
-// AUTH
-(function(){ if(localStorage.getItem('isLoggedIn')!=='true') window.location.href='login.html'; })();
+// ── Auth guard ─────────────────────────────────────────────────────────────────
+(function () {
+  if (!localStorage.getItem('access_token')) window.location.href = 'login.html';
+})();
 
-// USER
-function loadUser(){
-  var u=JSON.parse(localStorage.getItem('ecoUser')||'{}');
-  var name=u.name||u.username||'User';
-  var init=name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-  document.getElementById('sidebarName').textContent=name;
-  document.getElementById('sidebarAvatar').textContent=init;
-  document.getElementById('topbarAvatar').textContent=init;
+// ── User info ──────────────────────────────────────────────────────────────────
+function loadUser() {
+  var u    = JSON.parse(localStorage.getItem('ecoUser') || '{}');
+  var name = u.name || u.username || 'User';
+  var init = name.split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
+  document.getElementById('sidebarName').textContent  = name;
+  document.getElementById('sidebarAvatar').textContent = init;
+  document.getElementById('topbarAvatar').textContent  = init;
 }
 loadUser();
-document.getElementById('currentDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('currentDate').textContent =
+  new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-// TYPE CONFIG
-var TYPES={
-  plastic:{emoji:'🥤',label:'Plastic',color:'#2ecc71',bg:'rgba(46,204,113,0.12)'},
-  paper:{emoji:'📄',label:'Paper',color:'#3498db',bg:'rgba(52,152,219,0.12)'},
-  glass:{emoji:'🍶',label:'Glass',color:'#f1c40f',bg:'rgba(241,196,15,0.12)'},
-  metal:{emoji:'🔧',label:'Metal',color:'#e67e22',bg:'rgba(230,126,34,0.12)'},
-  electronics:{emoji:'💻',label:'Electronics',color:'#9b59b6',bg:'rgba(155,89,182,0.12)'},
-  organic:{emoji:'🌿',label:'Organic',color:'#1abc9c',bg:'rgba(26,188,156,0.12)'}
+// ── Constants ──────────────────────────────────────────────────────────────────
+// ✅ FIX 1: full URL so requests go to FastAPI on port 8000, not the HTML server
+var API_BASE = 'http://127.0.0.1:8000/recyclables';
+
+var TYPES = {
+  plastic:     { emoji: '🥤', label: 'Plastic',     color: '#2ecc71', bg: 'rgba(46,204,113,0.12)' },
+  paper:       { emoji: '📄', label: 'Paper',       color: '#3498db', bg: 'rgba(52,152,219,0.12)' },
+  glass:       { emoji: '🍶', label: 'Glass',       color: '#f1c40f', bg: 'rgba(241,196,15,0.12)' },
+  metal:       { emoji: '🔧', label: 'Metal',       color: '#e67e22', bg: 'rgba(230,126,34,0.12)' },
+  electronics: { emoji: '💻', label: 'Electronics', color: '#9b59b6', bg: 'rgba(155,89,182,0.12)' },
+  organic:     { emoji: '🌿', label: 'Organic',     color: '#1abc9c', bg: 'rgba(26,188,156,0.12)' }
 };
-var CONDITIONS={clean:'🟢 Clean',slightly_dirty:'🟡 Slightly Dirty',dirty:'🔴 Needs Cleaning'};
+var CONDITIONS = { clean: '🟢 Clean', slightly_dirty: '🟡 Slightly Dirty', dirty: '🔴 Needs Cleaning' };
 
-// DATA
-var items=JSON.parse(localStorage.getItem('ecoRecyclables')||'[]');
-var editingId=null;
-var activeFilter='all';
-var selectedType='plastic';
+// ── State ──────────────────────────────────────────────────────────────────────
+var items        = [];
+var editingId    = null;
+var activeFilter = 'all';
+var selectedType = 'plastic';
 
-if(items.length===0){
-  items=[
-    {id:Date.now()-3000,type:'plastic',name:'Plastic Bottles',desc:'Collected from weekly purchases',weight:8,condition:'clean',status:'pending',date:new Date().toISOString()},
-    {id:Date.now()-2000,type:'paper',name:'Cardboard Boxes',desc:'Moving boxes from last month',weight:12,condition:'clean',status:'scheduled',date:new Date().toISOString()},
-    {id:Date.now()-1000,type:'glass',name:'Glass Jars',desc:'Pasta jars and wine bottles',weight:5,condition:'slightly_dirty',status:'collected',date:new Date().toISOString()}
-  ];
-  save();
+// ── API helper ─────────────────────────────────────────────────────────────────
+async function apiRequest(url, method, body) {
+  method = method || 'GET';
+  body   = body   || null;
+
+  var token = localStorage.getItem('access_token');
+  if (!token) { window.location.href = 'login.html'; return null; }
+
+  var options = {
+    method:  method,
+    headers: { 'Authorization': 'Bearer ' + token }
+  };
+  if (body) {
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(body);
+  }
+
+  var response = await fetch(url, options);
+
+  if (response.status === 401 || response.status === 400) {
+    localStorage.clear();
+    window.location.href = 'login.html';
+    return null;
+  }
+  if (response.status === 204) return null;
+  if (!response.ok) {
+    var err = await response.json().catch(function () { return {}; });
+    showToast('❌', 'Error', err.detail || 'Something went wrong.');
+    return null;
+  }
+  return response.json();
 }
 
-function save(){ localStorage.setItem('ecoRecyclables',JSON.stringify(items)); }
+// ── Data CRUD ──────────────────────────────────────────────────────────────────
+async function fetchItems() {
+  var data = await apiRequest(API_BASE);
+  if (data) { items = data; renderAll(); }
+}
 
-function renderAll(){ updateSummary(); renderCards(); updateBadge(); }
+async function createItem(payload) {
+  var created = await apiRequest(API_BASE, 'POST', payload);
+  if (created) {
+    items.unshift(created);
+    renderAll();
+    showToast('✅', 'Item Added!',
+      (TYPES[created.type] || TYPES.plastic).emoji + ' ' +
+      created.weight + ' kg of ' + (TYPES[created.type] || TYPES.plastic).label + ' logged.');
+  }
+}
 
-function updateSummary(){
-  var t={plastic:0,paper:0,glass:0,other:0};
-  items.forEach(function(it){
-    if(it.type==='plastic') t.plastic+=it.weight;
-    else if(it.type==='paper') t.paper+=it.weight;
-    else if(it.type==='glass') t.glass+=it.weight;
-    else t.other+=it.weight;
+async function updateItem(id, payload) {
+  var updated = await apiRequest(API_BASE + '/' + id, 'PUT', payload);
+  if (updated) {
+    var idx = items.findIndex(function (i) { return i.id === id; });
+    if (idx !== -1) items[idx] = updated;
+    renderAll();
+    showToast('✏️', 'Item Updated!', 'Your recyclable has been updated.');
+  }
+}
+
+async function deleteItem(id) {
+  if (!confirm('Remove this item from your recyclables?')) return;
+  await apiRequest(API_BASE + '/' + id, 'DELETE');
+  items = items.filter(function (i) { return i.id !== id; });
+  renderAll();
+  showToast('🗑️', 'Item Removed', 'The recyclable has been deleted.');
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────────
+function renderAll() { updateSummary(); renderCards(); updateBadge(); }
+
+function updateSummary() {
+  var t = { plastic: 0, paper: 0, glass: 0, other: 0 };
+  items.forEach(function (it) {
+    if      (it.type === 'plastic') t.plastic += it.weight;
+    else if (it.type === 'paper')   t.paper   += it.weight;
+    else if (it.type === 'glass')   t.glass   += it.weight;
+    else                            t.other   += it.weight;
   });
-  document.getElementById('sumPlastic').textContent=t.plastic.toFixed(1)+' kg';
-  document.getElementById('sumPaper').textContent=t.paper.toFixed(1)+' kg';
-  document.getElementById('sumGlass').textContent=t.glass.toFixed(1)+' kg';
-  document.getElementById('sumOther').textContent=t.other.toFixed(1)+' kg';
+  document.getElementById('sumPlastic').textContent = t.plastic.toFixed(1) + ' kg';
+  document.getElementById('sumPaper').textContent   = t.paper.toFixed(1)   + ' kg';
+  document.getElementById('sumGlass').textContent   = t.glass.toFixed(1)   + ' kg';
+  document.getElementById('sumOther').textContent   = t.other.toFixed(1)   + ' kg';
 }
 
-function updateBadge(){
-  var n=items.filter(function(i){return i.status==='pending';}).length;
-  var b=document.getElementById('navBadge');
-  b.textContent=n; b.style.display=n>0?'':'none';
+function updateBadge() {
+  var n = items.filter(function (i) { return i.status === 'pending'; }).length;
+  var b = document.getElementById('navBadge');
+  b.textContent    = n;
+  b.style.display  = n > 0 ? '' : 'none';
 }
 
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmtDate(d){ try{return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch(e){return '';} }
+function esc(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function fmtDate(d) {
+  try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+  catch (e) { return ''; }
+}
 
-function renderCards(){
-  var q=document.getElementById('searchInput').value.toLowerCase();
-  var filtered=items.filter(function(it){
-    var mf=activeFilter==='all'||it.status===activeFilter;
-    var ms=it.name.toLowerCase().indexOf(q)>=0||(it.desc||'').toLowerCase().indexOf(q)>=0;
-    return mf&&ms;
+function renderCards() {
+  var q        = document.getElementById('searchInput').value.toLowerCase();
+  var filtered = items.filter(function (it) {
+    var mf = activeFilter === 'all' || it.status === activeFilter;
+    var ms = it.name.toLowerCase().indexOf(q) >= 0 || (it.desc || '').toLowerCase().indexOf(q) >= 0;
+    return mf && ms;
   });
-  var grid=document.getElementById('recyclablesGrid');
-  var empty=document.getElementById('emptyState');
-  grid.innerHTML='';
-  if(filtered.length===0){ empty.style.display='block'; return; }
-  empty.style.display='none';
-  filtered.forEach(function(it,i){
-    var c=TYPES[it.type]||TYPES.plastic;
-    var statusLabel=it.status==='pending'?'⏳ Pending Pickup':it.status==='scheduled'?'📅 Scheduled':'✅ Collected';
-    var card=document.createElement('div');
-    card.className='recyclable-card';
-    card.style.animationDelay=(i*0.07)+'s';
-    card.innerHTML='<div class="card-glow" style="background:'+c.color+';"></div>'
-      +'<div class="rc-header">'
-      +'<div class="rc-type-badge" style="background:'+c.bg+';color:'+c.color+';">'+c.emoji+' '+c.label+'</div>'
-      +'<div class="rc-actions">'
-      +'<button class="rc-action-btn" onclick="editItem('+it.id+')" title="Edit"><i class="fas fa-pen"></i></button>'
-      +'<button class="rc-action-btn delete" onclick="deleteItem('+it.id+')" title="Delete"><i class="fas fa-trash"></i></button>'
-      +'</div></div>'
-      +'<span class="rc-emoji">'+c.emoji+'</span>'
-      +'<div class="rc-name">'+esc(it.name)+'</div>'
-      +'<div class="rc-desc">'+esc(it.desc||'No description added.')+'</div>'
-      +'<div class="rc-meta">'
-      +'<div class="rc-meta-item"><i class="fas fa-weight-hanging"></i>'+it.weight+' kg</div>'
-      +'<div class="rc-meta-item"><i class="fas fa-check-circle"></i>'+esc(CONDITIONS[it.condition]||'Clean')+'</div>'
-      +'<div class="rc-meta-item"><i class="fas fa-calendar"></i>'+fmtDate(it.date)+'</div>'
-      +'</div>'
-      +'<div class="rc-status '+it.status+'">'+statusLabel+'</div>';
+
+  var grid  = document.getElementById('recyclablesGrid');
+  var empty = document.getElementById('emptyState');
+  grid.innerHTML = '';
+
+  if (filtered.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  filtered.forEach(function (it, i) {
+    var c           = TYPES[it.type] || TYPES.plastic;
+    var statusLabel = it.status === 'pending'   ? '⏳ Pending Pickup' :
+                      it.status === 'scheduled' ? '📅 Scheduled'      : '✅ Collected';
+    var card        = document.createElement('div');
+    card.className  = 'recyclable-card';
+    card.style.animationDelay = (i * 0.07) + 's';
+    card.innerHTML =
+      '<div class="card-glow" style="background:' + c.color + ';"></div>'
+      + '<div class="rc-header">'
+      +   '<div class="rc-type-badge" style="background:' + c.bg + ';color:' + c.color + ';">' + c.emoji + ' ' + c.label + '</div>'
+      +   '<div class="rc-actions">'
+      +     '<button class="rc-action-btn" onclick="editItem(' + it.id + ')" title="Edit"><i class="fas fa-pen"></i></button>'
+      +     '<button class="rc-action-btn delete" onclick="deleteItem(' + it.id + ')" title="Delete"><i class="fas fa-trash"></i></button>'
+      +   '</div></div>'
+      + '<span class="rc-emoji">' + c.emoji + '</span>'
+      + '<div class="rc-name">' + esc(it.name) + '</div>'
+      + '<div class="rc-desc">' + esc(it.desc || 'No description added.') + '</div>'
+      + '<div class="rc-meta">'
+      +   '<div class="rc-meta-item"><i class="fas fa-weight-hanging"></i>' + it.weight + ' kg</div>'
+      +   '<div class="rc-meta-item"><i class="fas fa-check-circle"></i>'   + esc(CONDITIONS[it.condition] || 'Clean') + '</div>'
+      +   '<div class="rc-meta-item"><i class="fas fa-calendar"></i>'       + fmtDate(it.date) + '</div>'
+      + '</div>'
+      + '<div class="rc-status ' + it.status + '">' + statusLabel + '</div>';
     grid.appendChild(card);
   });
 }
 
-// MODAL
+// ── Modal ──────────────────────────────────────────────────────────────────────
 function openModal(id) {
   editingId = id || null;
 
   if (editingId) {
     var it = items.find(function (x) { return x.id === editingId; });
     if (!it) return;
-
-    document.getElementById('modalTitle').textContent = 'Edit Recyclable';
+    document.getElementById('modalTitle').textContent    = 'Edit Recyclable';
     document.getElementById('modalSubtitle').textContent = 'Update the details of this item';
-
-    var saveBtnText = document.getElementById('saveBtnText');
-    if (saveBtnText) saveBtnText.textContent = 'Save Changes';
-
-    document.getElementById('weightSlider').value = it.weight;
+    document.getElementById('saveBtnText').textContent   = 'Save Changes';
+    document.getElementById('itemName').value            = it.name;
+    document.getElementById('itemDesc').value            = it.desc || '';
+    document.getElementById('weightSlider').value        = it.weight;
     updateSlider(it.weight);
-    document.getElementById('itemCondition').value = it.condition;
-    document.getElementById('itemStatus').value = it.status;
+    document.getElementById('itemCondition').value       = it.condition;
+    document.getElementById('itemStatus').value          = it.status;
     setType(it.type);
   } else {
-    document.getElementById('modalTitle').textContent = 'Add Recyclable';
+    document.getElementById('modalTitle').textContent    = 'Add Recyclable';
     document.getElementById('modalSubtitle').textContent = 'Log a new item for recycling pickup';
-
-    var saveBtnText2 = document.getElementById('saveBtnText');
-    if (saveBtnText2) saveBtnText2.textContent = 'Add Item';
-
-    document.getElementById('weightSlider').value = 5;
+    document.getElementById('saveBtnText').textContent   = 'Add Item';
+    document.getElementById('itemName').value            = '';
+    document.getElementById('itemDesc').value            = '';
+    document.getElementById('weightSlider').value        = 5;
     updateSlider(5);
-    document.getElementById('itemCondition').value = 'clean';
-    document.getElementById('itemStatus').value = 'pending';
+    document.getElementById('itemCondition').value       = 'clean';
+    document.getElementById('itemStatus').value          = 'pending';
     setType('plastic');
   }
 
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-
-  setTimeout(function () {
-    document.getElementById('weightSlider').focus();
-  }, 350);
+  setTimeout(function () { document.getElementById('itemName').focus(); }, 350);
 }
 
-function closeModal(){
+function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow='';
-  editingId=null;
+  document.body.style.overflow = '';
+  editingId = null;
 }
 
-function setType(type){
-  selectedType=type;
-  document.querySelectorAll('.type-option').forEach(function(o){
-    o.classList.toggle('selected',o.dataset.type===type);
+function setType(type) {
+  selectedType = type;
+  document.querySelectorAll('.type-option').forEach(function (o) {
+    o.classList.toggle('selected', o.dataset.type === type);
   });
 }
 
-document.querySelectorAll('.type-option').forEach(function(o){
-  o.addEventListener('click',function(){ setType(o.dataset.type); });
+document.querySelectorAll('.type-option').forEach(function (o) {
+  o.addEventListener('click', function () { setType(o.dataset.type); });
 });
 
-function updateSlider(val){
-  var s=document.getElementById('weightSlider');
-  var min=parseFloat(s.min),max=parseFloat(s.max);
-  var pct=((val-min)/(max-min))*100;
-  s.style.setProperty('--pct',pct+'%');
-  document.getElementById('weightVal').textContent=parseFloat(val).toFixed(1);
+function updateSlider(val) {
+  var s   = document.getElementById('weightSlider');
+  var min = parseFloat(s.min), max = parseFloat(s.max);
+  var pct = ((val - min) / (max - min)) * 100;
+  s.style.setProperty('--pct', pct + '%');
+  document.getElementById('weightVal').textContent = parseFloat(val).toFixed(1);
 }
 
-document.getElementById('weightSlider').addEventListener('input',function(){ updateSlider(this.value); });
-document.getElementById('openModalBtn').addEventListener('click',function(){ openModal(); });
-document.getElementById('closeModal').addEventListener('click',closeModal);
-document.getElementById('cancelModal').addEventListener('click',closeModal);
-document.getElementById('modalOverlay').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+document.getElementById('weightSlider').addEventListener('input', function () { updateSlider(this.value); });
+document.getElementById('openModalBtn').addEventListener('click', function () { openModal(); });
+document.getElementById('closeModal').addEventListener('click', closeModal);
+document.getElementById('cancelModal').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
 
-document.getElementById('saveItem').addEventListener('click',function(){
-  var name=document.getElementById('itemName').value.trim();
-  if(!name){
-    var inp=document.getElementById('itemName');
-    inp.focus(); inp.style.borderColor='var(--red)';
-    setTimeout(function(){inp.style.borderColor='';},1500);
+document.getElementById('saveItem').addEventListener('click', async function () {
+  var name = document.getElementById('itemName').value.trim();
+  if (!name) {
+    var inp = document.getElementById('itemName');
+    inp.focus();
+    inp.style.borderColor = 'var(--red)';
+    setTimeout(function () { inp.style.borderColor = ''; }, 1500);
     return;
   }
-  var item={
-    id:editingId||Date.now(),
-    type:selectedType,
-    name:name,
-    desc:document.getElementById('itemDesc').value.trim(),
-    weight:parseFloat(document.getElementById('weightSlider').value),
-    condition:document.getElementById('itemCondition').value,
-    status:document.getElementById('itemStatus').value,
-    date:editingId?(items.find(function(i){return i.id===editingId;})||{}).date||new Date().toISOString():new Date().toISOString()
+
+  var payload = {
+    type:      selectedType,
+    name:      name,
+    desc:      document.getElementById('itemDesc').value.trim(),
+    weight:    parseFloat(document.getElementById('weightSlider').value),
+    condition: document.getElementById('itemCondition').value,
+    status:    document.getElementById('itemStatus').value
   };
-  if(editingId){
-    var idx=items.findIndex(function(i){return i.id===editingId;});
-    if(idx!==-1) items[idx]=item;
-    showToast('✏️','Item Updated!','Your recyclable has been updated.');
+
+  if (editingId) {
+    await updateItem(editingId, payload);
   } else {
-    items.unshift(item);
-    showToast('✅','Item Added!',(TYPES[selectedType]||TYPES.plastic).emoji+' '+item.weight+' kg of '+(TYPES[selectedType]||TYPES.plastic).label+' logged.');
+    await createItem(payload);
   }
-  save(); renderAll(); closeModal();
+  closeModal();
 });
 
-function editItem(id){ openModal(id); }
-function deleteItem(id){
-  if(!confirm('Remove this item from your recyclables?')) return;
-  items=items.filter(function(i){return i.id!==id;});
-  save(); renderAll();
-  showToast('🗑️','Item Removed','The recyclable has been deleted.');
-}
+function editItem(id) { openModal(id); }
 
-// FILTERS
-document.querySelectorAll('.filter-btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+// ── Filters & Search ───────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
     this.classList.add('active');
-    activeFilter=this.dataset.filter;
+    activeFilter = this.dataset.filter;
     renderCards();
   });
 });
-document.getElementById('searchInput').addEventListener('input',function(){ renderCards(); });
+document.getElementById('searchInput').addEventListener('input', function () { renderCards(); });
 
-// TOAST
-function showToast(icon,title,msg){
-  document.getElementById('toastIcon').textContent=icon;
-  document.getElementById('toastTitle').textContent=title;
-  document.getElementById('toastMsg').textContent=msg;
-  var t=document.getElementById('toast');
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function showToast(icon, title, msg) {
+  document.getElementById('toastIcon').textContent  = icon;
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastMsg').textContent   = msg;
+  var t = document.getElementById('toast');
   t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},3500);
+  setTimeout(function () { t.classList.remove('show'); }, 3500);
 }
 
-// SIDEBAR
-var sidebar=document.getElementById('sidebar');
-var mainContent=document.getElementById('mainContent');
-var st=document.getElementById('sidebarToggle');
-var ti=st.querySelector('i');
-st.addEventListener('click',function(){
+// ── Sidebar ────────────────────────────────────────────────────────────────────
+var sidebar     = document.getElementById('sidebar');
+var mainContent = document.getElementById('mainContent');
+var st          = document.getElementById('sidebarToggle');
+var ti          = st.querySelector('i');
+st.addEventListener('click', function () {
   sidebar.classList.toggle('collapsed');
   mainContent.classList.toggle('expanded');
   ti.classList.toggle('fa-chevron-left');
   ti.classList.toggle('fa-chevron-right');
 });
-var mt=document.getElementById('mobileToggle');
-var ov=document.getElementById('sidebarOverlay');
-mt.addEventListener('click',function(){ sidebar.classList.add('mobile-open'); ov.classList.add('active'); document.body.style.overflow='hidden'; });
-ov.addEventListener('click',function(){ sidebar.classList.remove('mobile-open'); ov.classList.remove('active'); document.body.style.overflow=''; });
-document.getElementById('logoutSidebar').addEventListener('click',function(e){
-  e.preventDefault();
-  localStorage.removeItem('isLoggedIn'); localStorage.removeItem('ecoUser');
-  window.location.href='login.html';
+
+var mt = document.getElementById('mobileToggle');
+var ov = document.getElementById('sidebarOverlay');
+mt.addEventListener('click', function () {
+  sidebar.classList.add('mobile-open');
+  ov.classList.add('active');
+  document.body.style.overflow = 'hidden';
 });
-function handleResize(){
-  if(window.innerWidth>768){ sidebar.classList.remove('mobile-open'); ov.classList.remove('active'); document.body.style.overflow=''; }
-  if(window.innerWidth<=1024&&window.innerWidth>768){ sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }
+ov.addEventListener('click', function () {
+  sidebar.classList.remove('mobile-open');
+  ov.classList.remove('active');
+  document.body.style.overflow = '';
+});
+
+document.getElementById('logoutSidebar').addEventListener('click', function (e) {
+  e.preventDefault();
+  localStorage.clear();
+  window.location.href = 'login.html';
+});
+
+function handleResize() {
+  if (window.innerWidth > 768)  { sidebar.classList.remove('mobile-open'); ov.classList.remove('active'); document.body.style.overflow = ''; }
+  if (window.innerWidth <= 1024 && window.innerWidth > 768) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }
 }
-window.addEventListener('resize',handleResize);
+window.addEventListener('resize', handleResize);
 handleResize();
 
-renderAll();
+// ── Boot ───────────────────────────────────────────────────────────────────────
+fetchItems();
 </script>
 </body>
 </html>

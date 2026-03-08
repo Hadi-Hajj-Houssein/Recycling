@@ -11,13 +11,16 @@ def  create_access_token(data: dict, expires_minutes: int = 15):
     payload["exp"] = expire
     return jwt.encode(payload, NGU, algorithm=ALGORITHM)
 
-def get_curr_user_id(token:str= Depends(oauth2_scheme)):
-    payload = decode_token(token)
+def get_curr_user_id(token: str = Depends(oauth2_scheme)):
+    try:                                       
+        payload = decode_token(token)
+    except Exception:                      
+        raise HTTPException(status_code=401, detail="Token expired or invalid")
+    
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token")
     return int(user_id)
-
 
 
 def decode_token(token:str):
