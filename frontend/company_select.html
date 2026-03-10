@@ -348,7 +348,7 @@
 
         /* ═══════ CONFIRM BAR ═══════ */
         .confirm-bar {
-            position: sticky; bottom: 24px; z-index: 50;
+            position: fixed; bottom: 24px; left: calc(var(--sidebar-width) + 24px); right: 24px;
             background: rgba(10,26,15,0.9);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(46,204,113,0.2);
@@ -361,6 +361,9 @@
         }
 
         .confirm-bar.visible { transform: translateY(0); opacity: 1; pointer-events: all; }
+
+        .main.expanded ~ .confirm-bar,
+        .main.expanded .confirm-bar { left: var(--sidebar-collapsed); }
 
         .confirm-bar-info { display: flex; align-items: center; gap: 14px; }
 
@@ -458,25 +461,27 @@
     </div>
 
     <nav class="sidebar-nav">
-        <div class="nav-section">
-            <div class="nav-section-title">Main</div>
-            <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
-            <a href="recyclables.html" class="nav-item">
-                <i class="fas fa-recycle"></i><span>My Recyclables</span>
-                <div class="badge" id="pendingBadge">0</div>
-            </a>
-            <a href="company_select.html" class="nav-item active">
-                <i class="fas fa-building"></i><span>Choose Company</span>
-            </a>
-            <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
-        </div>
-        <div class="nav-section">
-            <div class="nav-section-title">Account</div>
-            <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Eco Points</span></a>
-            <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
-            <a href="#" class="nav-item logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
-        </div>
-    </nav>
+    <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+        <a href="Recyclables.html" class="nav-item"><i class="fas fa-recycle"></i><span>My Recyclables</span><div class="badge" id="pendingBadge">0</div></a>
+        <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
+        <a href="company_select.html" class="nav-item active"><i class="fas fa-building"></i><span>Companies</span></a>
+    </div>
+    <div class="nav-section">
+        <div class="nav-section-title">Analytics</div>
+        <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-leaf"></i><span>Impact</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-trophy"></i><span>Leaderboard</span></a>
+    </div>
+    <div class="nav-section">
+        <div class="nav-section-title">Account</div>
+        <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Eco Points</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
+        <a href="#" class="nav-item logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
+    </div>
+</nav>
 
     <div class="sidebar-footer">
         <div class="sidebar-user">
@@ -544,7 +549,7 @@
 
     </div><!-- /content -->
 
-</main>
+
 
 <!-- ═══════ CONFIRM BAR ═══════ -->
 <div class="confirm-bar" id="confirmBar">
@@ -560,6 +565,8 @@
         <button class="btn btn-primary" id="confirmBtn"><i class="fas fa-check"></i> Confirm</button>
     </div>
 </div>
+
+</main>
 
 <!-- ═══════ TOAST ═══════ -->
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Success!</span></div>
