@@ -118,7 +118,9 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 
 /* CARDS */
 .recyclables-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-bottom:28px; }
-.recyclable-card { background:var(--bg-card); border:1px solid var(--border); border-radius:18px; padding:22px 22px 54px; transition:all 0.3s; position:relative; overflow:hidden; opacity:0; animation:cardIn 0.4s ease forwards; }
+
+/* ── UPDATED: bottom padding increased to fit company button + status bar ── */
+.recyclable-card { background:var(--bg-card); border:1px solid var(--border); border-radius:18px; padding:22px 22px 96px; transition:all 0.3s; position:relative; overflow:hidden; opacity:0; animation:cardIn 0.4s ease forwards; }
 @keyframes cardIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 .recyclable-card:hover { border-color:var(--border-hover); background:var(--bg-card-hover); transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,0.2); }
 .card-glow { position:absolute; top:-20px; right:-20px; width:80px; height:80px; border-radius:50%; filter:blur(30px); opacity:0.12; pointer-events:none; }
@@ -134,11 +136,56 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 .rc-meta { display:flex; gap:8px; flex-wrap:wrap; }
 .rc-meta-item { display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-secondary); background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:4px 9px; border-radius:8px; }
 .rc-meta-item i { font-size:10px; color:var(--green); }
-.rc-status { position:absolute; bottom:0; left:0; right:0; padding:10px 22px; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px; border-top:1px solid var(--border); }
-.rc-status.pending { color:var(--yellow); }
+
+/* ── UPDATED: status bar sits above company button ── */
+.rc-status { position:absolute; bottom:42px; left:0; right:0; padding:9px 22px; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px; border-top:1px solid var(--border); }
+.rc-status.pending   { color:var(--yellow); }
 .rc-status.scheduled { color:var(--blue); }
 .rc-status.collected { color:var(--green); }
+/* ── NEW: assigned status colour ── */
+.rc-status.assigned  { color:var(--teal); }
 .rc-status::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+/* ── NEW: company button at the very bottom of each card ── */
+.rc-company-btn {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 42px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px; font-weight: 600;
+  border: none; border-top: 1px solid var(--border);
+  border-radius: 0 0 18px 18px;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+}
+
+/* pending → invite to pick a company */
+.rc-company-btn.needs-company {
+  background: rgba(46,204,113,0.06);
+  color: var(--green);
+}
+.rc-company-btn.needs-company:hover {
+  background: rgba(46,204,113,0.14);
+}
+
+/* already assigned → show the company name, allow change */
+.rc-company-btn.has-company {
+  background: rgba(26,188,156,0.06);
+  color: var(--teal);
+}
+.rc-company-btn.has-company:hover {
+  background: rgba(26,188,156,0.14);
+}
+
+/* collected → no action needed */
+.rc-company-btn.collected-state {
+  background: transparent;
+  color: var(--text-muted);
+  cursor: default;
+  pointer-events: none;
+}
 
 /* EMPTY STATE */
 .empty-state { text-align:center; padding:60px 20px; display:none; }
@@ -251,7 +298,7 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
       <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
       <a href="recyclables.html" class="nav-item active"><i class="fas fa-recycle"></i><span>My Recyclables</span><div class="badge" id="navBadge" style="display:none">0</div></a>
       <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
-      <a href="#" class="nav-item"><i class="fas fa-building"></i><span>Companies</span></a>
+      <a href="company_select.html" class="nav-item"><i class="fas fa-building"></i><span>Companies</span></a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Analytics</div>
@@ -312,6 +359,7 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="pending">⏳ Pending</button>
+      <button class="filter-btn" data-filter="assigned">🏢 Assigned</button>
       <button class="filter-btn" data-filter="scheduled">📅 Scheduled</button>
       <button class="filter-btn" data-filter="collected">✅ Collected</button>
       <div class="filter-search"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search items..."></div>
@@ -340,7 +388,6 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
     </div>
     <div class="modal-body">
 
-      <!-- ✅ FIX: itemName and itemDesc fields added -->
       <div class="form-group">
         <label class="form-label">Item Name</label>
         <input type="text" class="form-input" id="itemName" placeholder="e.g. Plastic Bottles" />
@@ -420,7 +467,7 @@ function loadUser() {
   var u    = JSON.parse(localStorage.getItem('ecoUser') || '{}');
   var name = u.name || u.username || 'User';
   var init = name.split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
-  document.getElementById('sidebarName').textContent  = name;
+  document.getElementById('sidebarName').textContent   = name;
   document.getElementById('sidebarAvatar').textContent = init;
   document.getElementById('topbarAvatar').textContent  = init;
 }
@@ -429,7 +476,6 @@ document.getElementById('currentDate').textContent =
   new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-// ✅ FIX 1: full URL so requests go to FastAPI on port 8000, not the HTML server
 var API_BASE = 'http://127.0.0.1:8000/recyclables';
 
 var TYPES = {
@@ -440,7 +486,16 @@ var TYPES = {
   electronics: { emoji: '💻', label: 'Electronics', color: '#9b59b6', bg: 'rgba(155,89,182,0.12)' },
   organic:     { emoji: '🌿', label: 'Organic',     color: '#1abc9c', bg: 'rgba(26,188,156,0.12)' }
 };
+
 var CONDITIONS = { clean: '🟢 Clean', slightly_dirty: '🟡 Slightly Dirty', dirty: '🔴 Needs Cleaning' };
+
+// ── NEW: status display map (includes assigned) ────────────────────────────────
+var STATUS_LABELS = {
+  pending:   '⏳ Pending Pickup',
+  assigned:  '🏢 Company Assigned',
+  scheduled: '📅 Scheduled',
+  collected: '✅ Collected'
+};
 
 // ── State ──────────────────────────────────────────────────────────────────────
 var items        = [];
@@ -466,7 +521,6 @@ async function apiRequest(url, method, body) {
   }
 
   var response = await fetch(url, options);
-
   if (response.status === 401 || response.status === 400) {
     localStorage.clear();
     window.location.href = 'login.html';
@@ -534,10 +588,11 @@ function updateSummary() {
 }
 
 function updateBadge() {
-  var n = items.filter(function (i) { return i.status === 'pending'; }).length;
+  // Badge now counts pending + assigned (both still need attention)
+  var n = items.filter(function (i) { return i.status === 'pending' || i.status === 'assigned'; }).length;
   var b = document.getElementById('navBadge');
-  b.textContent    = n;
-  b.style.display  = n > 0 ? '' : 'none';
+  b.textContent   = n;
+  b.style.display = n > 0 ? '' : 'none';
 }
 
 function esc(s) {
@@ -546,6 +601,32 @@ function esc(s) {
 function fmtDate(d) {
   try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
   catch (e) { return ''; }
+}
+
+// ── NEW: build the company button HTML for a card ─────────────────────────────
+function companyBtnHTML(it) {
+  // Collected items don't need a company action
+  if (it.status === 'collected') {
+    return '<div class="rc-company-btn collected-state"><i class="fas fa-check-circle"></i> Collected</div>';
+  }
+
+  // Already has a company assigned → show name, allow changing
+  if (it.company_id) {
+    var companyLabel = it.company_name
+      ? esc(it.company_name)
+      : '🏢 Company #' + it.company_id;
+    return '<a href="company_select.html?item_id=' + it.id + '&back=recyclables.html"'
+      + ' class="rc-company-btn has-company">'
+      + '<i class="fas fa-building"></i> ' + companyLabel
+      + ' <i class="fas fa-pen" style="font-size:10px;opacity:0.6;margin-left:4px;"></i>'
+      + '</a>';
+  }
+
+  // Pending — invite the user to choose a company
+  return '<a href="company_select.html?item_id=' + it.id + '&back=recyclables.html"'
+    + ' class="rc-company-btn needs-company">'
+    + '<i class="fas fa-building"></i> Choose Company'
+    + '</a>';
 }
 
 function renderCards() {
@@ -564,11 +645,10 @@ function renderCards() {
   empty.style.display = 'none';
 
   filtered.forEach(function (it, i) {
-    var c           = TYPES[it.type] || TYPES.plastic;
-    var statusLabel = it.status === 'pending'   ? '⏳ Pending Pickup' :
-                      it.status === 'scheduled' ? '📅 Scheduled'      : '✅ Collected';
-    var card        = document.createElement('div');
-    card.className  = 'recyclable-card';
+    var c          = TYPES[it.type] || TYPES.plastic;
+    var statusLabel = STATUS_LABELS[it.status] || STATUS_LABELS.pending;
+    var card       = document.createElement('div');
+    card.className = 'recyclable-card';
     card.style.animationDelay = (i * 0.07) + 's';
     card.innerHTML =
       '<div class="card-glow" style="background:' + c.color + ';"></div>'
@@ -586,7 +666,11 @@ function renderCards() {
       +   '<div class="rc-meta-item"><i class="fas fa-check-circle"></i>'   + esc(CONDITIONS[it.condition] || 'Clean') + '</div>'
       +   '<div class="rc-meta-item"><i class="fas fa-calendar"></i>'       + fmtDate(it.date) + '</div>'
       + '</div>'
-      + '<div class="rc-status ' + it.status + '">' + statusLabel + '</div>';
+      // Status bar
+      + '<div class="rc-status ' + it.status + '">' + statusLabel + '</div>'
+      // ── NEW: company button ──
+      + companyBtnHTML(it);
+
     grid.appendChild(card);
   });
 }
@@ -606,7 +690,7 @@ function openModal(id) {
     document.getElementById('weightSlider').value        = it.weight;
     updateSlider(it.weight);
     document.getElementById('itemCondition').value       = it.condition;
-    document.getElementById('itemStatus').value          = it.status;
+    document.getElementById('itemStatus').value          = it.status === 'assigned' ? 'pending' : it.status;
     setType(it.type);
   } else {
     document.getElementById('modalTitle').textContent    = 'Add Recyclable';

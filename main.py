@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import signup, login, company_signup
+from routers import signup, login, company_signup,company_selection
 from db_main import engine, Base
 from models.user import User
-from models.user_home_link import User_Home
+
 from models.company import Company
 from models.Add_Recyclable import Recyclables
 from models.Recyclables import Recyclable_Item 
@@ -21,7 +21,8 @@ app.add_middleware(
 app.include_router(signup.router)
 app.include_router(login.router)
 app.include_router(company_signup.router)
-app.include_router(router) # raouf hay router 8er ana msamiha hayk 
+app.include_router(router) 
+app.include_router(company_selection.router)
 @app.get("/")
 def home():
     return {"message": "Server is running"}

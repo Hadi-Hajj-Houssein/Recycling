@@ -12,7 +12,6 @@ from db_main import Base
 from models.user import User
 from models.company import Company
 from models.Add_Recyclable import Recyclables
-from models.user_home_link import User_Home
 from models.Recyclables import Recyclable_Item
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
