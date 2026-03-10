@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from db_main import get_db
 from models.Recyclables import Recyclable_Item
 from functionalities.auth import get_curr_user_id
+from models.Add_Recyclable import Recyclables
 
 router = APIRouter(prefix="/recyclables", tags=["recyclables"])
 
