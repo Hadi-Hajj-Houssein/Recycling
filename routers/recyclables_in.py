@@ -11,9 +11,6 @@ from models.Add_Recyclable import Recyclables
 
 router = APIRouter(prefix="/recyclables", tags=["recyclables"])
 
-
-# ── Pydantic Schemas ───────────────────────────────────────────────────────────
-
 class ItemIn(BaseModel):
     """Shape of data the frontend sends (POST / PUT body)."""
     type:      str
@@ -38,11 +35,7 @@ class ItemOut(BaseModel):
     date:      datetime
 
     class Config:
-        from_attributes = True   # Pydantic v2 — use orm_mode=True if on v1
-
-
-# ── Validation ─────────────────────────────────────────────────────────────────
-
+        from_attributes = True   
 VALID_TYPES      = {"plastic", "paper", "glass", "metal", "electronics", "organic"}
 VALID_CONDITIONS = {"clean", "slightly_dirty", "dirty"}
 VALID_STATUSES   = {"pending", "scheduled", "collected"}
@@ -60,10 +53,7 @@ def _validate(data: ItemIn):
                             f"status must be one of: {VALID_STATUSES}")
 
 
-# ── Summary sync ───────────────────────────────────────────────────────────────
-
 def _sync_summary(db: Session, user_id: int):
-    """Recalculate and upsert the Recyclables summary row for this user."""
     try:
         from models import Recyclables
         rows   = db.query(Recyclable_Item).filter(Recyclable_Item.user_id == user_id).all()
@@ -83,14 +73,11 @@ def _sync_summary(db: Session, user_id: int):
         pass
 
 
-# ── Endpoints ──────────────────────────────────────────────────────────────────
-
 @router.get("", response_model=List[ItemOut])
 def get_items(
     db:           Session = Depends(get_db),
     current_user: int     = Depends(get_curr_user_id),
 ):
-    """Return all recyclable items for the authenticated user."""
     return (
         db.query(Recyclable_Item)
           .filter(Recyclable_Item.user_id == current_user)
@@ -105,7 +92,6 @@ def create_item(
     db:           Session = Depends(get_db),
     current_user: int     = Depends(get_curr_user_id),
 ):
-    """Log a new recyclable item for the authenticated user."""
     _validate(payload)
 
     item = Recyclable_Item(
@@ -132,7 +118,6 @@ def update_item(
     db:           Session = Depends(get_db),
     current_user: int     = Depends(get_curr_user_id),
 ):
-    """Update an item. Returns 404 if it doesn't belong to the current user."""
     item = db.query(Recyclable_Item).filter(
         Recyclable_Item.id      == item_id,
         Recyclable_Item.user_id == current_user,
@@ -161,7 +146,6 @@ def delete_item(
     db:           Session = Depends(get_db),
     current_user: int     = Depends(get_curr_user_id),
 ):
-    """Delete an item. Returns 404 if it doesn't belong to the current user."""
     item = db.query(Recyclable_Item).filter(
         Recyclable_Item.id      == item_id,
         Recyclable_Item.user_id == current_user,

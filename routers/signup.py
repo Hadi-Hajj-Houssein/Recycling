@@ -23,7 +23,6 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
     confirmPassword: str = Form(...),db: Session = Depends(get_db)):
     print("wsolet ")
     try:
-        #input done
         if len(password) < 8 or len(password) > 72:
             raise HTTPException(status_code = 400 , detail ="password between 8 and 72 characters")
         if password != confirmPassword:
@@ -33,8 +32,6 @@ def signup(email: EmailStr = Form(...),username: str = Form(...),
             raise HTTPException(status_code=400, detail="Email already registered")
         if db.query(User).filter(User.username == username).first():
             raise HTTPException(status_code=400, detail="Username already taken")
-
-        #check for cross email use in company table
         if db.query(Company).filter(Company.email == email).first():
             raise HTTPException(status_code=400, detail="Email already registered as a company")
 

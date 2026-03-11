@@ -31,9 +31,6 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
             "role": "user",
             "user_id": user.id
         }
-    #auth toke  
-
-    # Check companies table
     company = db.query(Company).filter(Company.email == email).first()
     if company and pwd_context.verify(password, company.password):
     

@@ -34,7 +34,6 @@ def signup(email: EmailStr = Form(...),company_name: str = Form(...),
         if db.query(Company).filter(Company.company_name == company_name).first():
             raise HTTPException(status_code=400, detail="Company name already taken")
 
-        #check for cross email usage in user tables
         if db.query(User).filter(User.email == email).first():
             raise HTTPException(status_code=400, detail="Email already registered as a user")
 
