@@ -619,6 +619,8 @@ const typeIcons = {
 
 // ═══════ FETCH ITEM DETAILS ═══════
 async function loadItem() {
+    const token = localStorage.getItem("token");
+    console.log("Token in loadItem:", token);
     if (!ITEM_ID) {
         document.getElementById('itemName').textContent = 'No item selected';
         document.getElementById('itemDesc').textContent = 'Go back and select an item first.';
@@ -843,14 +845,19 @@ function authHeaders() {
     return token ? { 'Authorization': `Bearer ${token}` } : {};
 }
 
-// ═══════ LOGOUT ═══════
-document.getElementById('logoutBtn').addEventListener('click', e => {
-    e.preventDefault();
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('ecoUser');
-    window.location.href = 'login.html';
-});
-
+// logoutsidebar 
+const logout =document.getElementById('logoutSidebar');
+if(logout){
+    logout.addEventListener('click', e => {
+        e.preventDefault();
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('ecoUser');
+        window.location.href = 'login.html';
+    });
+}
+else{
+    console.warn('mafi logout button'); // warn bi 7otta ka danger bel console 
+}
 // ═══════ SIDEBAR TOGGLE ═══════
 const sidebar    = document.getElementById('sidebar');
 const mainEl     = document.getElementById('mainContent');

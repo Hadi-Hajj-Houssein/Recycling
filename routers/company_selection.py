@@ -81,3 +81,20 @@ def get_assigned_company(item_id: int, db: Session = Depends(get_db)):
             "email":        company.email,
         }
     }
+
+@router.get("/items/{item_id}")
+def get_item(item_id: int, db: Session = Depends(get_db)):
+    item = db.query(Recyclable_Item).filter(Recyclable_Item.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    return {
+        "id": item.id,
+        "name": item.name,
+        "type": item.type,
+        "desc": item.desc,
+        "weight": item.weight,
+        "condition": item.condition,
+        "status": item.status,
+        "company_id": item.company_id
+    }

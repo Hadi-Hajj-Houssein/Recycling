@@ -1282,12 +1282,8 @@
             showError('Please accept the Terms');
             return;
         }
-
-        // Show loading state
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         btn.disabled = true;
-
-        // Prepare Form Data for FastAPI
         const formData = new FormData();
         formData.append('company_name', companyName.value);
         formData.append('email', email.value);
@@ -1304,7 +1300,7 @@
 
             if (response.ok) {
                 showSuccess("Success! Company created.");
-                // Redirect to login or dashboard
+                // 3al login or dashboard
                 setTimeout(() => { window.location.href = 'login.html'; }, 2000);
             } else {
                 showError(result.detail || "Registration failed");
