@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import signup, login, company_signup,company_selection
 from db_main import engine, Base
 from models.user import User
-
+from models.user_total_recycled import UserTotalRecycled
 from models.company import Company
 from models.Add_Recyclable import Recyclables
 from models.Recyclables import Recyclable_Item 

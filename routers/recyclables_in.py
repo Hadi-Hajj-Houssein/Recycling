@@ -3,14 +3,11 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel
-
 from db_main import get_db
 from models.Recyclables import Recyclable_Item
 from functionalities.auth import get_curr_user_id
-from models.Add_Recyclable import Recyclables
-
+from models.user_total_recycled import UserTotalRecycled
 router = APIRouter(prefix="/recyclables", tags=["recyclables"])
-
 class ItemIn(BaseModel):
     """Shape of data the frontend sends (POST / PUT body)."""
     type:      str
@@ -54,25 +51,45 @@ def _validate(data: ItemIn):
 
 
 def _sync_summary(db: Session, user_id: int):
-    try:
-        from models import Recyclables
-        rows   = db.query(Recyclable_Item).filter(Recyclable_Item.user_id == user_id).all()
-        totals = {t: 0.0 for t in ("plastic", "paper", "glass", "metal", "organic")}
-        for r in rows:
-            if r.type in totals:
-                totals[r.type] += r.weight
-        summary = db.query(Recyclables).filter(Recyclables.user_id == user_id).first()
-        if summary is None:
-            summary = Recyclables(user_id=user_id, **totals)
-            db.add(summary)
-        else:
-            for k, v in totals.items():
-                setattr(summary, k, v)
-        db.commit()
-    except Exception:
-        pass
+    rows = db.query(Recyclable_Item).filter(
+        Recyclable_Item.user_id == user_id,
+        Recyclable_Item.status == "collected"
+    ).all()
 
+    totals = {
+        "organic": 0.0,
+        "paper": 0.0,
+        "plastic": 0.0,
+        "glass": 0.0,
+        "metal": 0.0
+    }
 
+    for r in rows:
+        if r.type in totals:
+            totals[r.type] += r.weight
+
+    summary = db.query(UserTotalRecycled).filter(
+        UserTotalRecycled.user_id == user_id
+    ).first()
+
+    if summary is None:
+        summary = UserTotalRecycled(
+            user_id=user_id,
+            total_organic=totals["organic"],
+            total_paper=totals["paper"],
+            total_plastic=totals["plastic"],
+            total_glass=totals["glass"],
+            total_metal=totals["metal"],
+        )
+        db.add(summary)
+    else:
+        summary.total_organic = totals["organic"]
+        summary.total_paper = totals["paper"]
+        summary.total_plastic = totals["plastic"]
+        summary.total_glass = totals["glass"]
+        summary.total_metal = totals["metal"]
+
+    db.commit()
 @router.get("", response_model=List[ItemOut])
 def get_items(
     db:           Session = Depends(get_db),
