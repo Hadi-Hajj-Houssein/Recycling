@@ -1058,7 +1058,7 @@
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('profileDropdown');
             const avatar = document.getElementById('topbarAvatar');
-            if (!dropdown.contains(e.target) && e.target !== avatar) {
+            if (!dropdown.contains(e.target) && !avatar.contains(e.target)) {
                 dropdown.classList.remove('show');
             }
         });

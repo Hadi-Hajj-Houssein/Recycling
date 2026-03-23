@@ -42,17 +42,14 @@
             overflow-x: hidden;
         }
 
-        /* ═══════ SIDEBAR ═══════ */
         .sidebar {
             position: fixed;
-            left: 0;
-            top: 0;
+            left: 0; top: 0;
             width: var(--sidebar-width);
             height: 100vh;
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             z-index: 1000;
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
@@ -61,21 +58,16 @@
         .sidebar-header {
             padding: 22px 20px;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             min-height: var(--topbar-height);
             flex-shrink: 0;
         }
 
         .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            white-space: nowrap;
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; white-space: nowrap;
         }
-        
+
         .sidebar-logo .icon {
             width: 38px; height: 38px; min-width: 38px;
             background: linear-gradient(135deg, var(--green), var(--teal));
@@ -101,8 +93,7 @@
         .sidebar-nav {
             flex: 1;
             padding: 16px 12px;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow-y: auto; overflow-x: hidden;
         }
 
         .sidebar-nav::-webkit-scrollbar { width: 3px; }
@@ -126,19 +117,14 @@
             text-decoration: none;
             font-size: 13.5px; font-weight: 500;
             transition: all 0.25s ease;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            position: relative;
-            cursor: pointer;
+            margin-bottom: 2px; white-space: nowrap;
+            position: relative; cursor: pointer;
         }
 
         .nav-item i { font-size: 16px; width: 20px; min-width: 20px; text-align: center; }
         .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
 
-        .nav-item.active {
-            background: rgba(46, 204, 113, 0.1);
-            color: var(--green);
-        }
+        .nav-item.active { background: rgba(46, 204, 113, 0.1); color: var(--green); }
 
         .nav-item.active::before {
             content: '';
@@ -153,8 +139,7 @@
             background: var(--red);
             color: #fff;
             font-size: 10px; font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 10px;
+            padding: 2px 7px; border-radius: 10px;
             min-width: 20px; text-align: center;
         }
 
@@ -188,7 +173,6 @@
         .sidebar-user .user-info h4 { font-size: 13px; font-weight: 600; line-height: 1.3; }
         .sidebar-user .user-info p { font-size: 11px; color: var(--text-muted); }
 
-        /* Collapsed */
         .sidebar.collapsed { width: var(--sidebar-collapsed); }
         .sidebar.collapsed .sidebar-logo .text,
         .sidebar.collapsed .nav-section-title,
@@ -201,7 +185,6 @@
         .sidebar.collapsed .nav-item i { font-size: 18px; }
         .sidebar.collapsed .sidebar-user { justify-content: center; padding: 10px; }
 
-        /* ═══════ MAIN ═══════ */
         .main {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
@@ -210,7 +193,6 @@
 
         .main.expanded { margin-left: var(--sidebar-collapsed); }
 
-        /* Topbar */
         .topbar {
             position: sticky; top: 0; z-index: 100;
             height: var(--topbar-height);
@@ -259,8 +241,7 @@
         }
 
         .topbar-btn {
-            width: 40px; height: 40px;
-            border-radius: 12px;
+            width: 40px; height: 40px; border-radius: 12px;
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
             color: var(--text-secondary);
@@ -289,19 +270,15 @@
 
         .topbar-avatar:hover { transform: scale(1.05); }
 
-        /* Dropdown */
         .profile-dropdown {
             position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
+            top: calc(100% + 8px); right: 0;
             width: 220px;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 8px;
+            border-radius: 16px; padding: 8px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.25s ease;
             z-index: 200;
@@ -337,7 +314,6 @@
 
         .content { padding: 28px 32px 40px; }
 
-        /* ═══════ STAT CARDS ═══════ */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -393,7 +369,6 @@
         .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
         .stat-label { font-size: 12.5px; color: var(--text-muted); }
 
-        /* ═══════ GRID ═══════ */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 28px; }
         .dashboard-grid.triple { grid-template-columns: 2fr 1fr; }
 
@@ -419,7 +394,6 @@
 
         .card-header .card-action:hover { opacity: 0.7; }
 
-        /* ═══════ CHART ═══════ */
         .chart-container { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-top: 10px; }
 
         .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; }
@@ -446,7 +420,6 @@
         .chart-bar:hover::before { opacity: 1; }
         .chart-label { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
 
-        /* ═══════ DONUT ═══════ */
         .donut-container { display: flex; align-items: center; gap: 30px; }
 
         .donut {
@@ -465,7 +438,6 @@
         .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
         .legend-item .legend-value { margin-left: auto; font-weight: 600; color: var(--text-primary); font-size: 12px; }
 
-        /* ═══════ ACTIVITY ═══════ */
         .activity-list { display: flex; flex-direction: column; gap: 4px; }
 
         .activity-item {
@@ -492,7 +464,6 @@
         .activity-details p { font-size: 11.5px; color: var(--text-muted); }
         .activity-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 
-        /* ═══════ PICKUP ═══════ */
         .upcoming-pickup {
             background: linear-gradient(135deg, rgba(46,204,113,0.08), rgba(26,188,156,0.04));
             border: 1px solid rgba(46,204,113,0.12);
@@ -522,7 +493,6 @@
             border-radius: 8px; font-size: 11px; color: var(--text-secondary);
         }
 
-        /* ═══════ PROGRESS ═══════ */
         .progress-section { margin-bottom: 18px; }
         .progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .progress-header span { font-size: 12px; color: var(--text-muted); }
@@ -545,7 +515,6 @@
 
         @keyframes progressShine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
-        /* ═══════ IMPACT ═══════ */
         .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .impact-item {
@@ -560,7 +529,6 @@
         .impact-item .impact-value { font-size: 18px; font-weight: 700; color: var(--green); }
         .impact-item .impact-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-        /* ═══════ LEADERBOARD ═══════ */
         .leaderboard-list { display: flex; flex-direction: column; gap: 6px; }
 
         .leaderboard-item {
@@ -589,7 +557,6 @@
         .leaderboard-info p { font-size: 11px; color: var(--text-muted); }
         .leaderboard-score { font-size: 13px; font-weight: 600; color: var(--green); }
 
-        /* ═══════ QUICK ACTIONS ═══════ */
         .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
 
         .quick-action {
@@ -620,7 +587,6 @@
         .quick-action h4 { font-size: 13.5px; font-weight: 600; }
         .quick-action p { font-size: 11.5px; color: var(--text-muted); }
 
-        /* ═══════ OVERLAY ═══════ */
         .sidebar-overlay {
             display: none;
             position: fixed; inset: 0;
@@ -631,7 +597,6 @@
 
         .sidebar-overlay.active { opacity: 1; }
 
-        /* ═══════ ANIMATIONS ═══════ */
         .animate-in {
             opacity: 0; transform: translateY(20px);
             animation: animateIn 0.5s ease forwards;
@@ -646,7 +611,6 @@
         .animate-in:nth-child(5) { animation-delay: 0.25s; }
         .animate-in:nth-child(6) { animation-delay: 0.3s; }
 
-        /* ═══════ RESPONSIVE ═══════ */
         @media (max-width: 1200px) {
             .stats-row { grid-template-columns: repeat(2, 1fr); }
             .quick-actions { grid-template-columns: 1fr 1fr; }
@@ -701,61 +665,39 @@
         </div>
 
         <nav class="sidebar-nav">
-    <div class="nav-section">
-        <div class="nav-section-title">Main</div>
-        <a href="#" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
-        <a href="#" class="nav-item">
-            <div class="nav-left">
-                <i class="fas fa-recycle"></i>
-                <span>&nbsp;&nbsp;&nbsp;Collected Materials</span>
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="#" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-recycle"></i>
+                    <span>Collected Materials</span>
+                    <div class="badge">1</div>
+                </a>
+                <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-building"></i><span>Collection Routes</span></a>
             </div>
-            <div class="badge">1</div>
-        </a>
-        <!-- LINE CHANGED: "Pickups" → "Pending Pickups" (company views user schedules) -->
-        <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
-        <!-- LINE CHANGED: "Companies" → "Collection Routes" (company manages routes post-pickup) -->
-        <a href="#" class="nav-item"><i class="fas fa-building"></i><span>Collection Routes</span></a>
-    </div>
-    <div class="nav-section">
-        <div class="nav-section-title">Analytics</div>
-        <!-- KEEP: Reports (company reports on collections) -->
-        <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
-        <!-- KEEP: Impact (company environmental impact) -->
-        <a href="#" class="nav-item"><i class="fas fa-leaf"></i><span>Impact</span></a>
-        <!-- LINE CHANGED: "Leaderboard" → "Performance" (company leaderboard → internal perf) -->
-        <a href="#" class="nav-item"><i class="fas fa-trophy"></i><span>Performance</span></a>
-    </div>
-    <div class="nav-section">
-        <div class="nav-section-title">Account</div>
-        <!-- LINE CHANGED: "Eco Points" → "Collection Score" (user points → company metrics) -->
-        <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Collection Score</span><div class="badge" style="background:var(--green);">1,240</div></a>
-        <!-- KEEP: Settings, Help -->
-        <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
-        <!-- KEEP: Logout (ID preserved for JS) -->
-        <a href="#" class="nav-item logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
-    </div>
-</nav>
+            <div class="nav-section">
+                <div class="nav-section-title">Analytics</div>
+                <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-leaf"></i><span>Impact</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-trophy"></i><span>Performance</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Account</div>
+                <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Collection Score</span><div class="badge" style="background:var(--green);">1,240</div></a>
+                <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
+                <a href="#" class="nav-item logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
+            </div>
+        </nav>
 
-<div class="sidebar-footer">
-    <div class="sidebar-user">
-        <!-- ID preserved for JS dynamic update -->
-        <div class="avatar" id="sidebarAvatar">GC</div>
-        <div class="user-info">
-            <!-- ID preserved; text changed to company profile -->
-            <h4 id="sidebarName">Green Collect Ltd</h4>
-            <p>Collector Team 🌿</p>
-        </div>
-    </div>
-</div>
-</aside>
-
+        <!-- FIX: Single sidebar footer, inside aside -->
         <div class="sidebar-footer">
             <div class="sidebar-user">
-                <div class="avatar" id="sidebarAvatar">JD</div>
+                <div class="avatar" id="sidebarAvatar">GC</div>
                 <div class="user-info">
-                    <h4 id="sidebarName">Jane Doe</h4>
-                    <p>Eco Warrior 🌿</p>
+                    <h4 id="sidebarName">Green Collect Ltd</h4>
+                    <p>Collector Team 🌿</p>
                 </div>
             </div>
         </div>
@@ -764,351 +706,308 @@
     <!-- Main -->
     <main class="main" id="mainContent">
 
-
-
-<header class="topbar">
-    <div class="topbar-left">
-        <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
-        <div class="topbar-greeting">
-            <h2 id="greeting">Good Morning, Collector 👋</h2>
-            <p id="currentDate"></p>
-        </div>
-    </div>
-    <div class="topbar-right">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search anything...">
-        </div>
-        <button class="topbar-btn" aria-label="Notifications">
-            <i class="fas fa-bell"></i>
-            <span class="notif-dot"></span>
-        </button>
-        <button class="topbar-btn" aria-label="Messages">
-            <i class="fas fa-envelope"></i>
-        </button>
-        <div style="position:relative;">
-            <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">GC</div>
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="dropdown-header">
-                    <h4 id="dropdownName">Green Collect Ltd</h4>
-                    <p id="dropdownEmail">info@greencollect.com</p>
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+                <div class="topbar-greeting">
+                    <h2 id="greeting">Good Morning, Collector 👋</h2>
+                    <p id="currentDate"></p>
                 </div>
-                <button class="dropdown-item"><i class="fas fa-user"></i> Company Profile</button>
-                <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
-                <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
-                <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
             </div>
-        </div>
-    </div>
-</header>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search anything...">
+                </div>
+                <button class="topbar-btn" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-dot"></span>
+                </button>
+                <button class="topbar-btn" aria-label="Messages">
+                    <i class="fas fa-envelope"></i>
+                </button>
+                <div style="position:relative;">
+                    <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">GC</div>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <h4 id="dropdownName">Green Collect Ltd</h4>
+                            <p id="dropdownEmail">info@greencollect.com</p>
+                        </div>
+                        <button class="dropdown-item"><i class="fas fa-user"></i> Company Profile</button>
+                        <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
+                        <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
+                        <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+                    </div>
+                </div>
+            </div>
+        </header>
 
         <div class="content">
-    <!-- Stats -->
-    <div class="stats-row">
-        <div class="stat-card animate-in">
-            <div class="stat-header">
-                <div class="stat-icon green"><i class="fas fa-recycle"></i></div>
-                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
-            </div>
-            <div class="stat-value">SOON</div>
-            <div class="stat-label">Total Collected</div>
-        </div>
 
-        <div class="stat-card animate-in">
-            <div class="stat-header">
-                <!-- optional icon change: fa-truck -> fa-clipboard-list -->
-                <div class="stat-icon blue"><i class="fas fa-clipboard-list"></i></div>
-                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon green"><i class="fas fa-recycle"></i></div>
+                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
+                    </div>
+                    <div class="stat-value">SOON</div>
+                    <div class="stat-label">Total Collected</div>
+                </div>
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon blue"><i class="fas fa-clipboard-list"></i></div>
+                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
+                    </div>
+                    <div class="stat-value">SOON</div>
+                    <div class="stat-label">Pending Pickups</div>
+                </div>
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon yellow"><i class="fas fa-star"></i></div>
+                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 24%</span>
+                    </div>
+                    <div class="stat-value">SOON</div>
+                    <div class="stat-label">Collection Score</div>
+                </div>
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon purple"><i class="fas fa-seedling"></i></div>
+                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 5%</span>
+                    </div>
+                    <div class="stat-value">SOON</div>
+                    <div class="stat-label">CO₂ Reduced</div>
+                </div>
             </div>
-            <div class="stat-value">SOON</div>
-            <div class="stat-label">Pending Pickups</div>
-        </div>
-
-        <div class="stat-card animate-in">
-            <div class="stat-header">
-                <div class="stat-icon yellow"><i class="fas fa-star"></i></div>
-                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 24%</span>
-            </div>
-            <div class="stat-value">SOON</div>
-            <div class="stat-label">Collection Score</div>
-        </div>
-
-        <div class="stat-card animate-in">
-            <div class="stat-header">
-                <div class="stat-icon purple"><i class="fas fa-seedling"></i></div>
-                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 5%</span>
-            </div>
-            <div class="stat-value">SOON</div>
-            <div class="stat-label">CO₂ Reduced</div>
-        </div>
-    </div>
 
             <!-- Quick Actions -->
-<div class="quick-actions">
-    <a href="#" class="quick-action animate-in">
-        <div class="qa-icon green"><i class="fas fa-clipboard-check"></i></div>
-        <div><h4>View Pickup Requests</h4><p>See all scheduled pickups</p></div>
-    </a>
-    <a href="#" class="quick-action animate-in">
-        <div class="qa-icon blue"><i class="fas fa-route"></i></div>
-        <div><h4>Plan Collection Route</h4><p>Assign pickups to drivers</p></div>
-    </a>
-    <a href="#" class="quick-action animate-in">
-        <div class="qa-icon orange"><i class="fas fa-check-circle"></i></div>
-        <div><h4>Mark as Collected</h4><p>Update pickup status</p></div>
-    </a>
-</div>
+            <div class="quick-actions">
+                <a href="#" class="quick-action animate-in">
+                    <div class="qa-icon green"><i class="fas fa-clipboard-check"></i></div>
+                    <div><h4>View Pickup Requests</h4><p>See all scheduled pickups</p></div>
+                </a>
+                <a href="#" class="quick-action animate-in">
+                    <div class="qa-icon blue"><i class="fas fa-route"></i></div>
+                    <div><h4>Plan Collection Route</h4><p>Assign pickups to drivers</p></div>
+                </a>
+                <a href="#" class="quick-action animate-in">
+                    <div class="qa-icon orange"><i class="fas fa-check-circle"></i></div>
+                    <div><h4>Mark as Collected</h4><p>Update pickup status</p></div>
+                </a>
+            </div>
 
             <!-- Charts -->
-<div class="dashboard-grid triple">
-    <div class="card animate-in">
-        <div class="card-header">
-            <!-- CHANGED: Recycling Overview → Collection Overview -->
-            <h3>Collection Overview</h3>
-            <button class="card-action">This Year <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></button>
-        </div>
-        <div class="chart-container" id="barChart"></div>
-    </div>
-    <div class="card animate-in">
-        <div class="card-header">
-            <!-- CHANGED: Materials Breakdown → Materials Collected -->
-            <h3>Materials Collected</h3>
-            <button class="card-action">Details</button>
-        </div>
-        <div class="donut-container">
-            <div class="donut" id="donutChart">
-                <div class="donut-center">
-                    <!-- VALUE can stay the same (total kg collected) -->
-                    <div class="value">2,847</div>
-                    <!-- CHANGED: kg total → kg Collected -->
-                    <div class="label">kg Collected</div>
+            <div class="dashboard-grid triple">
+                <div class="card animate-in">
+                    <div class="card-header">
+                        <h3>Collection Overview</h3>
+                        <button class="card-action">This Year <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></button>
+                    </div>
+                    <div class="chart-container" id="barChart"></div>
+                </div>
+                <div class="card animate-in">
+                    <div class="card-header">
+                        <h3>Materials Collected</h3>
+                        <button class="card-action">Details</button>
+                    </div>
+                    <div class="donut-container">
+                        <div class="donut" id="donutChart">
+                            <div class="donut-center">
+                                <div class="value">2,847</div>
+                                <div class="label">kg Collected</div>
+                            </div>
+                        </div>
+                        <div class="donut-legend">
+                            <div class="legend-item"><div class="legend-dot" style="background:#2ecc71;"></div><span>Plastic</span><span class="legend-value">38%</span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div><span>Paper</span><span class="legend-value">28%</span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></div><span>Glass</span><span class="legend-value">20%</span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div><span>Metal</span><span class="legend-value">14%</span></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="donut-legend">
-                <div class="legend-item"><div class="legend-dot" style="background:#2ecc71;"></div><span>Plastic</span><span class="legend-value">38%</span></div>
-                <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div><span>Paper</span><span class="legend-value">28%</span></div>
-                <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></div><span>Glass</span><span class="legend-value">20%</span></div>
-                <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div><span>Metal</span><span class="legend-value">14%</span></div>
-            </div>
-        </div>
-    </div>
-</div>
 
             <!-- Activity + Sidebar -->
-<div class="dashboard-grid">
-    <div class="card animate-in">
-        <div class="card-header">
-            <!-- CHANGED: Recent Activity → Collection Activity -->
-            <h3>Collection Activity</h3>
-            <button class="card-action">View All</button>
-        </div>
-        <div class="activity-list">
-            <!-- CHANGED: All items reflect COMPANY actions -->
-            <div class="activity-item">
-                <div class="activity-icon pickup"><i class="fas fa-truck"></i></div>
-                <div class="activity-details"><h4>Pickup Completed</h4><p>Driver #3 collected 15kg plastic from 123 Main St</p></div>
-                <div class="activity-time">2h ago</div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-icon reward"><i class="fas fa-gift"></i></div>
-                <div class="activity-details"><h4>New Pickup Request</h4><p>456 Oak Ave: 8kg paper, 3kg glass scheduled</p></div>
-                <div class="activity-time">5h ago</div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-icon recycle"><i class="fas fa-box"></i></div>
-                <div class="activity-details"><h4>Driver Assigned</h4><p>Driver #1 assigned to Route A - Downtown</p></div>
-                <div class="activity-time">1d ago</div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-icon pickup"><i class="fas fa-calendar-check"></i></div>
-                <div class="activity-details"><h4>Pickup Confirmed</h4><p>789 Pine St pickup confirmed for Jan 28, 10:00 AM</p></div>
-                <div class="activity-time">2d ago</div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-icon alert"><i class="fas fa-exclamation-triangle"></i></div>
-                <div class="activity-details"><h4>Pickup Rescheduled</h4><p>Customer at 321 Elm St moved pickup to Feb 2</p></div>
-                <div class="activity-time">3d ago</div>
-            </div>
-        </div>
-    </div>
+            <div class="dashboard-grid">
+                <div class="card animate-in">
+                    <div class="card-header">
+                        <h3>Collection Activity</h3>
+                        <button class="card-action">View All</button>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon pickup"><i class="fas fa-truck"></i></div>
+                            <div class="activity-details"><h4>Pickup Completed</h4><p>Driver #3 collected 15kg plastic from 123 Main St</p></div>
+                            <div class="activity-time">2h ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon reward"><i class="fas fa-gift"></i></div>
+                            <div class="activity-details"><h4>New Pickup Request</h4><p>456 Oak Ave: 8kg paper, 3kg glass scheduled</p></div>
+                            <div class="activity-time">5h ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon recycle"><i class="fas fa-box"></i></div>
+                            <div class="activity-details"><h4>Driver Assigned</h4><p>Driver #1 assigned to Route A - Downtown</p></div>
+                            <div class="activity-time">1d ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon pickup"><i class="fas fa-calendar-check"></i></div>
+                            <div class="activity-details"><h4>Pickup Confirmed</h4><p>789 Pine St pickup confirmed for Jan 28, 10:00 AM</p></div>
+                            <div class="activity-time">2d ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon alert"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="activity-details"><h4>Pickup Rescheduled</h4><p>Customer at 321 Elm St moved pickup to Feb 2</p></div>
+                            <div class="activity-time">3d ago</div>
+                        </div>
+                    </div>
+                </div>
 
-    <div style="display:flex;flex-direction:column;gap:18px;">
-        <div class="card animate-in">
-            <div class="card-header"><h3>Next Collection</h3><button class="card-action">Manage</button></div>
-            <div class="upcoming-pickup">
-                <div class="pickup-date">
-                    <div class="date-box"><div class="day">28</div><div class="month">Jan</div></div>
-                    <!-- CHANGED: EcoWaste Ltd. → Route A - Downtown -->
-                    <div class="pickup-info"><h4>Route A - Downtown</h4><p>10:00 AM — 12:00 PM</p></div>
-                </div>
-                <div class="pickup-items">
-                    <span class="pickup-tag">🥤 Plastic 8kg</span>
-                    <span class="pickup-tag">📄 Paper 5kg</span>
-                    <span class="pickup-tag">🍶 Glass 3kg</span>
-                </div>
-            </div>
-            <div class="progress-section">
-                <!-- CHANGED: Monthly Goal → Monthly Target -->
-                <div class="progress-header"><span>Monthly Target</span><strong>72%</strong></div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width:72%;background:linear-gradient(90deg,var(--green),var(--teal));"></div>
-                </div>
-            </div>
-        </div>
+                <div style="display:flex;flex-direction:column;gap:18px;">
+                    <div class="card animate-in">
+                        <div class="card-header"><h3>Next Collection</h3><button class="card-action">Manage</button></div>
+                        <div class="upcoming-pickup">
+                            <div class="pickup-date">
+                                <div class="date-box"><div class="day">28</div><div class="month">Jan</div></div>
+                                <div class="pickup-info"><h4>Route A - Downtown</h4><p>10:00 AM — 12:00 PM</p></div>
+                            </div>
+                            <div class="pickup-items">
+                                <span class="pickup-tag">🥤 Plastic 8kg</span>
+                                <span class="pickup-tag">📄 Paper 5kg</span>
+                                <span class="pickup-tag">🍶 Glass 3kg</span>
+                            </div>
+                        </div>
+                        <div class="progress-section">
+                            <div class="progress-header"><span>Monthly Target</span><strong>72%</strong></div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width:72%;background:linear-gradient(90deg,var(--green),var(--teal));"></div>
+                            </div>
+                        </div>
+                    </div>
 
-        <div class="card animate-in">
-            <div class="card-header"><h3>🏆 Top Collectors</h3><button class="card-action">Full List</button></div>
-            <div class="leaderboard-list">
-                <!-- CHANGED: User names → Driver names & IDs -->
-                <div class="leaderboard-item">
-                    <div class="rank gold">1</div>
-                    <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#f1c40f,#e67e22);">AL</div>
-                    <div class="leaderboard-info"><h4>Driver #1 (Alex)</h4><p>4,520 kg collected</p></div>
-                    <div class="leaderboard-score">98% efficiency</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank silver">2</div>
-                    <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#bdc3c7,#95a5a6);">SJ</div>
-                    <div class="leaderboard-info"><h4>Driver #2 (Sam)</h4><p>3,890 kg collected</p></div>
-                    <div class="leaderboard-score">96% efficiency</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank bronze">3</div>
-                    <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#e67e22,#d35400);">JR</div>
-                    <div class="leaderboard-info"><h4>Driver #3 (Jordan)</h4><p>3,210 kg collected</p></div>
-                    <div class="leaderboard-score">94% efficiency</div>
-                </div>
-                <div class="leaderboard-item you">
-                    <div class="rank">7</div>
-                    <!-- IDs preserved for JS -->
-                    <div class="leaderboard-avatar" id="leaderboardAvatar" style="background:linear-gradient(135deg,var(--green),var(--teal));">GC</div>
-                    <div class="leaderboard-info"><h4 id="leaderboardName">Your Team (Green Collect)</h4><p>2,847 kg this month</p></div>
-                    <div class="leaderboard-score">1,240 pts</div>
+                    <div class="card animate-in">
+                        <div class="card-header"><h3>🏆 Top Collectors</h3><button class="card-action">Full List</button></div>
+                        <div class="leaderboard-list">
+                            <div class="leaderboard-item">
+                                <div class="rank gold">1</div>
+                                <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#f1c40f,#e67e22);">AL</div>
+                                <div class="leaderboard-info"><h4>Driver #1 (Alex)</h4><p>4,520 kg collected</p></div>
+                                <div class="leaderboard-score">98% efficiency</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="rank silver">2</div>
+                                <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#bdc3c7,#95a5a6);">SJ</div>
+                                <div class="leaderboard-info"><h4>Driver #2 (Sam)</h4><p>3,890 kg collected</p></div>
+                                <div class="leaderboard-score">96% efficiency</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="rank bronze">3</div>
+                                <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#e67e22,#d35400);">JR</div>
+                                <div class="leaderboard-info"><h4>Driver #3 (Jordan)</h4><p>3,210 kg collected</p></div>
+                                <div class="leaderboard-score">94% efficiency</div>
+                            </div>
+                            <div class="leaderboard-item you">
+                                <div class="rank">7</div>
+                                <div class="leaderboard-avatar" id="leaderboardAvatar" style="background:linear-gradient(135deg,var(--green),var(--teal));">GC</div>
+                                <div class="leaderboard-info"><h4 id="leaderboardName">Your Team (Green Collect)</h4><p>2,847 kg this month</p></div>
+                                <div class="leaderboard-score">1,240 pts</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
             <!-- Impact -->
-<div class="dashboard-grid" style="margin-top:18px;">
-    <div class="card animate-in">
-        <!-- CHANGED: Your -> Company -->
-        <div class="card-header"><h3>🌍 Company Environmental Impact</h3><button class="card-action">Detailed Analytics</button></div>
-        <div class="impact-grid">
-            <!-- Labels changed to reflect total company contribution -->
-            <div class="impact-item"><span class="impact-emoji">🌳</span><div class="impact-value">18</div><div class="impact-label">Total Trees Saved</div></div>
-            <div class="impact-item"><span class="impact-emoji">💧</span><div class="impact-value">12,400 L</div><div class="impact-label">Total Water Saved</div></div>
-            <div class="impact-item"><span class="impact-emoji">⚡</span><div class="impact-value">340 kWh</div><div class="impact-label">Total Energy Saved</div></div>
-            <div class="impact-item"><span class="impact-emoji">🏭</span><div class="impact-value">890 kg</div><div class="impact-label">Total CO₂ Reduced</div></div>
-        </div>
-    </div>
-    <div class="card animate-in">
-        <!-- CHANGED: Eco Points -> Collection Score -->
-        <div class="card-header"><h3>⭐ Collection Score</h3><button class="card-action">Export Data</button></div>
-        <div style="text-align:center;margin-bottom:24px;">
-            <div style="font-size:42px;font-weight:800;color:var(--green);line-height:1;">1,240</div>
-            <!-- CHANGED: Available Points -> Operational Score -->
-            <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Operational Score</div>
-        </div>
-        <div class="progress-section">
-            <!-- CHANGED: Level -> Partnership Tier -->
-            <div class="progress-header"><span>Silver Tier → Gold Partner</span><strong>760 pts to go</strong></div>
-            <div class="progress-track">
-                <div class="progress-fill" style="width:62%;background:linear-gradient(90deg,var(--yellow),var(--orange));"></div>
+            <div class="dashboard-grid" style="margin-top:18px;">
+                <div class="card animate-in">
+                    <div class="card-header"><h3>🌍 Company Environmental Impact</h3><button class="card-action">Detailed Analytics</button></div>
+                    <div class="impact-grid">
+                        <div class="impact-item"><span class="impact-emoji">🌳</span><div class="impact-value">18</div><div class="impact-label">Total Trees Saved</div></div>
+                        <div class="impact-item"><span class="impact-emoji">💧</span><div class="impact-value">12,400 L</div><div class="impact-label">Total Water Saved</div></div>
+                        <div class="impact-item"><span class="impact-emoji">⚡</span><div class="impact-value">340 kWh</div><div class="impact-label">Total Energy Saved</div></div>
+                        <div class="impact-item"><span class="impact-emoji">🏭</span><div class="impact-value">890 kg</div><div class="impact-label">Total CO₂ Reduced</div></div>
+                    </div>
+                </div>
+                <div class="card animate-in">
+                    <div class="card-header"><h3>⭐ Collection Score</h3><button class="card-action">Export Data</button></div>
+                    <div style="text-align:center;margin-bottom:24px;">
+                        <div style="font-size:42px;font-weight:800;color:var(--green);line-height:1;">1,240</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Operational Score</div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-header"><span>Silver Tier → Gold Partner</span><strong>760 pts to go</strong></div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width:62%;background:linear-gradient(90deg,var(--yellow),var(--orange));"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;margin-top:20px;">
+                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+                            <div style="font-size:16px;margin-bottom:4px;">🏅</div><div style="font-size:11px;color:var(--text-muted);">152 Pickups</div>
+                        </div>
+                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+                            <div style="font-size:16px;margin-bottom:4px;">🚛</div><div style="font-size:11px;color:var(--text-muted);">98% Reliability</div>
+                        </div>
+                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
+                            <div style="font-size:16px;margin-bottom:4px;">🏢</div><div style="font-size:11px;color:var(--text-muted);">Certified</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:20px;">
-            <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                <!-- CHANGED: Badges -> Verified Pickups -->
-                <div style="font-size:16px;margin-bottom:4px;">🏅</div><div style="font-size:11px;color:var(--text-muted);">152 Pickups</div>
-            </div>
-            <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                <!-- CHANGED: Streak -> Service Streak -->
-                <div style="font-size:16px;margin-bottom:4px;">🚛</div><div style="font-size:11px;color:var(--text-muted);">98% Reliability</div>
-            </div>
-            <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                <!-- CHANGED: Level -> Partner Level -->
-                <div style="font-size:16px;margin-bottom:4px;">🏢</div><div style="font-size:11px;color:var(--text-muted);">Certified</div>
-            </div>
-        </div>
-    </div>
-</div>
+
+        </div><!-- end .content -->
+    </main><!-- end main -->
 
     <script>
-        // ═══════ AUTH CHECK ═══════
-        // If not logged in, redirect to login
         (function checkAuth() {
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (isLoggedIn !== 'true') {
                 window.location.href = 'login.html';
-                return;
             }
         })();
 
-        // ═══════ LOAD COMPANY DATA ═══════
-function loadCompanyData() {
-    // Changed: ecoUser → ecoCompany (localStorage key)
-    const companyData = JSON.parse(localStorage.getItem('ecoCompany') || '{}');
-    
-    // Changed: Load company fields instead of personal fields
-    const name = companyData.companyName || companyData.name || 'Green Collect Ltd';
-    const email = companyData.adminEmail || 'admin@ecocollect.com';
-    
-    // Changed: Initials based on company name (e.g., Green Collect → GC)
-    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        function loadCompanyData() {
+            const companyData = JSON.parse(localStorage.getItem('ecoCompany') || '{}');
+            const name = companyData.companyName || companyData.name || 'Green Collect Ltd';
+            const email = companyData.adminEmail || 'admin@ecocollect.com';
+            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-    // Update all name displays (IDs preserved!)
-    document.getElementById('sidebarName').textContent = name;
-    document.getElementById('dropdownName').textContent = name;
-    document.getElementById('dropdownEmail').textContent = email;
-    
-    // Changed: Leaderboard shows team/company info instead of "You (Name)"
-    document.getElementById('leaderboardName').textContent = 'Your Team (' + name + ')';
+            document.getElementById('sidebarName').textContent = name;
+            document.getElementById('dropdownName').textContent = name;
+            document.getElementById('dropdownEmail').textContent = email;
+            document.getElementById('leaderboardName').textContent = 'Your Team (' + name + ')';
 
-    // Update all avatars (IDs preserved!)
-    ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = initials;
-    });
+            ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = initials;
+            });
 
-    // Update greeting (Changed: More professional for company dashboard)
-    const hour = new Date().getHours();
-    const greetEl = document.getElementById('greeting');
-    if (hour < 12) greetEl.textContent = 'Good Morning, Collector 👋';
-    else if (hour < 17) greetEl.textContent = 'Good Afternoon, Collector ☀️';
-    else greetEl.textContent = 'Good Evening, Collector 🌙';
-}
+            const hour = new Date().getHours();
+            const greetEl = document.getElementById('greeting');
+            if (hour < 12) greetEl.textContent = 'Good Morning, Collector 👋';
+            else if (hour < 17) greetEl.textContent = 'Good Afternoon, Collector ☀️';
+            else greetEl.textContent = 'Good Evening, Collector 🌙';
+        }
 
-loadCompanyData();
+        loadCompanyData();
 
-       // ═══════ DATE ═══════
-const now = new Date();
-document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-});
+        const now = new Date();
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
 
-// ═══════ LOGOUT ═══════
-function logout() {
-    localStorage.removeItem('isLoggedIn');
-    // Changed: Clear company data instead of user data
-    localStorage.removeItem('ecoCompany');
-    window.location.href = 'login.html';
-}
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('ecoCompany');
+            window.location.href = 'login.html';
+        }
 
-document.getElementById('logoutSidebar').addEventListener('click', (e) => {
-    e.preventDefault();
-    logout();
-});
+        document.getElementById('logoutSidebar').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+        document.getElementById('logoutDropdown').addEventListener('click', logout);
 
-document.getElementById('logoutDropdown').addEventListener('click', logout);
-
-        // ═══════ PROFILE DROPDOWN ═══════
         function toggleDropdown() {
             document.getElementById('profileDropdown').classList.toggle('show');
         }
 
-        // Close dropdown on outside click
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('profileDropdown');
             const avatar = document.getElementById('topbarAvatar');
@@ -1117,7 +1016,6 @@ document.getElementById('logoutDropdown').addEventListener('click', logout);
             }
         });
 
-        // ═══════ SIDEBAR TOGGLE ═══════
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -1130,7 +1028,6 @@ document.getElementById('logoutDropdown').addEventListener('click', logout);
             toggleIcon.classList.toggle('fa-chevron-right');
         });
 
-        // ═══════ MOBILE SIDEBAR ═══════
         const mobileToggle = document.getElementById('mobileToggle');
         const overlay = document.getElementById('sidebarOverlay');
 
@@ -1150,138 +1047,112 @@ document.getElementById('logoutDropdown').addEventListener('click', logout);
         }
 
         document.querySelectorAll('.nav-item:not(.logout-btn)').forEach(item => {
-  item.addEventListener('click', function (e) {
-    const href = this.getAttribute('href');
+            item.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                if (window.innerWidth <= 768) closeMobile();
+                if (!href || href === '#') e.preventDefault();
+            });
+        });
 
-    // set active UI
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    this.classList.add('active');
-    if (window.innerWidth <= 768) closeMobile();
+        const barData = [
+            { label: 'Jan', value: 1200 }, { label: 'Feb', value: 1800 },
+            { label: 'Mar', value: 2500 }, { label: 'Apr', value: 2000 },
+            { label: 'May', value: 3100 }, { label: 'Jun', value: 2800 },
+            { label: 'Jul', value: 3500 }, { label: 'Aug', value: 2900 },
+            { label: 'Sep', value: 3800 }, { label: 'Oct', value: 4200 },
+            { label: 'Nov', value: 3600 }, { label: 'Dec', value: 1900 },
+        ];
 
-    // ONLY block dummy links like "#"
-    if (!href || href === '#') {
-      e.preventDefault();
-    }
-    // if href is "Recyclables.html" it will navigate normally
-  });
-});
+        const maxVal = Math.max(...barData.map(d => d.value));
+        const barChart = document.getElementById('barChart');
 
-        // ═══════ BAR CHART: MONTHLY TOTAL COLLECTIONS ═══════
-// 👇 Variable name `barData` PRESERVED. Values now = company total collected kg per month, not user personal recycling
-const barData = [
-    // Optional: values increased to realistic volumes for a collection company, you can adjust to your actual data
-    { label: 'Jan', value: 1200 }, { label: 'Feb', value: 1800 },
-    { label: 'Mar', value: 2500 }, { label: 'Apr', value: 2000 },
-    { label: 'May', value: 3100 }, { label: 'Jun', value: 2800 },
-    { label: 'Jul', value: 3500 }, { label: 'Aug', value: 2900 },
-    { label: 'Sep', value: 3800 }, { label: 'Oct', value: 4200 },
-    { label: 'Nov', value: 3600 }, { label: 'Dec', value: 1900 },
-];
+        barData.forEach((d, i) => {
+            const group = document.createElement('div');
+            group.className = 'chart-bar-group';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'chart-bar-wrapper';
+            const bar = document.createElement('div');
+            bar.className = 'chart-bar';
+            bar.setAttribute('data-value', d.value + 'kg');
+            bar.style.height = '0%';
+            setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
+            if (i === now.getMonth()) {
+                bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
+                bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
+            }
+            wrapper.appendChild(bar);
+            const label = document.createElement('div');
+            label.className = 'chart-label';
+            label.textContent = d.label;
+            group.appendChild(wrapper);
+            group.appendChild(label);
+            barChart.appendChild(group);
+        });
 
-const maxVal = Math.max(...barData.map(d => d.value));
-const barChart = document.getElementById('barChart');
+        const donutChart = document.getElementById('donutChart');
+        const segments = [
+            { percent: 38, color: '#2ecc71' },
+            { percent: 28, color: '#3498db' },
+            { percent: 20, color: '#f1c40f' },
+            { percent: 14, color: '#9b59b6' },
+        ];
 
-barData.forEach((d, i) => {
-    const group = document.createElement('div');
-    group.className = 'chart-bar-group';
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.style.cssText = 'width:100%;height:100%;transform:rotate(-90deg);position:absolute;';
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'chart-bar-wrapper';
+        const radius = 40;
+        const circumference = 2 * Math.PI * radius;
+        let offset = 0;
 
-    const bar = document.createElement('div');
-    bar.className = 'chart-bar';
-    bar.setAttribute('data-value', d.value + 'kg');
-    bar.style.height = '0%';
+        segments.forEach((seg, i) => {
+            const circle = document.createElementNS(svgNS, 'circle');
+            circle.setAttribute('cx', '50');
+            circle.setAttribute('cy', '50');
+            circle.setAttribute('r', radius.toString());
+            circle.setAttribute('fill', 'none');
+            circle.setAttribute('stroke', seg.color);
+            circle.setAttribute('stroke-width', '12');
+            circle.setAttribute('stroke-linecap', 'round');
+            const dashLength = (seg.percent / 100) * circumference;
+            circle.setAttribute('stroke-dashoffset', (-offset).toString());
+            circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
+            circle.style.transition = 'stroke-dasharray 1s ease';
+            setTimeout(() => { circle.setAttribute('stroke-dasharray', `${dashLength - 3} ${circumference}`); }, 500 + i * 150);
+            offset += dashLength;
+            svg.appendChild(circle);
+        });
 
-    setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
+        donutChart.insertBefore(svg, donutChart.firstChild);
 
-    if (i === now.getMonth()) {
-        bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
-        bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
-    }
-
-    wrapper.appendChild(bar);
-    const label = document.createElement('div');
-    label.className = 'chart-label';
-    label.textContent = d.label;
-    group.appendChild(wrapper);
-    group.appendChild(label);
-    barChart.appendChild(group);
-});
-
-// ═══════ DONUT CHART: COLLECTED MATERIALS BREAKDOWN ═══════
-// 👇 Variable name `segments` PRESERVED. Values now = company wide material breakdown, not user personal
-const donutChart = document.getElementById('donutChart');
-const segments = [
-    { percent: 38, color: '#2ecc71' },
-    { percent: 28, color: '#3498db' },
-    { percent: 20, color: '#f1c40f' },
-    { percent: 14, color: '#9b59b6' },
-];
-
-const svgNS = 'http://www.w3.org/2000/svg';
-const svg = document.createElementNS(svgNS, 'svg');
-svg.setAttribute('viewBox', '0 0 100 100');
-svg.style.cssText = 'width:100%;height:100%;transform:rotate(-90deg);position:absolute;';
-
-const radius = 40;
-const circumference = 2 * Math.PI * radius;
-let offset = 0;
-
-segments.forEach((seg, i) => {
-    const circle = document.createElementNS(svgNS, 'circle');
-    circle.setAttribute('cx', '50');
-    circle.setAttribute('cy', '50');
-    circle.setAttribute('r', radius.toString());
-    circle.setAttribute('fill', 'none');
-    circle.setAttribute('stroke', seg.color);
-    circle.setAttribute('stroke-width', '12');
-    circle.setAttribute('stroke-linecap', 'round');
-
-    const dashLength = (seg.percent / 100) * circumference;
-    circle.setAttribute('stroke-dashoffset', (-offset).toString());
-    circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
-    circle.style.transition = 'stroke-dasharray 1s ease';
-
-    setTimeout(() => {
-        circle.setAttribute('stroke-dasharray', `${dashLength - 3} ${circumference}`);
-    }, 500 + i * 150);
-
-    offset += dashLength;
-    svg.appendChild(circle);
-});
-
-donutChart.insertBefore(svg, donutChart.firstChild);
-
-// ═══════ RESPONSIVE ═══════
-// ✅ 100% UNCHANGED, sidebar behavior works identically for company dashboard
-function handleResize() {
-    if (window.innerWidth > 768) {
-        sidebar.classList.remove('mobile-open');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    if (window.innerWidth <= 1024 && window.innerWidth > 768) {
-        sidebar.classList.add('collapsed');
-        mainContent.classList.add('expanded');
-    }
-}
-
-window.addEventListener('resize', handleResize);
-handleResize();
-
-// ═══════ SCROLL ANIMATIONS ═══════
-// ✅ 100% UNCHANGED
-const animObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            if (window.innerWidth <= 1024 && window.innerWidth > 768) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            }
         }
-    });
-}, { threshold: 0.05 });
 
-document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
-</script>
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        const animObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.05 });
+
+        document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
+    </script>
 </body>
 </html>
