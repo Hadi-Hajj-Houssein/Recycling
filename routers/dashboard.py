@@ -24,7 +24,30 @@ def dashboard(
     total = organic + paper + plastic + glass + metal
     if(total>0):
         organic_pct = round((organic/total)*100,1)
-        paper_pct = 
-        plastic_pct =
-        glass_pct =
-        metal_pct =
+        paper_pct = round((paper/total)*100,1)
+        plastic_pct =round((plastic/total)*100,1)
+        glass_pct =round((glass/total)*100,1)
+        metal_pct =round((metal/total)*100,1)
+
+    else:
+        organic_pct = 0
+        paper_pct = 0
+        plastic_pct = 0
+        glass_pct = 0
+        metal_pct = 0
+    
+
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "total": total,
+        "organic": organic,
+        "paper": paper,
+        "plastic": plastic,
+        "glass": glass,
+        "metal": metal,
+        "organic_pct": organic_pct,
+        "paper_pct": paper_pct,
+        "plastic_pct": plastic_pct,
+        "glass_pct": glass_pct,
+        "metal_pct": metal_pct,
+    })
