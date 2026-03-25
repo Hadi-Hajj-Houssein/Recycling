@@ -619,7 +619,7 @@
         localStorage.setItem('isLoggedIn', 'true');
 
         setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            window.location.href = '/dashboard';
         }, 800);
     }
 
@@ -713,8 +713,8 @@
             showSuccess('Login successful! Redirecting...');
             setTimeout(() => {
                 window.location.href = data.role === 'company'
-                    ? 'company_dashboard.html'
-                    : 'dashboard.html';
+                    ? '/company_dashboard'
+                    : '/dashboard';
             }, 1000);
 
         } catch (err) {

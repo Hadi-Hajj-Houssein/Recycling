@@ -21,13 +21,15 @@ def dashboard(
     plastic = totals.total_plastic if totals else 0
     glass = totals.total_glass if totals else 0
     metal = totals.total_metal if totals else 0
-    total = organic + paper + plastic + glass + metal
+    electronics = 0#totals.total_electronics if totals else 0
+    total = organic + paper + plastic + glass + metal + electronics
     if(total>0):
         organic_pct = round((organic/total)*100,1)
         paper_pct = round((paper/total)*100,1)
         plastic_pct =round((plastic/total)*100,1)
         glass_pct =round((glass/total)*100,1)
         metal_pct =round((metal/total)*100,1)
+        electronics_pct = 0#round((electronics/total)*100,1)
 
     else:
         organic_pct = 0
@@ -35,9 +37,9 @@ def dashboard(
         plastic_pct = 0
         glass_pct = 0
         metal_pct = 0
-    
+        electronics_pct = 0
 
-    return templates.TemplateResponse("dashboard.html", {
+    return templates.TemplateResponse("/dashboard", {
         "request": request,
         "total": total,
         "organic": organic,
@@ -45,9 +47,11 @@ def dashboard(
         "plastic": plastic,
         "glass": glass,
         "metal": metal,
+        "electronics": electronics,
         "organic_pct": organic_pct,
         "paper_pct": paper_pct,
         "plastic_pct": plastic_pct,
         "glass_pct": glass_pct,
         "metal_pct": metal_pct,
+        "electronics_pct": electronics_pct
     })

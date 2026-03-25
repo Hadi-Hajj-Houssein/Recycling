@@ -10,7 +10,7 @@ from models.Recyclables import Recyclable_Item
 from routers.recyclables_in import router 
 from routers.dashboard import router as dashboard_router 
 from routers import signup, login, company_signup,company_selection   
-Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine) 3am esta3mel NEON
 app = FastAPI(debug=True)
 origins = ["http://127.0.0.1:5500", "http://localhost:5500"]
 app.add_middleware(
@@ -29,3 +29,7 @@ app.include_router(dashboard_router)
 @app.get("/")
 def home():
     return {"message": "Server is running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
