@@ -1,13 +1,13 @@
-from fastapi import APIRouter , Depends , HTTPException , Form
+from fastapi import APIRouter, Depends, HTTPException, Form, Response
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from db_main import SessionLocal
 from models.user import User
 from models.company import Company
-router = APIRouter()
-#hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 from functionalities.auth import create_access_token
+
+router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_db():
     db = SessionLocal()
@@ -17,34 +17,54 @@ def get_db():
         db.close()
 
 @router.post("/login")
-def login(email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+def login(
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
     user = db.query(User).filter(User.email == email).first()
     if user and pwd_context.verify(password, user.password):
         token = create_access_token(
             data={"sub": str(user.id), "role": "user"},
             expires_minutes=15
         )
-        print (token)
+
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            secure=False,   # set True in production with HTTPS
+            samesite="lax",
+            max_age=15 * 60,
+            path="/"
+        )
+
         return {
-            "access_token": token,
-            "token_type": "bearer",
             "role": "user",
             "user_id": user.id
         }
+
     company = db.query(Company).filter(Company.email == email).first()
     if company and pwd_context.verify(password, company.password):
-    
         token = create_access_token(
-        data={"sub": str(company.id), "role": "company"},
-        expires_minutes=15
+            data={"sub": str(company.id), "role": "company"},
+            expires_minutes=15
         )
+
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            secure=False,   # set True in production with HTTPS
+            samesite="lax",
+            max_age=15 * 60,
+            path="/"
+        )
+
         return {
-            "access_token": token,
-            "token_type": "bearer",
             "role": "company",
             "company_id": company.id
         }
+
     raise HTTPException(status_code=401, detail="Invalid email or password")
-
-
-

@@ -677,7 +677,8 @@
         try {
             const response = await fetch('http://127.0.0.1:8000/login', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include'
             });
 
             const data = await response.json();
@@ -689,10 +690,6 @@
                 return;
             }
 
-            // ✅ FIX #2: Save the access token
-            localStorage.setItem('access_token', data.access_token);
-            console.log(data.access_token)
-            // ✅ FIX #3: Save user info WITH id and role
             localStorage.setItem('ecoUser', JSON.stringify({
                 email: email.value,
                 username: email.value.split('@')[0],
