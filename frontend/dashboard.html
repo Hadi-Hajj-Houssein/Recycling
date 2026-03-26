@@ -850,16 +850,18 @@
                             </div>
                         </div>
                         <div class="donut-legend">
-                            <div class="legend-item"><div class="legend-dot" style="background:#2ecc71;"></div><span>Plastic</span><span class="legend-value">38%</span></div>
-                            <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div><span>Paper</span><span class="legend-value">28%</span></div>
-                            <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></div><span>Glass</span><span class="legend-value">20%</span></div>
-                            <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div><span>Metal</span><span class="legend-value">14%</span></div>
-                        </div>
+                            <div class="legend-item"><div class="legend-dot" style="background:#ff0000;"></div><span>Plastic</span><span class="legend-value">{{plastic_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
+                            <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div><span>Paper</span><span class="legend-value">{{paper_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
+                            <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></div><span>Glass</span><span class="legend-value">{{glass_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
+                            <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div><span>Metal</span><span class="legend-value">{{metal_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
+                            <div class="legend-item"><div class="legend-dot" style="background:#000000;"></div><span>Electronics</span><span class="legend-value">{{electronics_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
+                            <div class="legend-item"><div class="legend-dot" style="background:#6aff00;"></div><span>Organic</span><span class="legend-value">{{organic_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->                            
+
+                        </div>c
                     </div>
                 </div>
             </div>
 
-            <!-- Activity + Sidebar -->
             <div class="dashboard-grid">
                 <div class="card animate-in">
                     <div class="card-header">
@@ -1156,10 +1158,12 @@
         // ═══════ DONUT CHART ═══════
         const donutChart = document.getElementById('donutChart');
         const segments = [
-            { percent: 38, color: '#2ecc71' },
-            { percent: 28, color: '#3498db' },
-            { percent: 20, color: '#f1c40f' },
-            { percent: 14, color: '#9b59b6' },
+            { percent: {plastic_pct}, color: '#2ecc71' },
+            { percent: {paper_pct}, color: '#3498db' },
+            { percent: {glass_pct}, color: '#f1c40f' },
+            { percent: {metal_pct}, color: '#9b59b6' },
+            { percent: {electronics_pct}, color: '#000000' },
+            { percent: {organic_pct}, color: '#6aff00' },
         ];
 
         const svgNS = 'http://www.w3.org/2000/svg';
