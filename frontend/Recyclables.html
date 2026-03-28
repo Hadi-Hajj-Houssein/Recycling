@@ -457,10 +457,7 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 </div>
 
 <script>
-// ── Auth guard ─────────────────────────────────────────────────────────────────
-(function () {
-  if (!localStorage.getItem('access_token')) window.location.href = 'login.html';
-})();
+
 
 // ── User info ──────────────────────────────────────────────────────────────────
 function loadUser() {
@@ -508,12 +505,10 @@ async function apiRequest(url, method, body) {
   method = method || 'GET';
   body   = body   || null;
 
-  var token = localStorage.getItem('access_token');
-  if (!token) { window.location.href = 'login.html'; return null; }
-
   var options = {
-    method:  method,
-    headers: { 'Authorization': 'Bearer ' + token }
+    method:      method,
+    credentials: 'include',   // ← sends cookie automatically
+    headers:     {}
   };
   if (body) {
     options.headers['Content-Type'] = 'application/json';
@@ -521,8 +516,7 @@ async function apiRequest(url, method, body) {
   }
 
   var response = await fetch(url, options);
-  if (response.status === 401 || response.status === 400) {
-    localStorage.clear();
+  if (response.status === 401) {
     window.location.href = 'login.html';
     return null;
   }

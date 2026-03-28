@@ -1,28 +1,32 @@
-async function apiRequest(url,method = 'GET',body = null){
-    const token  = localStorage.getItem('access_token');
-    if(!token){
-        window.location.href ='login.html';
-        return null;
-    }
-    // const options = {
-    //     options.headers['Content-Type'] = "application/json";
-
-    // }
+async function apiRequest(url, method = 'GET', body = null) {
     const options = {
         method: method,
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        }
+        credentials: 'include',
+        headers: {}
     };
-    if(body){
-        options.headers['Content-Type'] = "application/json";
+
+    if (body) {
+        options.headers['Content-Type'] = 'application/json';
         options.body = JSON.stringify(body);
     }
-    const response = await fetch(url,options);
-    if(response.status==400 || response.status==401){
-        localStorage.clear();
-        window.location.href ='login.html';
+
+    const response = await fetch(`http://127.0.0.1:8000${url}`, options);
+
+    if (response.status === 401) {
+        window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
         return null;
     }
+
+    if (response.status === 400) {
+        const errorData = await response.json();
+        alert(errorData.detail || "Bad request");
+        return null;
+    }
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Request failed: ${response.status} - ${text}`);
+    }
+
     return await response.json();
 }

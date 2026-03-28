@@ -568,10 +568,10 @@
     </div>
 
     <script>
-    // Toggle password visibility
     function togglePass(fieldId, btn) {
         const field = document.getElementById(fieldId);
         const icon = btn.querySelector('i');
+
         if (field.type === 'password') {
             field.type = 'text';
             icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -581,7 +581,6 @@
         }
     }
 
-    // Show error
     function showError(msg) {
         const err = document.getElementById('formError');
         document.getElementById('errorText').textContent = msg;
@@ -589,7 +588,6 @@
         document.getElementById('formSuccess').classList.remove('show');
     }
 
-    // Show success
     function showSuccess(msg) {
         const suc = document.getElementById('formSuccess');
         document.getElementById('successText').textContent = msg;
@@ -597,13 +595,11 @@
         document.getElementById('formError').classList.remove('show');
     }
 
-    // Hide messages
     function hideMessages() {
         document.getElementById('formError').classList.remove('show');
         document.getElementById('formSuccess').classList.remove('show');
     }
 
-    // ✅ FIX #4: Added "event" as parameter
     function socialLogin(provider, event) {
         const btn = event.target.closest('.btn-social');
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -615,15 +611,15 @@
             loginTime: new Date().toISOString(),
             provider: provider
         };
+
         localStorage.setItem('ecoUser', JSON.stringify(user));
         localStorage.setItem('isLoggedIn', 'true');
 
         setTimeout(() => {
-            window.location.href = '/dashboard';
+            window.location.href = 'http://127.0.0.1:5500/frontend/dashboard.html';
         }, 800);
     }
 
-    // Form submission
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         hideMessages();
@@ -636,7 +632,6 @@
         email.classList.remove('error-input');
         password.classList.remove('error-input');
 
-        // Validate email
         if (!email.value.trim()) {
             showError('Please enter your email address');
             email.classList.add('error-input');
@@ -651,7 +646,6 @@
             return;
         }
 
-        // Validate password
         if (!password.value) {
             showError('Please enter your password');
             password.classList.add('error-input');
@@ -670,7 +664,6 @@
         btn.disabled = true;
 
         const formData = new FormData();
-        // ✅ FIX #1: Changed 'username' to 'email' — matches backend Form(...) field
         formData.append('email', email.value);
         formData.append('password', password.value);
 
@@ -700,7 +693,6 @@
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userRole', data.role);
 
-            // Remember me
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('rememberedEmail', email.value);
             } else {
@@ -708,20 +700,21 @@
             }
 
             showSuccess('Login successful! Redirecting...');
+
             setTimeout(() => {
                 window.location.href = data.role === 'company'
-                    ? '/company_dashboard'
-                    : '/dashboard';
+                    ? 'http://127.0.0.1:5500/frontend/company_dashboard.html'
+                    : 'http://127.0.0.1:5500/frontend/dashboard.html';
             }, 1000);
 
         } catch (err) {
-            showError('Backend server is offline');
+            console.error("Login error:", err);
+            showError('Request failed: ' + err.message);
             btn.disabled = false;
             btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right"></i>';
         }
     });
 
-    // Auto-fill remembered email
     window.addEventListener('DOMContentLoaded', () => {
         const remembered = localStorage.getItem('rememberedEmail');
         if (remembered) {
@@ -730,13 +723,13 @@
         }
     });
 
-    // Input focus animations
     document.querySelectorAll('.form-group input').forEach(input => {
         input.addEventListener('focus', function () {
             this.closest('.input-wrapper').style.transform = 'scale(1.015)';
             this.classList.remove('error-input');
             hideMessages();
         });
+
         input.addEventListener('blur', function () {
             this.closest('.input-wrapper').style.transform = 'scale(1)';
         });
