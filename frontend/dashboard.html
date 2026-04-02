@@ -850,14 +850,42 @@
                             </div>
                         </div>
                         <div class="donut-legend">
-                            <div class="legend-item"><div class="legend-dot" style="background:#ff0000;"></div><span>Plastic</span><span class="legend-value">{{paper_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
-                            <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div><span>Paper</span><span class="legend-value">{{paper_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
-                            <div class="legend-item"><div class="legend-dot" style="background:#f1c40f;"></div><span>Glass</span><span class="legend-value">{{glass_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
-                            <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div><span>Metal</span><span class="legend-value">{{metal_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
-                            <div class="legend-item"><div class="legend-dot" style="background:#000000;"></div><span>Electronics</span><span class="legend-value">{{electronics_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->
-                            <div class="legend-item"><div class="legend-dot" style="background:#6aff00;"></div><span>Organic</span><span class="legend-value">{{organic_pct}}%</span></div> <!-- donut bel dashboard  ma7touta hon -->                            
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:#ff0000;"></div>
+                            <span>Plastic</span>
+                            <span class="legend-value" id="plastic_pct">0%</span>
+                        </div>
 
-                        </div>c
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:#3498db;"></div>
+                            <span>Paper</span>
+                            <span class="legend-value" id="paper_pct">0%</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:#f1c40f;"></div>
+                            <span>Glass</span>
+                            <span class="legend-value" id="glass_pct">0%</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:#9b59b6;"></div>
+                            <span>Metal</span>
+                            <span class="legend-value" id="metal_pct">0%</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:#000000;"></div>
+                            <span>Electronics</span>
+                            <span class="legend-value" id="electronics_pct">0%</span>
+                        </div>
+
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background:#6aff00;"></div>
+                            <span>Organic</span>
+                            <span class="legend-value" id="organic_pct">0%</span>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -991,12 +1019,16 @@
     </main>
 
     <script>
-        // ═══════ AUTH CHECK ═══════
-        // If not logged in, redirect to login
         (function checkAuth() {
             const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (isLoggedIn !== 'true') {
-                window.location.href = 'login.html';
+            const ecoUser = localStorage.getItem('ecoUser');
+            if (isLoggedIn !== 'true' || !ecoUser) {
+                // Give it 100ms in case localStorage is still being written
+                setTimeout(() => {
+                    if (localStorage.getItem('isLoggedIn') !== 'true') {
+                        window.location.href = 'login.html';
+                    }
+                }, 100);
                 return;
             }
         })();
@@ -1227,6 +1259,36 @@
         }, { threshold: 0.05 });
 
         document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
+
+        //materials breakdown
+        async function loadDashboardData() {
+        try {
+            const res = await fetch("http://127.0.0.1:8000/dashboard", {
+                method: "GET",
+                credentials: "include"
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.detail || "Failed to load dashboard data");
+                return;
+            }
+
+            document.getElementById("plastic_pct").textContent = data.plastic_pct + "%";
+            document.getElementById("paper_pct").textContent = data.paper_pct + "%";
+            document.getElementById("glass_pct").textContent = data.glass_pct + "%";
+            document.getElementById("metal_pct").textContent = data.metal_pct + "%";
+            document.getElementById("organic_pct").textContent = data.organic_pct + "%";
+            document.getElementById("electronics_pct").textContent = data.electronics_pct + "%";
+
+        } catch (err) {
+            console.error(err);
+            alert("Request failed");
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded", loadDashboardData);
     </script>
 </body>
 </html>

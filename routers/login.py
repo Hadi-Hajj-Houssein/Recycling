@@ -34,9 +34,9 @@ def login(
             key="access_token",
             value=token,
             httponly=True,
-            secure=False,   # set True in production with HTTPS
             samesite="lax",
-            max_age=15 * 60,
+            secure=False,        # False for localhost
+            domain="127.0.0.1",  # explicit domain
             path="/"
         )
 

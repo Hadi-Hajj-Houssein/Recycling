@@ -14,7 +14,7 @@ def get_db():
         db.close()
 
 @router.get("/me")
-def get_me(user_id: int = Depends(get_curr_user_id), db: Session = Depends(get_db)):
+def get_me(user_id: int = Depends(get_curr_user_id), db: Session = Depends(get_db)): # FastAPI pauses get_me and runs get_curr_user_id first.
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

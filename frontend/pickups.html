@@ -8,7 +8,7 @@ document.getElementById("pickupBtn").addEventListener("click", async () => {
     try {
         const res = await fetch("http://127.0.0.1:8000/me", {
             method: "GET",
-            credentials: "include"
+            credentials: "include"// the browser attaches your login cookies to this request. This is how the server knows who you are.
         });
 
         const data = await res.json();

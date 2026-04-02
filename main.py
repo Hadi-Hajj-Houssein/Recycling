@@ -9,7 +9,7 @@ from models.Add_Recyclable import Recyclables
 from models.Recyclables import Recyclable_Item
 
 from routers.recyclables_in import router as recyclables_router
-from routers.dashboard import router as dashboard_router
+from routers.recycling import router as dashboard_router
 from routers import signup, login, company_signup, company_selection, testroute
 
 Base.metadata.create_all(bind=engine)
