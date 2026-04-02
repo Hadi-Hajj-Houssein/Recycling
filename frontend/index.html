@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoCollect - Recycle Smarter</title>
+    <title>EcoCycle - Recycle Smarter</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -120,17 +120,22 @@
             z-index: 1001;
         }
 
-        .logo-icon {
+         .logo-icon {
             width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, #2ecc71, #1abc9c);
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
             box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
             animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(2);
+            display: block;
         }
 
         @keyframes logoPulse {
@@ -1043,8 +1048,10 @@
 
     <nav class="navbar" id="navbar">
         <a href="index.html" class="logo">
-            <img src="images/recyclables_logo.png" alt="logo image" class="logo-icon">
-            <div class="logo-text">Eco<span>Collect</span></div>
+            <div class="logo-icon">
+                <img src="../images/recyclables_logo.png" alt="logo image">
+            </div>
+            <div class="logo-text">Eco<span>Cycle</span></div>
         </a>
         <ul class="nav-links">
             <li><a href="#impact">Why It Matters</a></li>
@@ -1208,7 +1215,7 @@
         <div class="testimonials-grid">
             <div class="testimonial-card reveal">
                 <div class="testimonial-stars">★★★★★</div>
-                <blockquote>"EcoCollect completely changed how our household handles waste. Scheduling a pickup takes less than a minute, and knowing it actually goes to a certified recycler gives us real peace of mind."</blockquote>
+                <blockquote>"EcoCycle completely changed how our household handles waste. Scheduling a pickup takes less than a minute, and knowing it actually goes to a certified recycler gives us real peace of mind."</blockquote>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">SJ</div>
                     <div class="testimonial-info">
@@ -1219,8 +1226,7 @@
             </div>
             <div class="testimonial-card reveal">
                 <div class="testimonial-stars">★★★★★</div>
-                <blockquote>"As a restaurant owner, waste management used to be a headache. EcoCollect connected us with a reliable partner company within days. Our carbon footprint is down and our team loves it."</blockquote>
-                <div class="testimonial-author">
+                    <div class="testimonial-author">
                     <div class="testimonial-avatar">MR</div>
                     <div class="testimonial-info">
                         <h4>Mark Rivera</h4>
@@ -1230,7 +1236,7 @@
             </div>
             <div class="testimonial-card reveal">
                 <div class="testimonial-stars">★★★★★</div>
-                <blockquote>"I started using EcoCollect for my dorm and got my whole floor involved. It's the easiest way I've found to actually make recycling a habit. The tracking dashboard is super satisfying too!"</blockquote>
+                <blockquote>"I started using Ecocycle for my dorm and got my whole floor involved. It's the easiest way I've found to actually make recycling a habit. The tracking dashboard is super satisfying too!"</blockquote>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">AL</div>
                     <div class="testimonial-info">
@@ -1245,7 +1251,7 @@
     <section class="cta" id="cta">
         <div class="cta-box reveal">
             <h2>Ready to Make a <span class="highlight">Difference</span>?</h2>
-            <p>Join EcoCollect today and be part of the solution. It's free, easy, and makes a real impact.</p>
+            <p>Join EcoCycle today and be part of the solution. It's free, easy, and makes a real impact.</p>
             <a href="signup_choice.html" class="btn-hero-primary">
                 Start Recycling Now <i class="fas fa-arrow-right"></i>
             </a>
@@ -1256,8 +1262,10 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="index.html" class="logo">
-                    <div class="logo-icon">♻️</div>
-                    <div class="logo-text">Eco<span>Collect</span></div>
+                    <div class="logo-icon">
+                        <img src="../images/recyclables_logo.png" alt="logo image" style="width: 100%; height: 100%; object-fit: cover; transform: scale(2);">
+                    </div>
+                    <div class="logo-text">Eco<span>Cycle</span></div>
                 </a>
                 <p>Making recycling effortless for everyone. Track, schedule, and make an impact — one pickup at a time.</p>
                 <div class="footer-social">
@@ -1290,7 +1298,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 EcoCollect. All rights reserved. Built for a greener planet 🌍</p>
+            <p>&copy; 2025 EcoCycle. All rights reserved. Built for a greener planet 🌍</p>
         </div>
     </footer>
 
