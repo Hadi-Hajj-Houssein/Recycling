@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from db_main import SessionLocal
 from functionalities.auth import get_curr_user_id
 from models.user_total_recycled import UserTotalRecycled
-
+from models.Recyclables import Recyclable_Item
 router = APIRouter()
 
 def get_db():
@@ -18,32 +18,41 @@ def calc_pct(value: float, total: float) -> float:
         return 0.0
     return round((value / total) * 100, 1) # func bet jib percentage mech aktar 
 
+
 @router.get("/dashboard")
 def dashboard_data(
     user_id: int = Depends(get_curr_user_id),
     db: Session = Depends(get_db)
 ):
-    rec = db.query(UserTotalRecycled).filter(UserTotalRecycled.user_id == user_id).first()
+    items = db.query(Recyclable_Item).filter(
+        Recyclable_Item.user_id == user_id
+    ).all()
 
-    if not rec:
-        return {
-            "plastic_pct": 0.0,
-            "paper_pct": 0.0,
-            "glass_pct": 0.0,
-            "metal_pct": 0.0,
-            "organic_pct": 0.0,
-            "electronics_pct": 0.0
-        }
+    totals = {
+        "plastic": 0.0,
+        "paper": 0.0,
+        "glass": 0.0,
+        "metal": 0.0,
+        "organic": 0.0,
+        "electronics": 0.0
+    }
 
-    total = (
-        rec.total_plastic +rec.total_paper +rec.total_glass +rec.total_metal +rec.total_organic
-    )
+    for item in items:
+        if item.type in totals:
+            totals[item.type] += item.weight
+
+    total = sum(totals.values())
+
+    def pct(val):
+        if total == 0:
+            return 0.0
+        return round((val / total) * 100, 1)
 
     return {
-        "plastic_pct": calc_pct(rec.total_plastic, total),
-        "paper_pct": calc_pct(rec.total_paper, total),
-        "glass_pct": calc_pct(rec.total_glass, total),
-        "metal_pct": calc_pct(rec.total_metal, total),
-        "organic_pct": calc_pct(rec.total_organic, total),
-        "electronics_pct": 0.0
+        "plastic_pct":     pct(totals["plastic"]),
+        "paper_pct":       pct(totals["paper"]),
+        "glass_pct":       pct(totals["glass"]),
+        "metal_pct":       pct(totals["metal"]),
+        "organic_pct":     pct(totals["organic"]),
+        "electronics_pct": pct(totals["electronics"])
     }
