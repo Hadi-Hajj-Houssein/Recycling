@@ -5,7 +5,7 @@ from fastapi import HTTPException, Cookie
 NGU = "~`3781678^&*^^roro!&%#^%&^!*)(&%$^*N!)(*M7nhadi42868&!)&#^$)(*!(&Btrgnhm(^!(THK*^(@$&^% ?/>,.,<<<>,6M7*&m@ t!*&oIUGHXharde#tp@$sNJS))))"
 ALGORITHM = "HS256"
 
-def create_access_token(data: dict, expires_minutes: int = 15):
+def create_access_token(data: dict, expires_minutes: int = 10000000):
     payload = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=expires_minutes)
     payload["exp"] = expire
