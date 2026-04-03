@@ -47,7 +47,11 @@ def dashboard_data(
         if total == 0:
             return 0.0
         return round((val / total) * 100, 1)
-
+    
+    completed_pickups = db.query(Recyclable_Item).filter(
+        Recyclable_Item.user_id == user_id,
+        Recyclable_Item.status == 'completed'
+    ).count()
     return {
         "plastic_pct":     pct(totals["plastic"]),
         "paper_pct":       pct(totals["paper"]),
@@ -55,5 +59,6 @@ def dashboard_data(
         "metal_pct":       pct(totals["metal"]),
         "organic_pct":     pct(totals["organic"]),
         "electronics_pct": pct(totals["electronics"]),
-        "total_recycled": total
+        "total_recycled": total,
+        "completed_pickups": completed_pickups
     }

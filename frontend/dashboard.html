@@ -783,7 +783,7 @@
                         <div class="stat-icon green"><i class="fas fa-recycle"></i></div>
                         <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
                     </div>
-                    <div class="stat_value" id="stat_total_recycled">0</div>
+                    <div class="stat-value" id="stat_total_recycled">0</div>
                     
                     
                     <div class="stat-label" >Total Recycled</div> hadi rja3 
@@ -793,7 +793,7 @@
                         <div class="stat-icon blue"><i class="fas fa-truck"></i></div>
                         <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
                     </div>
-                    <div class="stat-value">SOON</div>
+                    <div class="stat-value" id="completed_pickups">0</div> 
                     <div class="stat-label">Pickups Completed</div>
                 </div>
                 <div class="stat-card animate-in">
@@ -1296,7 +1296,7 @@
         updateElement("metal_pct", data.metal_pct + "%");
         updateElement("organic_pct", data.organic_pct + "%");
         updateElement("electronics_pct", data.electronics_pct + "%");
-
+        updateElement("completed_pickups", data.completed_pickups);
         // Update total recycled (both locations)
         const totalRecycled = data.total_recycled + " kg";
         updateElement("stat_total_recycled", totalRecycled);
@@ -1322,9 +1322,6 @@
 
 // Call the function when page loads
     document.addEventListener('DOMContentLoaded', loadDashboardData);
-    
-
-    window.addEventListener("DOMContentLoaded", loadDashboardData);
     </script>
 </body>
 </html>
