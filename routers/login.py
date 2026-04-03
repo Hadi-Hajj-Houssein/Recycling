@@ -27,7 +27,7 @@ def login(
     if user and pwd_context.verify(password, user.password):
         token = create_access_token(
             data={"sub": str(user.id), "role": "user"},
-            expires_minutes=15
+            expires_minutes=120
         )
 
         response.set_cookie(
@@ -49,7 +49,7 @@ def login(
     if company and pwd_context.verify(password, company.password):
         token = create_access_token(
             data={"sub": str(company.id), "role": "company"},
-            expires_minutes=15
+            expires_minutes=120
         )
 
         response.set_cookie(
