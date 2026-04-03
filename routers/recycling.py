@@ -54,5 +54,6 @@ def dashboard_data(
         "glass_pct":       pct(totals["glass"]),
         "metal_pct":       pct(totals["metal"]),
         "organic_pct":     pct(totals["organic"]),
-        "electronics_pct": pct(totals["electronics"])
+        "electronics_pct": pct(totals["electronics"]),
+        "total_recycled": total
     }

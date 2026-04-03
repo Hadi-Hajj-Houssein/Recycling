@@ -783,8 +783,10 @@
                         <div class="stat-icon green"><i class="fas fa-recycle"></i></div>
                         <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
                     </div>
-                    <div class="stat-value">SOON</div>
-                    <div class="stat-label">Total Recycled</div>
+                    <div class="stat_value" id="stat_total_recycled">0</div>
+                    
+                    
+                    <div class="stat-label" >Total Recycled</div> hadi rja3 
                 </div>
                 <div class="stat-card animate-in">
                     <div class="stat-header">
@@ -845,7 +847,7 @@
                     <div class="donut-container">
                         <div class="donut" id="donutChart">
                             <div class="donut-center">
-                                <div class="value">2,847</div>
+                                <div class="value">0</div>  <!-- Remove the id="total_recycled" -->
                                 <div class="label">kg total</div>
                             </div>
                         </div>
@@ -1262,31 +1264,65 @@
 
         //materials breakdown
         async function loadDashboardData() {
-        try {
-            const res = await fetch("http://127.0.0.1:8000/dashboard", {
-                method: "GET",
-                credentials: "include"
-            });
+    try {
+        const res = await fetch("http://127.0.0.1:8000/dashboard", {
+            method: "GET",
+            credentials: "include"
+        });
 
-            const data = await res.json();
+        const data = await res.json();
 
-            if (!res.ok) {
-                alert(data.detail || "Failed to load dashboard data");
-                return;
-            }
-
-            document.getElementById("plastic_pct").textContent = data.plastic_pct + "%";
-            document.getElementById("paper_pct").textContent = data.paper_pct + "%";
-            document.getElementById("glass_pct").textContent = data.glass_pct + "%";
-            document.getElementById("metal_pct").textContent = data.metal_pct + "%";
-            document.getElementById("organic_pct").textContent = data.organic_pct + "%";
-            document.getElementById("electronics_pct").textContent = data.electronics_pct + "%";
-
-        } catch (err) {
-            console.error(err);
-            alert("Request failed");
+        if (!res.ok) {
+            alert(data.detail || "Failed to load dashboard data");
+            return;
         }
+
+        console.log("Dashboard data received:", data); // Debug log
+
+        // Safe update function
+        function updateElement(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            } else {
+                console.error(`❌ Element with id="${id}" not found!`);
+            }
+        }
+
+        // Update percentage elements
+        updateElement("plastic_pct", data.plastic_pct + "%");
+        updateElement("paper_pct", data.paper_pct + "%");
+        updateElement("glass_pct", data.glass_pct + "%");
+        updateElement("metal_pct", data.metal_pct + "%");
+        updateElement("organic_pct", data.organic_pct + "%");
+        updateElement("electronics_pct", data.electronics_pct + "%");
+
+        // Update total recycled (both locations)
+        const totalRecycled = data.total_recycled + " kg";
+        updateElement("stat_total_recycled", totalRecycled);
+        
+        // Update donut chart center value
+        const donutChart = document.getElementById("donutChart");
+        if (donutChart) {
+            const valueElement = donutChart.querySelector(".value");
+            if (valueElement) {
+                valueElement.textContent = totalRecycled;
+            } else {
+                console.error("❌ .value element not found inside #donutChart");
+            }
+        } else {
+            console.error("❌ Element with id='donutChart' not found!");
+        }
+
+    } catch (err) {
+        console.error("Error loading dashboard data:", err);
+        alert("Request failed: " + err.message);
     }
+}
+
+// Call the function when page loads
+    document.addEventListener('DOMContentLoaded', loadDashboardData);
+    
 
     window.addEventListener("DOMContentLoaded", loadDashboardData);
     </script>
