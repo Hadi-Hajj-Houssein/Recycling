@@ -9,7 +9,6 @@ session = Session()
 print("--- CHECKING DATABASE ---")
 
 try:
-    # SQL query to get all companies
     result = session.execute(text("SELECT * FROM companies"))
     rows = result.fetchall()
 
