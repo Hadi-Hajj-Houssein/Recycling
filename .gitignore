@@ -2,3 +2,5 @@
 .env
 __pycache__/
 *.pyc
+db_config.py
+email_verification.py

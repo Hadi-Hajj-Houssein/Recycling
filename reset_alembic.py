@@ -3,9 +3,8 @@ import sys
 from sqlalchemy import create_engine, text
 from alembic.config import Config
 from alembic import command
-
-# Your database URL
-DATABASE_URL = "postgresql://postgres:123@localhost:5432/your_database"
+from db_config import DB_URL
+DATABASE_URL = DB_URL
 
 def drop_alembic_version():
     """Drop the alembic_version table"""

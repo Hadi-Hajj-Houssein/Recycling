@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from db_main import SessionLocal
 from models.user import User
 from models.company import Company
-
+from email_verification import SENDER_EMAIL, APP_PASSWORD
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
