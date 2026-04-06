@@ -17,6 +17,7 @@ class ItemIn(BaseModel):
     condition: str = "clean"
     status:    str = "pending"
     date:      Optional[datetime] = None
+    company_id : Optional[int] = None
 
 
 class ItemOut(BaseModel):
@@ -30,6 +31,7 @@ class ItemOut(BaseModel):
     condition: str
     status:    str
     date:      datetime
+    company_id: Optional[int] = None 
 
     class Config:
         from_attributes = True   
@@ -120,6 +122,7 @@ def create_item(
         condition = payload.condition,
         status    = payload.status,
         date      = payload.date or datetime.utcnow(),
+        company_id = payload.company_id,
     )
     db.add(item)
     db.commit()
@@ -150,6 +153,7 @@ def update_item(
     item.weight    = payload.weight
     item.condition = payload.condition
     item.status    = payload.status
+    item.company_id = payload.company_id  
 
     db.commit()
     db.refresh(item)

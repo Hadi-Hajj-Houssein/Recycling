@@ -816,15 +816,15 @@
 
             <!-- Quick Actions -->
             <div class="quick-actions">
-                <a href="#" class="quick-action animate-in">
+                <a href="./Recyclables.html" class="quick-action animate-in">
                     <div class="qa-icon green"><i class="fas fa-plus"></i></div>
                     <div><h4>Log Recyclables</h4><p>Add new items to recycle</p></div>
                 </a>
-                <a href="#" class="quick-action animate-in">
+                <a href="./pickups.html" class="quick-action animate-in">
                     <div class="qa-icon blue"><i class="fas fa-calendar-plus"></i></div>
                     <div><h4>Schedule Pickup</h4><p>Book a pickup date</p></div>
                 </a>
-                <a href="#" class="quick-action animate-in">
+                <a href="./companies.html" class="quick-action animate-in">
                     <div class="qa-icon orange"><i class="fas fa-search-location"></i></div>
                     <div><h4>Find Companies</h4><p>Browse recyclers near you</p></div>
                 </a>
@@ -832,13 +832,13 @@
 
             <!-- Charts -->
             <div class="dashboard-grid triple">
-                <div class="card animate-in">
+                <!-- <div class="card animate-in">
                     <div class="card-header">
-                        <h3>Recycling Overview SOON</h3>
+                        <h3>Recycling Overview</h3>
                         <button class="card-action">This Year <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></button>
                     </div>
-                    <div class="chart-container" id="barChart"></div>
-                </div>
+                    <div class="chart-container" id="barChart" style="display: none;"></div>
+                </div> -->
                 <div class="card animate-in">
                     <div class="card-header">
                         <h3>Materials Breakdown</h3>
@@ -1149,45 +1149,45 @@
 });
 
         // ═══════ BAR CHART ═══════
-        const barData = [
-            { label: 'Jan', value: 120 }, { label: 'Feb', value: 180 },
-            { label: 'Mar', value: 250 }, { label: 'Apr', value: 200 },
-            { label: 'May', value: 310 }, { label: 'Jun', value: 280 },
-            { label: 'Jul', value: 350 }, { label: 'Aug', value: 290 },
-            { label: 'Sep', value: 380 }, { label: 'Oct', value: 420 },
-            { label: 'Nov', value: 360 }, { label: 'Dec', value: 190 },
-        ];
+        // const barData = [
+        //     { label: 'Jan', value: 120 }, { label: 'Feb', value: 180 },
+        //     { label: 'Mar', value: 250 }, { label: 'Apr', value: 200 },
+        //     { label: 'May', value: 310 }, { label: 'Jun', value: 280 },
+        //     { label: 'Jul', value: 350 }, { label: 'Aug', value: 290 },
+        //     { label: 'Sep', value: 380 }, { label: 'Oct', value: 420 },
+        //     { label: 'Nov', value: 360 }, { label: 'Dec', value: 190 },
+        // ];
 
-        const maxVal = Math.max(...barData.map(d => d.value));
-        const barChart = document.getElementById('barChart');
+        // const maxVal = Math.max(...barData.map(d => d.value));
+        // const barChart = document.getElementById('barChart');
 
-        barData.forEach((d, i) => {
-            const group = document.createElement('div');
-            group.className = 'chart-bar-group';
+        // barData.forEach((d, i) => {
+        //     const group = document.createElement('div');
+        //     group.className = 'chart-bar-group';
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'chart-bar-wrapper';
+        //     const wrapper = document.createElement('div');
+        //     wrapper.className = 'chart-bar-wrapper';
 
-            const bar = document.createElement('div');
-            bar.className = 'chart-bar';
-            bar.setAttribute('data-value', d.value + 'kg');
-            bar.style.height = '0%';
+        //     const bar = document.createElement('div');
+        //     bar.className = 'chart-bar';
+        //     bar.setAttribute('data-value', d.value + 'kg');
+        //     bar.style.height = '0%';
 
-            setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
+        //     setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
 
-            if (i === now.getMonth()) {
-                bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
-                bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
-            }
+        //     if (i === now.getMonth()) {
+        //         bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
+        //         bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
+        //     }
 
-            wrapper.appendChild(bar);
-            const label = document.createElement('div');
-            label.className = 'chart-label';
-            label.textContent = d.label;
-            group.appendChild(wrapper);
-            group.appendChild(label);
-            barChart.appendChild(group);
-        });
+        //     wrapper.appendChild(bar);
+        //     const label = document.createElement('div');
+        //     label.className = 'chart-label';
+        //     label.textContent = d.label;
+        //     group.appendChild(wrapper);
+        //     group.appendChild(label);
+        //     barChart.appendChild(group);
+        // });
 
         // ═══════ DONUT CHART ═══════
         const donutChart = document.getElementById('donutChart');
