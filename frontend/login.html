@@ -617,7 +617,7 @@
         localStorage.setItem('isLoggedIn', 'true');
 
         setTimeout(() => {
-            window.location.href = 'http://127.0.0.1:5500/frontend/dashboard.html';
+            window.location.href = '/static/dashboard.html';
         }, 800);
     }
 
@@ -704,8 +704,8 @@
 
             setTimeout(() => {
                 window.location.href = data.role === 'company'
-                    ? 'http://127.0.0.1:5500/frontend/company_dashboard.html'
-                    : 'http://127.0.0.1:5500/frontend/dashboard.html';
+                    ? '/static/frontend/company_dashboard.html'
+                    : '/static/frontend/dashboard.html';
             }, 1000);
 
         } catch (err) {
