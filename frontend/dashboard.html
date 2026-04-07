@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="theme.css">
+    <script src="theme.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - EcoCycle</title>
@@ -9,30 +11,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        :root {
-            --sidebar-width: 260px;
-            --sidebar-collapsed: 76px;
-            --topbar-height: 70px;
-            --bg-primary: #060e09;
-            --bg-secondary: #0a1a0f;
-            --bg-card: rgba(255, 255, 255, 0.025);
-            --bg-card-hover: rgba(46, 204, 113, 0.04);
-            --border: rgba(255, 255, 255, 0.06);
-            --border-hover: rgba(46, 204, 113, 0.15);
-            --green: #2ecc71;
-            --green-dark: #27ae60;
-            --green-glow: rgba(46, 204, 113, 0.3);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.6);
-            --text-muted: rgba(255, 255, 255, 0.35);
-            --blue: #3498db;
-            --yellow: #f1c40f;
-            --orange: #e67e22;
-            --red: #e74c3c;
-            --purple: #9b59b6;
-            --teal: #1abc9c;
-        }
-
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg-primary);
@@ -40,13 +18,13 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
         }
 
         /* ═══════ SIDEBAR ═══════ */
         .sidebar {
             position: fixed;
-            left: 0;
-            top: 0;
+            left: 0; top: 0;
             width: var(--sidebar-width);
             height: 100vh;
             background: var(--bg-secondary);
@@ -75,7 +53,7 @@
             text-decoration: none;
             white-space: nowrap;
         }
-        
+
         .sidebar-logo .icon {
             width: 38px; height: 38px; min-width: 38px;
             background: linear-gradient(135deg, var(--green), var(--teal));
@@ -85,7 +63,13 @@
             box-shadow: 0 4px 12px var(--green-glow);
         }
 
-        .sidebar-logo .text { font-size: 20px; font-weight: 700; color: #fff; transition: opacity 0.2s; }
+        /* ✅ FIX 1: Was hardcoded #fff — now uses var(--text-primary) so it's visible in both themes */
+        .sidebar-logo .text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: opacity 0.2s, color 0.4s;
+        }
         .sidebar-logo .text span { color: var(--green); }
 
         .sidebar-toggle {
@@ -95,8 +79,7 @@
             transition: all 0.3s;
             display: flex; align-items: center; justify-content: center;
         }
-
-        .sidebar-toggle:hover { background: rgba(255,255,255,0.05); color: var(--green); }
+        .sidebar-toggle:hover { background: rgba(46,204,113,0.08); color: var(--green); }
 
         .sidebar-nav {
             flex: 1;
@@ -104,7 +87,6 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
-
         .sidebar-nav::-webkit-scrollbar { width: 3px; }
         .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
@@ -173,7 +155,6 @@
             transition: background 0.3s;
             cursor: pointer; white-space: nowrap;
         }
-
         .sidebar-user:hover { background: rgba(255,255,255,0.04); }
 
         .sidebar-user .avatar {
@@ -207,19 +188,24 @@
             min-height: 100vh;
             transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .main.expanded { margin-left: var(--sidebar-collapsed); }
 
-        /* Topbar */
+        /* ✅ FIX 2: Topbar — was hardcoded dark. Now uses var(--bg-secondary) with blur overlay */
         .topbar {
             position: sticky; top: 0; z-index: 100;
             height: var(--topbar-height);
-            background: rgba(6, 14, 9, 0.85);
+            background: var(--topbar-bg, rgba(6, 14, 9, 0.85));
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 32px;
+            transition: background 0.4s ease;
+        }
+
+        /* Light mode topbar override */
+        [data-theme="light"] .topbar {
+            background: rgba(240, 245, 241, 0.92);
         }
 
         .topbar-left { display: flex; align-items: center; gap: 20px; }
@@ -231,25 +217,25 @@
             cursor: pointer; padding: 6px;
         }
 
-        .topbar-greeting h2 { font-size: 18px; font-weight: 600; }
+        .topbar-greeting h2 { font-size: 18px; font-weight: 600; color: var(--text-primary); }
         .topbar-greeting p { font-size: 12px; color: var(--text-muted); }
 
         .topbar-right { display: flex; align-items: center; gap: 8px; }
 
         .search-box { position: relative; margin-right: 8px; }
 
+        /* ✅ FIX 3: Search input was hardcoded color:#fff — now uses var(--text-primary) */
         .search-box input {
             width: 220px;
             padding: 9px 14px 9px 38px;
-            background: rgba(255,255,255,0.04);
+            background: var(--bg-input);
             border: 1px solid var(--border);
             border-radius: 12px;
-            color: #fff;
+            color: var(--text-primary);
             font-family: 'Poppins', sans-serif;
             font-size: 13px;
             outline: none; transition: all 0.3s;
         }
-
         .search-box input::placeholder { color: var(--text-muted); }
         .search-box input:focus { border-color: var(--green); background: rgba(46,204,113,0.04); width: 260px; }
 
@@ -261,15 +247,14 @@
         .topbar-btn {
             width: 40px; height: 40px;
             border-radius: 12px;
-            background: rgba(255,255,255,0.03);
+            background: var(--bg-card);
             border: 1px solid var(--border);
             color: var(--text-secondary);
             font-size: 16px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.3s; position: relative;
         }
-
-        .topbar-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+        .topbar-btn:hover { background: rgba(46,204,113,0.08); color: var(--green); }
 
         .topbar-btn .notif-dot {
             position: absolute; top: 8px; right: 8px;
@@ -286,27 +271,23 @@
             cursor: pointer; margin-left: 4px;
             transition: transform 0.3s;
         }
-
         .topbar-avatar:hover { transform: scale(1.05); }
 
         /* Dropdown */
         .profile-dropdown {
             position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
+            top: calc(100% + 8px); right: 0;
             width: 220px;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 8px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            opacity: 0;
-            visibility: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            opacity: 0; visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.25s ease;
             z-index: 200;
         }
-
         .profile-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
         .profile-dropdown .dropdown-header {
@@ -314,8 +295,7 @@
             border-bottom: 1px solid var(--border);
             margin-bottom: 4px;
         }
-
-        .profile-dropdown .dropdown-header h4 { font-size: 13px; font-weight: 600; }
+        .profile-dropdown .dropdown-header h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
         .profile-dropdown .dropdown-header p { font-size: 11px; color: var(--text-muted); }
 
         .dropdown-item {
@@ -329,8 +309,7 @@
             font-family: 'Poppins', sans-serif;
             text-align: left;
         }
-
-        .dropdown-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+        .dropdown-item:hover { background: rgba(46,204,113,0.06); color: var(--text-primary); }
         .dropdown-item.danger { color: var(--red); }
         .dropdown-item.danger:hover { background: rgba(231,76,60,0.08); }
         .dropdown-item i { width: 16px; text-align: center; font-size: 14px; }
@@ -340,7 +319,7 @@
         /* ═══════ STAT CARDS ═══════ */
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 18px; margin-bottom: 28px;
         }
 
@@ -363,12 +342,11 @@
         .stat-card:nth-child(1)::after { background: var(--green); }
         .stat-card:nth-child(2)::after { background: var(--blue); }
         .stat-card:nth-child(3)::after { background: var(--yellow); }
-        .stat-card:nth-child(4)::after { background: var(--purple); }
 
         .stat-card:hover {
             transform: translateY(-4px);
             border-color: var(--border-hover);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
         }
 
         .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -377,7 +355,6 @@
             width: 44px; height: 44px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center; font-size: 18px;
         }
-
         .stat-icon.green { background: rgba(46,204,113,0.1); color: var(--green); }
         .stat-icon.blue { background: rgba(52,152,219,0.1); color: var(--blue); }
         .stat-icon.yellow { background: rgba(241,196,15,0.1); color: var(--yellow); }
@@ -388,9 +365,9 @@
             font-size: 11px; font-weight: 600;
             padding: 4px 8px; border-radius: 8px;
         }
-
         .stat-trend.up { color: var(--green); background: rgba(46,204,113,0.1); }
-        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
+
+        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; color: var(--text-primary); }
         .stat-label { font-size: 12.5px; color: var(--text-muted); }
 
         /* ═══════ GRID ═══════ */
@@ -401,13 +378,12 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 18px; padding: 24px;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, background 0.4s;
         }
-
-        .card:hover { border-color: rgba(255,255,255,0.08); }
+        .card:hover { border-color: rgba(46,204,113,0.1); }
 
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-        .card-header h3 { font-size: 15px; font-weight: 600; }
+        .card-header h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
 
         .card-header .card-action {
             font-size: 12px; color: var(--green);
@@ -416,35 +392,7 @@
             font-family: 'Poppins', sans-serif;
             transition: opacity 0.3s;
         }
-
         .card-header .card-action:hover { opacity: 0.7; }
-
-        /* ═══════ CHART ═══════ */
-        .chart-container { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-top: 10px; }
-
-        .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; }
-        .chart-bar-wrapper { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
-
-        .chart-bar {
-            width: 70%; max-width: 36px;
-            border-radius: 8px 8px 4px 4px;
-            background: linear-gradient(180deg, var(--green), rgba(46,204,113,0.3));
-            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
-            cursor: pointer; min-height: 4px;
-            position: relative;
-        }
-
-        .chart-bar:hover { filter: brightness(1.2); }
-
-        .chart-bar::before {
-            content: attr(data-value);
-            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
-            font-size: 10px; font-weight: 600; color: var(--text-muted);
-            opacity: 0; transition: opacity 0.2s; white-space: nowrap;
-        }
-
-        .chart-bar:hover::before { opacity: 1; }
-        .chart-label { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
 
         /* ═══════ DONUT ═══════ */
         .donut-container { display: flex; align-items: center; gap: 30px; }
@@ -456,7 +404,7 @@
         }
 
         .donut-center { position: absolute; text-align: center; }
-        .donut-center .value { font-size: 24px; font-weight: 700; line-height: 1.2; }
+        .donut-center .value { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
         .donut-center .label { font-size: 10px; color: var(--text-muted); }
 
         .donut-legend { display: flex; flex-direction: column; gap: 12px; }
@@ -473,22 +421,20 @@
             padding: 12px 14px; border-radius: 12px;
             transition: background 0.25s; cursor: pointer;
         }
-
-        .activity-item:hover { background: rgba(255,255,255,0.02); }
+        .activity-item:hover { background: rgba(46,204,113,0.04); }
 
         .activity-icon {
             width: 40px; height: 40px; min-width: 40px;
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center; font-size: 16px;
         }
-
         .activity-icon.pickup { background: rgba(46,204,113,0.1); color: var(--green); }
         .activity-icon.recycle { background: rgba(52,152,219,0.1); color: var(--blue); }
         .activity-icon.reward { background: rgba(241,196,15,0.1); color: var(--yellow); }
         .activity-icon.alert { background: rgba(231,76,60,0.1); color: var(--red); }
 
         .activity-details { flex: 1; min-width: 0; }
-        .activity-details h4 { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .activity-details h4 { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .activity-details p { font-size: 11.5px; color: var(--text-muted); }
         .activity-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 
@@ -506,19 +452,18 @@
             background: rgba(46,204,113,0.12); border-radius: 12px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
         .date-box .day { font-size: 20px; font-weight: 700; color: var(--green); line-height: 1; }
         .date-box .month { font-size: 10px; color: var(--green); text-transform: uppercase; font-weight: 600; }
 
-        .pickup-info h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 2px; }
+        .pickup-info h4 { font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
         .pickup-info p { font-size: 11.5px; color: var(--text-muted); }
 
         .pickup-items { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .pickup-tag {
             padding: 4px 10px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
+            background: rgba(46,204,113,0.06);
+            border: 1px solid rgba(46,204,113,0.15);
             border-radius: 8px; font-size: 11px; color: var(--text-secondary);
         }
 
@@ -528,7 +473,7 @@
         .progress-header span { font-size: 12px; color: var(--text-muted); }
         .progress-header strong { font-size: 12px; color: var(--text-secondary); }
 
-        .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+        .progress-track { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
 
         .progress-fill {
             height: 100%; border-radius: 4px;
@@ -542,23 +487,7 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             animation: progressShine 2s linear infinite;
         }
-
         @keyframes progressShine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
-
-        /* ═══════ IMPACT ═══════ */
-        .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .impact-item {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            border-radius: 14px; padding: 18px 16px;
-            text-align: center; transition: all 0.3s;
-        }
-
-        .impact-item:hover { border-color: var(--border-hover); transform: translateY(-2px); }
-        .impact-item .impact-emoji { font-size: 28px; margin-bottom: 8px; display: block; }
-        .impact-item .impact-value { font-size: 18px; font-weight: 700; color: var(--green); }
-        .impact-item .impact-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
         /* ═══════ LEADERBOARD ═══════ */
         .leaderboard-list { display: flex; flex-direction: column; gap: 6px; }
@@ -568,8 +497,7 @@
             padding: 10px 12px; border-radius: 12px;
             transition: background 0.25s;
         }
-
-        .leaderboard-item:hover { background: rgba(255,255,255,0.02); }
+        .leaderboard-item:hover { background: rgba(46,204,113,0.04); }
         .leaderboard-item.you { background: rgba(46,204,113,0.06); border: 1px solid rgba(46,204,113,0.12); }
 
         .rank { font-size: 13px; font-weight: 700; color: var(--text-muted); width: 24px; min-width: 24px; text-align: center; }
@@ -585,7 +513,7 @@
         }
 
         .leaderboard-info { flex: 1; min-width: 0; }
-        .leaderboard-info h4 { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .leaderboard-info h4 { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .leaderboard-info p { font-size: 11px; color: var(--text-muted); }
         .leaderboard-score { font-size: 13px; font-weight: 600; color: var(--green); }
 
@@ -599,12 +527,11 @@
             cursor: pointer; transition: all 0.3s;
             text-decoration: none; color: var(--text-primary);
         }
-
         .quick-action:hover {
             border-color: var(--border-hover);
             background: var(--bg-card-hover);
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
 
         .qa-icon {
@@ -612,12 +539,11 @@
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center; font-size: 18px;
         }
-
         .qa-icon.green { background: rgba(46,204,113,0.1); color: var(--green); }
         .qa-icon.blue { background: rgba(52,152,219,0.1); color: var(--blue); }
         .qa-icon.orange { background: rgba(230,126,34,0.1); color: var(--orange); }
 
-        .quick-action h4 { font-size: 13.5px; font-weight: 600; }
+        .quick-action h4 { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
         .quick-action p { font-size: 11.5px; color: var(--text-muted); }
 
         /* ═══════ OVERLAY ═══════ */
@@ -628,7 +554,6 @@
             z-index: 999; opacity: 0;
             transition: opacity 0.3s;
         }
-
         .sidebar-overlay.active { opacity: 1; }
 
         /* ═══════ ANIMATIONS ═══════ */
@@ -636,7 +561,6 @@
             opacity: 0; transform: translateY(20px);
             animation: animateIn 0.5s ease forwards;
         }
-
         @keyframes animateIn { to { opacity: 1; transform: translateY(0); } }
 
         .animate-in:nth-child(1) { animation-delay: 0.05s; }
@@ -651,12 +575,10 @@
             .stats-row { grid-template-columns: repeat(2, 1fr); }
             .quick-actions { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 1024px) {
             .dashboard-grid, .dashboard-grid.triple { grid-template-columns: 1fr; }
             .search-box { display: none; }
         }
-
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.3); }
             .sidebar.mobile-open { transform: translateX(0); }
@@ -671,7 +593,6 @@
             .quick-actions { grid-template-columns: 1fr; }
             .donut-container { flex-direction: column; align-items: center; }
         }
-
         @media (max-width: 480px) {
             .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
             .stat-card { padding: 16px 14px; border-radius: 14px; }
@@ -679,8 +600,6 @@
             .stat-icon { width: 38px; height: 38px; font-size: 16px; }
             .topbar-greeting h2 { font-size: 15px; }
             .card { padding: 20px; }
-            .impact-grid { gap: 8px; }
-            .impact-item { padding: 14px 12px; }
         }
     </style>
 </head>
@@ -704,11 +623,12 @@
             <div class="nav-section">
                 <div class="nav-section-title">Main</div>
                 <a href="#" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
-<a href="./Recyclables.html" class="nav-item">
-  <i class="fas fa-recycle"></i>
-  <span>My Recyclables</span>
-  <div class="badge">1</div>
-</a>           <a href="pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
+                <a href="./Recyclables.html" class="nav-item">
+                    <i class="fas fa-recycle"></i>
+                    <span>My Recyclables</span>
+                    <div class="badge">1</div>
+                </a>
+                <a href="pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
                 <a href="company_select.html" class="nav-item"><i class="fas fa-building"></i><span>Companies</span></a>
             </div>
             <div class="nav-section">
@@ -767,7 +687,7 @@
                             <p id="dropdownEmail">jane@example.com</p>
                         </div>
                         <button class="dropdown-item"><i class="fas fa-user"></i> My Profile</button>
-                        <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
+                        <button class="dropdown-item" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i> Settings</button>
                         <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
                         <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
                     </div>
@@ -777,23 +697,22 @@
 
         <div class="content">
             <!-- Stats -->
+            <!-- ✅ FIX 4: Removed "hadi rja3" debug text, corrected to 3 columns -->
             <div class="stats-row">
                 <div class="stat-card animate-in">
                     <div class="stat-header">
                         <div class="stat-icon green"><i class="fas fa-recycle"></i></div>
                         <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
                     </div>
-                    <div class="stat-value" id="stat_total_recycled">0</div>
-                    
-                    
-                    <div class="stat-label" >Total Recycled</div> hadi rja3 
+                    <div class="stat-value" id="stat_total_recycled">0 kg</div>
+                    <div class="stat-label">Total Recycled</div>
                 </div>
                 <div class="stat-card animate-in">
                     <div class="stat-header">
                         <div class="stat-icon blue"><i class="fas fa-truck"></i></div>
                         <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
                     </div>
-                    <div class="stat-value" id="completed_pickups">0</div> 
+                    <div class="stat-value" id="completed_pickups">0</div>
                     <div class="stat-label">Pickups Completed</div>
                 </div>
                 <div class="stat-card animate-in">
@@ -804,14 +723,6 @@
                     <div class="stat-value">SOON</div>
                     <div class="stat-label">Eco Points Earned</div>
                 </div>
-                <!-- <div class="stat-card animate-in">
-                    <div class="stat-header">
-                        <div class="stat-icon purple"><i class="fas fa-seedling"></i></div>
-                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> 5%</span>
-                    </div>
-                    <div class="stat-value">SOON</div>
-                    <div class="stat-label">Trees Saved</div>
-                </div> -->
             </div>
 
             <!-- Quick Actions -->
@@ -824,7 +735,7 @@
                     <div class="qa-icon blue"><i class="fas fa-calendar-plus"></i></div>
                     <div><h4>Schedule Pickup</h4><p>Book a pickup date</p></div>
                 </a>
-                <a href="./companies.html" class="quick-action animate-in">
+                <a href="./company_select.html" class="quick-action animate-in">
                     <div class="qa-icon orange"><i class="fas fa-search-location"></i></div>
                     <div><h4>Find Companies</h4><p>Browse recyclers near you</p></div>
                 </a>
@@ -832,13 +743,6 @@
 
             <!-- Charts -->
             <div class="dashboard-grid triple">
-                <!-- <div class="card animate-in">
-                    <div class="card-header">
-                        <h3>Recycling Overview</h3>
-                        <button class="card-action">This Year <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></button>
-                    </div>
-                    <div class="chart-container" id="barChart" style="display: none;"></div>
-                </div> -->
                 <div class="card animate-in">
                     <div class="card-header">
                         <h3>Materials Breakdown</h3>
@@ -847,47 +751,42 @@
                     <div class="donut-container">
                         <div class="donut" id="donutChart">
                             <div class="donut-center">
-                                <div class="value">0</div>  <!-- Remove the id="total_recycled" -->
+                                <div class="value">0 kg</div>
                                 <div class="label">kg total</div>
                             </div>
                         </div>
                         <div class="donut-legend">
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:#ff0000;"></div>
-                            <span>Plastic</span>
-                            <span class="legend-value" id="plastic_pct">0%</span>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background:#e74c3c;"></div>
+                                <span>Plastic</span>
+                                <span class="legend-value" id="plastic_pct">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background:#3498db;"></div>
+                                <span>Paper</span>
+                                <span class="legend-value" id="paper_pct">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background:#f1c40f;"></div>
+                                <span>Glass</span>
+                                <span class="legend-value" id="glass_pct">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background:#9b59b6;"></div>
+                                <span>Metal</span>
+                                <span class="legend-value" id="metal_pct">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background:#555;"></div>
+                                <span>Electronics</span>
+                                <span class="legend-value" id="electronics_pct">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background:#2ecc71;"></div>
+                                <span>Organic</span>
+                                <span class="legend-value" id="organic_pct">0%</span>
+                            </div>
                         </div>
-
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:#3498db;"></div>
-                            <span>Paper</span>
-                            <span class="legend-value" id="paper_pct">0%</span>
-                        </div>
-
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:#f1c40f;"></div>
-                            <span>Glass</span>
-                            <span class="legend-value" id="glass_pct">0%</span>
-                        </div>
-
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:#9b59b6;"></div>
-                            <span>Metal</span>
-                            <span class="legend-value" id="metal_pct">0%</span>
-                        </div>
-
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:#000000;"></div>
-                            <span>Electronics</span>
-                            <span class="legend-value" id="electronics_pct">0%</span>
-                        </div>
-
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:#6aff00;"></div>
-                            <span>Organic</span>
-                            <span class="legend-value" id="organic_pct">0%</span>
-                        </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -980,43 +879,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Impact -->
-            <div class="dashboard-grid" style="margin-top:18px;">
-                <!-- <div class="card animate-in">
-                    <div class="card-header"><h3>🌍 Your Environmental Impact</h3><button class="card-action">Learn More</button></div>
-                    <div class="impact-grid">
-                        <div class="impact-item"><span class="impact-emoji">🌳</span><div class="impact-value">18</div><div class="impact-label">Trees Saved</div></div>
-                        <div class="impact-item"><span class="impact-emoji">💧</span><div class="impact-value">12,400 L</div><div class="impact-label">Water Saved</div></div>
-                        <div class="impact-item"><span class="impact-emoji">⚡</span><div class="impact-value">340 kWh</div><div class="impact-label">Energy Saved</div></div>
-                        <div class="impact-item"><span class="impact-emoji">🏭</span><div class="impact-value">890 kg</div><div class="impact-label">CO₂ Reduced</div></div>
-                    </div>
-                </div> -->
-                <!-- <div class="card animate-in">
-                    <div class="card-header"><h3>⭐ Eco Points</h3><button class="card-action">Redeem</button></div>
-                    <div style="text-align:center;margin-bottom:24px;">
-                        <div style="font-size:42px;font-weight:800;color:var(--green);line-height:1;">1,240</div>
-                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Available Points</div>
-                    </div>
-                    <div class="progress-section">
-                        <div class="progress-header"><span>Level 7 → Level 8</span><strong>760 pts to go</strong></div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width:62%;background:linear-gradient(90deg,var(--yellow),var(--orange));"></div>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:10px;margin-top:20px;">
-                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                            <div style="font-size:16px;margin-bottom:4px;">🥉</div><div style="font-size:11px;color:var(--text-muted);">5 Badges</div>
-                        </div>
-                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                            <div style="font-size:16px;margin-bottom:4px;">🔥</div><div style="font-size:11px;color:var(--text-muted);">12 Day Streak</div>
-                        </div>
-                        <div style="flex:1;text-align:center;padding:14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;">
-                            <div style="font-size:16px;margin-bottom:4px;">🎯</div><div style="font-size:11px;color:var(--text-muted);">Level 7</div>
-                        </div>
-                    </div>
-                </div> -->
-            </div>
         </div>
     </main>
 
@@ -1025,7 +887,6 @@
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             const ecoUser = localStorage.getItem('ecoUser');
             if (isLoggedIn !== 'true' || !ecoUser) {
-                // Give it 100ms in case localStorage is still being written
                 setTimeout(() => {
                     if (localStorage.getItem('isLoggedIn') !== 'true') {
                         window.location.href = 'login.html';
@@ -1042,19 +903,16 @@
             const email = userData.email || 'user@example.com';
             const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-            // Update all name displays
             document.getElementById('sidebarName').textContent = name;
             document.getElementById('dropdownName').textContent = name;
             document.getElementById('dropdownEmail').textContent = email;
             document.getElementById('leaderboardName').textContent = 'You (' + name + ')';
 
-            // Update all avatars
             ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = initials;
             });
 
-            // Update greeting
             const hour = new Date().getHours();
             const firstName = name.split(' ')[0];
             const greetEl = document.getElementById('greeting');
@@ -1071,7 +929,7 @@
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         });
 
-    // LOGOUT FUNCTION 
+        // ═══════ LOGOUT ═══════
         function logout() {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('ecoUser');
@@ -1082,7 +940,6 @@
             e.preventDefault();
             logout();
         });
-
         document.getElementById('logoutDropdown').addEventListener('click', logout);
 
         // ═══════ PROFILE DROPDOWN ═══════
@@ -1090,7 +947,6 @@
             document.getElementById('profileDropdown').classList.toggle('show');
         }
 
-        // Close dropdown on outside click
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('profileDropdown');
             const avatar = document.getElementById('topbarAvatar');
@@ -1132,72 +988,24 @@
         }
 
         document.querySelectorAll('.nav-item:not(.logout-btn)').forEach(item => {
-  item.addEventListener('click', function (e) {
-    const href = this.getAttribute('href');
-
-    // set active UI
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    this.classList.add('active');
-    if (window.innerWidth <= 768) closeMobile();
-
-    // ONLY block dummy links like "#"
-    if (!href || href === '#') {
-      e.preventDefault();
-    }
-    // if href is "Recyclables.html" it will navigate normally
-  });
-});
-
-        // ═══════ BAR CHART ═══════
-        // const barData = [
-        //     { label: 'Jan', value: 120 }, { label: 'Feb', value: 180 },
-        //     { label: 'Mar', value: 250 }, { label: 'Apr', value: 200 },
-        //     { label: 'May', value: 310 }, { label: 'Jun', value: 280 },
-        //     { label: 'Jul', value: 350 }, { label: 'Aug', value: 290 },
-        //     { label: 'Sep', value: 380 }, { label: 'Oct', value: 420 },
-        //     { label: 'Nov', value: 360 }, { label: 'Dec', value: 190 },
-        // ];
-
-        // const maxVal = Math.max(...barData.map(d => d.value));
-        // const barChart = document.getElementById('barChart');
-
-        // barData.forEach((d, i) => {
-        //     const group = document.createElement('div');
-        //     group.className = 'chart-bar-group';
-
-        //     const wrapper = document.createElement('div');
-        //     wrapper.className = 'chart-bar-wrapper';
-
-        //     const bar = document.createElement('div');
-        //     bar.className = 'chart-bar';
-        //     bar.setAttribute('data-value', d.value + 'kg');
-        //     bar.style.height = '0%';
-
-        //     setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
-
-        //     if (i === now.getMonth()) {
-        //         bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
-        //         bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
-        //     }
-
-        //     wrapper.appendChild(bar);
-        //     const label = document.createElement('div');
-        //     label.className = 'chart-label';
-        //     label.textContent = d.label;
-        //     group.appendChild(wrapper);
-        //     group.appendChild(label);
-        //     barChart.appendChild(group);
-        // });
+            item.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                if (window.innerWidth <= 768) closeMobile();
+                if (!href || href === '#') e.preventDefault();
+            });
+        });
 
         // ═══════ DONUT CHART ═══════
         const donutChart = document.getElementById('donutChart');
         const segments = [
-
-            { percent: {paper_pct}, color: '#3498db' },
-            { percent: {glass_pct}, color: '#f1c40f' },
-            { percent: {metal_pct}, color: '#9b59b6' },
-            { percent: {electronics_pct}, color: '#000000' },
-            { percent: {organic_pct}, color: '#6aff00' },
+            { percent: 0, color: '#e74c3c' },
+            { percent: 0, color: '#3498db' },
+            { percent: 0, color: '#f1c40f' },
+            { percent: 0, color: '#9b59b6' },
+            { percent: 0, color: '#555555' },
+            { percent: 0, color: '#2ecc71' },
         ];
 
         const svgNS = 'http://www.w3.org/2000/svg';
@@ -1208,6 +1016,7 @@
         const radius = 40;
         const circumference = 2 * Math.PI * radius;
         let offset = 0;
+        const circleRefs = [];
 
         segments.forEach((seg, i) => {
             const circle = document.createElementNS(svgNS, 'circle');
@@ -1218,21 +1027,34 @@
             circle.setAttribute('stroke', seg.color);
             circle.setAttribute('stroke-width', '12');
             circle.setAttribute('stroke-linecap', 'round');
-
-            const dashLength = (seg.percent / 100) * circumference;
-            circle.setAttribute('stroke-dashoffset', (-offset).toString());
+            circle.setAttribute('stroke-dashoffset', '0');
             circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
             circle.style.transition = 'stroke-dasharray 1s ease';
-
-            setTimeout(() => {
-                circle.setAttribute('stroke-dasharray', `${dashLength - 3} ${circumference}`);
-            }, 500 + i * 150);
-
-            offset += dashLength;
+            circleRefs.push(circle);
             svg.appendChild(circle);
         });
 
         donutChart.insertBefore(svg, donutChart.firstChild);
+
+        function updateDonut(data) {
+            let off = 0;
+            const percents = [
+                data.plastic_pct || 0,
+                data.paper_pct || 0,
+                data.glass_pct || 0,
+                data.metal_pct || 0,
+                data.electronics_pct || 0,
+                data.organic_pct || 0,
+            ];
+            circleRefs.forEach((circle, i) => {
+                const dashLength = (percents[i] / 100) * circumference;
+                circle.setAttribute('stroke-dashoffset', (-off).toString());
+                setTimeout(() => {
+                    circle.setAttribute('stroke-dasharray', `${Math.max(0, dashLength - 2)} ${circumference}`);
+                }, 500 + i * 150);
+                off += dashLength;
+            });
+        }
 
         // ═══════ RESPONSIVE ═══════
         function handleResize() {
@@ -1246,7 +1068,6 @@
                 mainContent.classList.add('expanded');
             }
         }
-
         window.addEventListener('resize', handleResize);
         handleResize();
 
@@ -1259,69 +1080,50 @@
                 }
             });
         }, { threshold: 0.05 });
-
         document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
 
-        //materials breakdown
+        // ═══════ DASHBOARD DATA ═══════
         async function loadDashboardData() {
-    try {
-        const res = await fetch("http://127.0.0.1:8000/dashboard", {
-            method: "GET",
-            credentials: "include"
-        });
+            try {
+                const res = await fetch("http://127.0.0.1:8000/dashboard", {
+                    method: "GET",
+                    credentials: "include"
+                });
 
-        const data = await res.json();
+                const data = await res.json();
 
-        if (!res.ok) {
-            alert(data.detail || "Failed to load dashboard data");
-            return;
-        }
+                if (!res.ok) {
+                    console.error("Failed to load dashboard data:", data.detail);
+                    return;
+                }
 
-        console.log("Dashboard data received:", data); // Debug log
+                function updateElement(id, value) {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                }
 
-        // Safe update function
-        function updateElement(id, value) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.textContent = value;
-            } else {
-                console.error(`❌ Element with id="${id}" not found!`);
+                updateElement("plastic_pct", data.plastic_pct + "%");
+                updateElement("paper_pct", data.paper_pct + "%");
+                updateElement("glass_pct", data.glass_pct + "%");
+                updateElement("metal_pct", data.metal_pct + "%");
+                updateElement("organic_pct", data.organic_pct + "%");
+                updateElement("electronics_pct", data.electronics_pct + "%");
+                updateElement("completed_pickups", data.completed_pickups);
+
+                const totalRecycled = data.total_recycled + " kg";
+                updateElement("stat_total_recycled", totalRecycled);
+
+                const valueEl = donutChart.querySelector(".value");
+                if (valueEl) valueEl.textContent = totalRecycled;
+
+                updateDonut(data);
+
+            } catch (err) {
+                console.error("Error loading dashboard data:", err);
             }
         }
 
-        // Update percentage elements
-        updateElement("plastic_pct", data.plastic_pct + "%");
-        updateElement("paper_pct", data.paper_pct + "%");
-        updateElement("glass_pct", data.glass_pct + "%");
-        updateElement("metal_pct", data.metal_pct + "%");
-        updateElement("organic_pct", data.organic_pct + "%");
-        updateElement("electronics_pct", data.electronics_pct + "%");
-        updateElement("completed_pickups", data.completed_pickups);
-        // Update total recycled (both locations)
-        const totalRecycled = data.total_recycled + " kg";
-        updateElement("stat_total_recycled", totalRecycled);
-        
-        // Update donut chart center value
-        const donutChart = document.getElementById("donutChart");
-        if (donutChart) {
-            const valueElement = donutChart.querySelector(".value");
-            if (valueElement) {
-                valueElement.textContent = totalRecycled;
-            } else {
-                console.error("❌ .value element not found inside #donutChart");
-            }
-        } else {
-            console.error("❌ Element with id='donutChart' not found!");
-        }
-
-    } catch (err) {
-        console.error("Error loading dashboard data:", err);
-        alert("Request failed: " + err.message);
-    }
-}
-
-// Call the function when page loads
-    document.addEventListener('DOMContentLoaded', loadDashboardData);
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
     </script>
 </body>
 </html>
