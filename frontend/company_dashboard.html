@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - EcoCollect</title>
@@ -978,7 +979,23 @@
         loadCompanyData();
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        function logout() { localStorage.removeItem('isLoggedIn'); localStorage.removeItem('ecoCompany'); window.location.href = 'login.html'; }
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        async function logout() {
+            await fetch('http://127.0.0.1:8000/logout', {
+                method: 'POST',
+                credentials: 'include'
+            }).catch(() => {});
+            
+            // Clear all possible session data
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('ecoCompany');
+            localStorage.removeItem('ecoUser'); 
+            
+            window.location.href = 'login.html';
+        }
         document.getElementById('logoutSidebar').addEventListener('click', (e) => { e.preventDefault(); logout(); });
         document.getElementById('logoutDropdown').addEventListener('click', logout);
 

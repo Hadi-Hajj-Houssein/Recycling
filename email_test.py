@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import smtplib
 import random
 from email.mime.text import MIMEText
+from email_verification import SENDER_EMAIL, APP_PASSWORD
 
 app = FastAPI()
 app.add_middleware(
@@ -15,9 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 verification_codes = {}
-SENDER_EMAIL = "ecocycle0000@gmail.com"
-APP_PASSWORD = "smimkwwukyjsdcjt"
-
 class EmailRequest(BaseModel):
     email: EmailStr
 
@@ -62,4 +60,3 @@ def verify_code(data: VerifyRequest):
 
     del verification_codes[data.email]
     return {"message": "Email verified successfully"}
-#

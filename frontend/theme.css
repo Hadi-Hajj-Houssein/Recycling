@@ -1,0 +1,101 @@
+:root {
+    --sidebar-width: 260px;
+    --sidebar-collapsed: 76px;
+    --topbar-height: 70px;
+
+    --bg-primary: #060e09;
+    --bg-secondary: #0a1a0f;
+    --bg-card: rgba(255, 255, 255, 0.025);
+    --bg-card-hover: rgba(46, 204, 113, 0.04);
+    --bg-input: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(46, 204, 113, 0.2);
+    --border-input: rgba(255, 255, 255, 0.08);
+    --green: #2ecc71;
+    --green-dark: #27ae60;
+    --green-glow: rgba(46, 204, 113, 0.3);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-muted: rgba(255, 255, 255, 0.35);
+    --blue: #3498db;
+    --yellow: #f1c40f;
+    --orange: #e67e22;
+    --red: #e74c3c;
+    --purple: #9b59b6;
+    --teal: #1abc9c;
+    --shadow: rgba(0,0,0,0.35);
+}
+
+[data-theme="light"] {
+    --bg-primary: #f0f5f1;
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(255,255,255,0.85);
+    --bg-card-hover: rgba(46, 204, 113, 0.06);
+    --bg-input: rgba(0,0,0,0.03);
+    --border: rgba(0,0,0,0.08);
+    --border-hover: rgba(46, 204, 113, 0.3);
+    --border-input: rgba(0,0,0,0.1);
+    --text-primary: #0d1f12;
+    --text-secondary: rgba(13,31,18,0.65);
+    --text-muted: rgba(13,31,18,0.4);
+    --shadow: rgba(0,0,0,0.1);
+}
+
+body {
+    margin: 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.topbar {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+input, textarea, select {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border-input);
+}
+
+body, .topbar, .card, input, textarea, select {
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+/* Sidebar logo text — fixes the white-on-white issue globally */
+.sidebar-logo .text {
+    color: var(--text-primary);
+    transition: color 0.4s;
+}
+
+/* Topbar light mode — fixes the black bar globally */
+[data-theme="light"] .topbar {
+    background: rgba(240, 245, 241, 0.92);
+}
+
+/* Search inputs — fixes invisible text in light mode globally */
+.search-box input {
+    color: var(--text-primary);
+    background: var(--bg-input);
+}
+
+/* Cards hover in light mode — subtle instead of invisible */
+[data-theme="light"] .card:hover,
+[data-theme="light"] .settings-card:hover {
+    border-color: rgba(46, 204, 113, 0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+/* Nav item hover in light mode — not too transparent */
+[data-theme="light"] .nav-item:hover {
+    background: rgba(46, 204, 113, 0.06);
+}
+
+/* Dropdown backgrounds in light mode */
+[data-theme="light"] .profile-dropdown {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
