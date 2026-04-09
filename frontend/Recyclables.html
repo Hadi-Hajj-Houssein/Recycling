@@ -521,7 +521,10 @@ async function apiRequest(url, method, body) {
     options.body = JSON.stringify(body);
   }
 
-  var response = await fetch(url, options);
+  var response = await fetch(url, {
+      ...options,
+      credentials: 'include'
+  });
   if (response.status === 401) {
     if (!window.location.href.includes('index.html')) {
         window.location.href = 'login.html';
