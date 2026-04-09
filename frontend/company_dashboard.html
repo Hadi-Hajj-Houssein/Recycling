@@ -652,7 +652,6 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="index.html" class="sidebar-logo">
@@ -667,14 +666,14 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main</div>
-                <a href="#" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
-                <a href="#" class="nav-item">
+                <a href="company_dashboard.html" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <a href="company_collected_materials.html" class="nav-item">
                     <i class="fas fa-recycle"></i>
                     <span>Collected Materials</span>
                     <div class="badge">1</div>
                 </a>
                 <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
-                <a href="#" class="nav-item"><i class="fas fa-building"></i><span>Collection Routes</span></a>
+                <a href="user_requests.html" class="nav-item"><i class="fas fa-users"></i><span>User Requests</span><div class="badge">7</div></a>
             </div>
             <div class="nav-section">
                 <div class="nav-section-title">Analytics</div>
@@ -691,7 +690,6 @@
             </div>
         </nav>
 
-        <!-- FIX: Single sidebar footer, inside aside -->
         <div class="sidebar-footer">
             <div class="sidebar-user">
                 <div class="avatar" id="sidebarAvatar">GC</div>
@@ -703,7 +701,6 @@
         </div>
     </aside>
 
-    <!-- Main -->
     <main class="main" id="mainContent">
 
         <header class="topbar">
@@ -744,7 +741,6 @@
 
         <div class="content">
 
-            <!-- Stats -->
             <div class="stats-row">
                 <div class="stat-card animate-in">
                     <div class="stat-header">
@@ -780,15 +776,14 @@
                 </div>
             </div>
 
-            <!-- Quick Actions -->
             <div class="quick-actions">
                 <a href="#" class="quick-action animate-in">
                     <div class="qa-icon green"><i class="fas fa-clipboard-check"></i></div>
                     <div><h4>View Pickup Requests</h4><p>See all scheduled pickups</p></div>
                 </a>
-                <a href="#" class="quick-action animate-in">
-                    <div class="qa-icon blue"><i class="fas fa-route"></i></div>
-                    <div><h4>Plan Collection Route</h4><p>Assign pickups to drivers</p></div>
+                <a href="user_requests.html" class="quick-action animate-in">
+                    <div class="qa-icon blue"><i class="fas fa-users"></i></div>
+                    <div><h4>Browse User Requests</h4><p>Filter by area & material</p></div>
                 </a>
                 <a href="#" class="quick-action animate-in">
                     <div class="qa-icon orange"><i class="fas fa-check-circle"></i></div>
@@ -796,7 +791,6 @@
                 </a>
             </div>
 
-            <!-- Charts -->
             <div class="dashboard-grid triple">
                 <div class="card animate-in">
                     <div class="card-header">
@@ -827,7 +821,6 @@
                 </div>
             </div>
 
-            <!-- Activity + Sidebar -->
             <div class="dashboard-grid">
                 <div class="card animate-in">
                     <div class="card-header">
@@ -917,7 +910,6 @@
                 </div>
             </div>
 
-            <!-- Impact -->
             <div class="dashboard-grid" style="margin-top:18px;">
                 <div class="card animate-in">
                     <div class="card-header"><h3>🌍 Company Environmental Impact</h3><button class="card-action">Detailed Analytics</button></div>
@@ -954,15 +946,13 @@
                 </div>
             </div>
 
-        </div><!-- end .content -->
-    </main><!-- end main -->
+        </div>
+    </main>
 
     <script>
         (function checkAuth() {
             const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (isLoggedIn !== 'true') {
-                window.location.href = 'login.html';
-            }
+            if (isLoggedIn !== 'true') window.location.href = 'login.html';
         })();
 
         function loadCompanyData() {
@@ -970,17 +960,14 @@
             const name = companyData.companyName || companyData.name || 'Green Collect Ltd';
             const email = companyData.adminEmail || 'admin@ecocollect.com';
             const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-
             document.getElementById('sidebarName').textContent = name;
             document.getElementById('dropdownName').textContent = name;
             document.getElementById('dropdownEmail').textContent = email;
             document.getElementById('leaderboardName').textContent = 'Your Team (' + name + ')';
-
             ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = initials;
             });
-
             const hour = new Date().getHours();
             const greetEl = document.getElementById('greeting');
             if (hour < 12) greetEl.textContent = 'Good Morning, Collector 👋';
@@ -989,38 +976,23 @@
         }
 
         loadCompanyData();
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        const now = new Date();
-        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('ecoCompany');
-            window.location.href = 'login.html';
-        }
-
+        function logout() { localStorage.removeItem('isLoggedIn'); localStorage.removeItem('ecoCompany'); window.location.href = 'login.html'; }
         document.getElementById('logoutSidebar').addEventListener('click', (e) => { e.preventDefault(); logout(); });
         document.getElementById('logoutDropdown').addEventListener('click', logout);
 
-        function toggleDropdown() {
-            document.getElementById('profileDropdown').classList.toggle('show');
-        }
-
+        function toggleDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('profileDropdown');
             const avatar = document.getElementById('topbarAvatar');
-            if (!dropdown.contains(e.target) && e.target !== avatar) {
-                dropdown.classList.remove('show');
-            }
+            if (!dropdown.contains(e.target) && e.target !== avatar) dropdown.classList.remove('show');
         });
 
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const toggleIcon = sidebarToggle.querySelector('i');
-
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('expanded');
@@ -1030,128 +1002,62 @@
 
         const mobileToggle = document.getElementById('mobileToggle');
         const overlay = document.getElementById('sidebarOverlay');
+        mobileToggle.addEventListener('click', () => { sidebar.classList.add('mobile-open'); sidebar.classList.remove('collapsed'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; });
 
-        mobileToggle.addEventListener('click', () => {
-            sidebar.classList.add('mobile-open');
-            sidebar.classList.remove('collapsed');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-
-        overlay.addEventListener('click', closeMobile);
-
-        function closeMobile() {
-            sidebar.classList.remove('mobile-open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        document.querySelectorAll('.nav-item:not(.logout-btn)').forEach(item => {
-            item.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                if (window.innerWidth <= 768) closeMobile();
-                if (!href || href === '#') e.preventDefault();
-            });
-        });
-
+        const now = new Date();
         const barData = [
-            { label: 'Jan', value: 1200 }, { label: 'Feb', value: 1800 },
-            { label: 'Mar', value: 2500 }, { label: 'Apr', value: 2000 },
-            { label: 'May', value: 3100 }, { label: 'Jun', value: 2800 },
-            { label: 'Jul', value: 3500 }, { label: 'Aug', value: 2900 },
-            { label: 'Sep', value: 3800 }, { label: 'Oct', value: 4200 },
-            { label: 'Nov', value: 3600 }, { label: 'Dec', value: 1900 },
+            { label: 'Jan', value: 1200 }, { label: 'Feb', value: 1800 }, { label: 'Mar', value: 2500 },
+            { label: 'Apr', value: 2000 }, { label: 'May', value: 3100 }, { label: 'Jun', value: 2800 },
+            { label: 'Jul', value: 3500 }, { label: 'Aug', value: 2900 }, { label: 'Sep', value: 3800 },
+            { label: 'Oct', value: 4200 }, { label: 'Nov', value: 3600 }, { label: 'Dec', value: 1900 },
         ];
-
         const maxVal = Math.max(...barData.map(d => d.value));
         const barChart = document.getElementById('barChart');
-
         barData.forEach((d, i) => {
-            const group = document.createElement('div');
-            group.className = 'chart-bar-group';
-            const wrapper = document.createElement('div');
-            wrapper.className = 'chart-bar-wrapper';
-            const bar = document.createElement('div');
-            bar.className = 'chart-bar';
-            bar.setAttribute('data-value', d.value + 'kg');
-            bar.style.height = '0%';
+            const group = document.createElement('div'); group.className = 'chart-bar-group';
+            const wrapper = document.createElement('div'); wrapper.className = 'chart-bar-wrapper';
+            const bar = document.createElement('div'); bar.className = 'chart-bar';
+            bar.setAttribute('data-value', d.value + 'kg'); bar.style.height = '0%';
             setTimeout(() => { bar.style.height = (d.value / maxVal) * 100 + '%'; }, 300 + i * 60);
-            if (i === now.getMonth()) {
-                bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)';
-                bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)';
-            }
+            if (i === now.getMonth()) { bar.style.background = 'linear-gradient(180deg, #27ae60, #2ecc71)'; bar.style.boxShadow = '0 0 12px rgba(46,204,113,0.3)'; }
             wrapper.appendChild(bar);
-            const label = document.createElement('div');
-            label.className = 'chart-label';
-            label.textContent = d.label;
-            group.appendChild(wrapper);
-            group.appendChild(label);
-            barChart.appendChild(group);
+            const label = document.createElement('div'); label.className = 'chart-label'; label.textContent = d.label;
+            group.appendChild(wrapper); group.appendChild(label); barChart.appendChild(group);
         });
 
         const donutChart = document.getElementById('donutChart');
-        const segments = [
-            { percent: 38, color: '#2ecc71' },
-            { percent: 28, color: '#3498db' },
-            { percent: 20, color: '#f1c40f' },
-            { percent: 14, color: '#9b59b6' },
-        ];
-
+        const segments = [{ percent: 38, color: '#2ecc71' }, { percent: 28, color: '#3498db' }, { percent: 20, color: '#f1c40f' }, { percent: 14, color: '#9b59b6' }];
         const svgNS = 'http://www.w3.org/2000/svg';
         const svg = document.createElementNS(svgNS, 'svg');
         svg.setAttribute('viewBox', '0 0 100 100');
         svg.style.cssText = 'width:100%;height:100%;transform:rotate(-90deg);position:absolute;';
-
-        const radius = 40;
-        const circumference = 2 * Math.PI * radius;
+        const radius = 40, circumference = 2 * Math.PI * radius;
         let offset = 0;
-
         segments.forEach((seg, i) => {
             const circle = document.createElementNS(svgNS, 'circle');
-            circle.setAttribute('cx', '50');
-            circle.setAttribute('cy', '50');
-            circle.setAttribute('r', radius.toString());
-            circle.setAttribute('fill', 'none');
-            circle.setAttribute('stroke', seg.color);
-            circle.setAttribute('stroke-width', '12');
-            circle.setAttribute('stroke-linecap', 'round');
+            circle.setAttribute('cx', '50'); circle.setAttribute('cy', '50'); circle.setAttribute('r', radius.toString());
+            circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', seg.color);
+            circle.setAttribute('stroke-width', '12'); circle.setAttribute('stroke-linecap', 'round');
             const dashLength = (seg.percent / 100) * circumference;
             circle.setAttribute('stroke-dashoffset', (-offset).toString());
             circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
             circle.style.transition = 'stroke-dasharray 1s ease';
             setTimeout(() => { circle.setAttribute('stroke-dasharray', `${dashLength - 3} ${circumference}`); }, 500 + i * 150);
-            offset += dashLength;
-            svg.appendChild(circle);
+            offset += dashLength; svg.appendChild(circle);
         });
-
         donutChart.insertBefore(svg, donutChart.firstChild);
 
         function handleResize() {
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            if (window.innerWidth <= 1024 && window.innerWidth > 768) {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
-            }
+            if (window.innerWidth > 768) { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; }
+            if (window.innerWidth <= 1024 && window.innerWidth > 768) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }
         }
-
         window.addEventListener('resize', handleResize);
         handleResize();
 
         const animObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.opacity = '1'; entry.target.style.transform = 'translateY(0)'; } });
         }, { threshold: 0.05 });
-
         document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
     </script>
 </body>
