@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 db_config.py
 email_verification.py
+alembic.ini
