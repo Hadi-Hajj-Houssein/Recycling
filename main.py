@@ -35,6 +35,7 @@ app.include_router(company_selection.router)
 app.include_router(dashboard_router)
 app.include_router(me.router)
 #app.include_router(auth.router)
+#
 @app.get("/")
 def home():
     return {"message": "Server is running"}
