@@ -298,7 +298,7 @@
                 <span>Collected Materials</span>
                 <div class="badge">1</div>
             </a>
-            <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
+            <a href="pending_pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
             <!-- REPLACED: Collection Routes → User Requests -->
             <a href="user_requests.html" class="nav-item"><i class="fas fa-users"></i><span>User Requests</span><div class="badge">7</div></a>
         </div>
@@ -515,6 +515,22 @@ let currentPage = 1;
 const perPage = 10;
 let filtered = [];
 
+// Replace the (function checkAuth()) IIFE at the top
+async function checkAuth() {
+    try {
+        const res = await fetch('http://127.0.0.1:8000/me', {
+            credentials: 'include' // sends the HttpOnly cookie automatically
+        });
+        if (!res.ok) window.location.href = 'login.html';
+        else {
+            const data = await res.json();
+            populateDashboard(data); // use real user data
+        }
+    } catch {
+        window.location.href = 'login.html';
+    }
+}
+checkAuth();
 async function loadPickups() {
     try {
         const res = await fetch('http://127.0.0.1:8000/pickups');

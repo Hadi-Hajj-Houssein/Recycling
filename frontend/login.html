@@ -704,8 +704,8 @@
 
             setTimeout(() => {
                 window.location.href = data.role === 'company'
-                    ? '/static/frontend/company_dashboard.html'
-                    : '/static/frontend/dashboard.html';
+                    ? 'http://127.0.0.1:5500/frontend/company_dashboard.html'
+                    : 'http://127.0.0.1:5500/frontend/dashboard.html';
             }, 1000);
 
         } catch (err) {

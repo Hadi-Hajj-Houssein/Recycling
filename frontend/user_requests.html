@@ -264,8 +264,8 @@
             <div class="nav-section-title">Main</div>
             <a href="company_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
             <a href="company_collected_materials.html" class="nav-item"><i class="fas fa-recycle"></i><span>Collected Materials</span><div class="badge">1</div></a>
-            <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
-            <a href="requests.html" class="nav-item active"><i class="fas fa-users"></i><span>User Requests</span><div class="badge">7</div></a>
+            <a href="pending_pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
+            <a href="#" class="nav-item active"><i class="fas fa-users"></i><span>User Requests</span><div class="badge">7</div></a>
         </div>
         <div class="nav-section">
             <div class="nav-section-title">Analytics</div>
@@ -389,21 +389,25 @@
 
 <script>
 /* ── Static sample data (replace with API fetch) ── */
-const REQUESTS = [
-    { id:'REQ-001', name:'Rami Khoury', initials:'RK', avatarBg:'linear-gradient(135deg,#2ecc71,#1abc9c)', area:'Jounieh', address:'Rue de Jounieh, Bloc B', materials:['plastic','glass'], weight:28, date:'2026-04-10', status:'new', score:340, joined:'Jan 2025', phone:'+961 3 112 233', notes:'Large bags near entrance. Ring bell #4.' },
-    { id:'REQ-002', name:'Lara Nassar', initials:'LN', avatarBg:'linear-gradient(135deg,#3498db,#9b59b6)', area:'Jounieh', address:'Kaslik, Highway entrance', materials:['paper','metal'], weight:15, date:'2026-04-10', status:'urgent', score:210, joined:'Mar 2025', phone:'+961 3 445 566', notes:'Time-sensitive, bins overflow.' },
-    { id:'REQ-003', name:'Hassan Chahine', initials:'HC', avatarBg:'linear-gradient(135deg,#e67e22,#e74c3c)', area:'Jounieh', address:'Haret Sakher, Blvd 7', materials:['ewaste'], weight:10, date:'2026-04-11', status:'awaiting', score:580, joined:'Jun 2024', phone:'+961 3 778 899', notes:'Electronics — 2 old monitors, printer.' },
-    { id:'REQ-004', name:'Maya Gebran', initials:'MG', avatarBg:'linear-gradient(135deg,#9b59b6,#3498db)', area:'Jounieh', address:'Zouk Mosbeh, Downtown', materials:['plastic','paper','glass'], weight:42, date:'2026-04-09', status:'new', score:720, joined:'Oct 2023', phone:'+961 3 321 654', notes:'' },
-    { id:'REQ-005', name:'Karim Saleh', initials:'KS', avatarBg:'linear-gradient(135deg,#1abc9c,#2ecc71)', area:'Beirut – Hamra', address:'Hamra St, Bldg 14', materials:['paper','organic'], weight:20, date:'2026-04-10', status:'scheduled', score:155, joined:'Feb 2026', phone:'+961 3 654 321', notes:'Morning pickup preferred (before 10 AM).' },
-    { id:'REQ-006', name:'Nour Haddad', initials:'NH', avatarBg:'linear-gradient(135deg,#f1c40f,#e67e22)', area:'Beirut – Hamra', address:'Bliss St, near AUB gate', materials:['plastic','metal'], weight:33, date:'2026-04-11', status:'new', score:490, joined:'Aug 2024', phone:'+961 3 900 112', notes:'' },
-    { id:'REQ-007', name:'Tony Rizk', initials:'TR', avatarBg:'linear-gradient(135deg,#e74c3c,#e67e22)', area:'Beirut – Ashrafieh', address:'Geitawi, Rue Sursock', materials:['glass','metal'], weight:18, date:'2026-04-10', status:'urgent', score:290, joined:'Nov 2024', phone:'+961 3 233 445', notes:'Glass stored in crates, handle carefully.' },
-    { id:'REQ-008', name:'Dina Khalil', initials:'DK', avatarBg:'linear-gradient(135deg,#3498db,#2ecc71)', area:'Beirut – Ashrafieh', address:'Achrafieh, Rue Monot 23', materials:['paper','plastic'], weight:25, date:'2026-04-12', status:'awaiting', score:640, joined:'May 2024', phone:'+961 3 556 778', notes:'' },
-    { id:'REQ-009', name:'Jad Frem', initials:'JF', avatarBg:'linear-gradient(135deg,#9b59b6,#e74c3c)', area:'Metn', address:'Dekwaneh, Main Rd', materials:['plastic','ewaste'], weight:37, date:'2026-04-09', status:'new', score:820, joined:'Mar 2023', phone:'+961 3 010 203', notes:'Large e-waste batch — office cleanup.' },
-    { id:'REQ-010', name:'Samar Bou Habib', initials:'SB', avatarBg:'linear-gradient(135deg,#1abc9c,#3498db)', area:'Metn', address:'Sin El Fil, Industrial Zone', materials:['metal','glass'], weight:54, date:'2026-04-10', status:'new', score:910, joined:'Jan 2023', phone:'+961 3 405 060', notes:'Heavy — bring extra hands.' },
-    { id:'REQ-011', name:'Elias Karam', initials:'EK', avatarBg:'linear-gradient(135deg,#2ecc71,#f1c40f)', area:'Metn', address:'Jdeideh, Rue El Matar', materials:['organic','paper'], weight:12, date:'2026-04-13', status:'scheduled', score:370, joined:'Sep 2025', phone:'+961 3 708 090', notes:'' },
-    { id:'REQ-012', name:'Hiba Moussa', initials:'HM', avatarBg:'linear-gradient(135deg,#e67e22,#9b59b6)', area:'Keserwan', address:'Ghosta, Church Sq.', materials:['plastic'], weight:8, date:'2026-04-11', status:'new', score:220, joined:'Dec 2025', phone:'+961 3 800 900', notes:'' },
-    { id:'REQ-013', name:'Marc Gemayel', initials:'MG', avatarBg:'linear-gradient(135deg,#3498db,#e74c3c)', area:'Keserwan', address:'Adma, Coastal Rd', materials:['glass','plastic','paper'], weight:30, date:'2026-04-10', status:'urgent', score:460, joined:'Jul 2024', phone:'+961 3 111 222', notes:'Urgent — scheduled community event cleanup.' },
-];
+let REQUESTS = [];
+
+async function loadLiveRequests() {
+    try {
+        // Change this line from '/pickups' to '/api/requests'
+        const response = await fetch('http://127.0.0.1:8000/api/requests');
+        
+        if (!response.ok) throw new Error("Database fetch failed");
+        
+        const data = await response.json();
+        
+        // This is where we update the global REQUESTS variable with DB data
+        REQUESTS = data; 
+        render(); 
+        updateSummary(REQUESTS);
+    } catch (err) {
+        console.error("Connection Error:", err);
+    }
+}
 
 const MAT_ICONS = { plastic:'🥤', paper:'📄', glass:'🍶', metal:'🔩', ewaste:'💻', organic:'🌱' };
 const STATUS_LABELS = { new:'New', urgent:'Urgent', scheduled:'Scheduled', awaiting:'Awaiting' };
@@ -413,6 +417,23 @@ let currentMat = '';
 let currentStatus = '';
 let currentSearch = '';
 let viewMode = 'grid';
+
+// Replace the (function checkAuth()) IIFE at the top
+async function checkAuth() {
+    try {
+        const res = await fetch('http://127.0.0.1:8000/me', {
+            credentials: 'include' // sends the HttpOnly cookie automatically
+        });
+        if (!res.ok) window.location.href = 'login.html';
+        else {
+            const data = await res.json();
+            populateDashboard(data); // use real user data
+        }
+    } catch {
+        window.location.href = 'login.html';
+    }
+}
+checkAuth();
 
 function getFiltered() {
     return REQUESTS.filter(r => {
@@ -582,6 +603,7 @@ function closeDrawerDirect() { document.getElementById('drawerOverlay').classLis
 /* ── Init ── */
 buildAreaButtons();
 render();
+loadLiveRequests();
 
 document.getElementById('matFilter').addEventListener('change', e => { currentMat = e.target.value; render(); });
 document.getElementById('statusFilter').addEventListener('change', e => { currentStatus = e.target.value; render(); });
@@ -626,6 +648,7 @@ function handleResize() {
 }
 window.addEventListener('resize', handleResize);
 handleResize();
+
 </script>
 </body>
 </html>

@@ -673,7 +673,7 @@
                     <span>Collected Materials</span>
                     <div class="badge">1</div>
                 </a>
-                <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
+                <a href="pending_pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
                 <a href="user_requests.html" class="nav-item"><i class="fas fa-users"></i><span>User Requests</span><div class="badge">7</div></a>
             </div>
             <div class="nav-section">
@@ -951,33 +951,38 @@
     </main>
 
     <script>
-        (function checkAuth() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (isLoggedIn !== 'true') window.location.href = 'login.html';
-        })();
+        async function checkAuth() {
+            try {
+                const res = await fetch('http://127.0.0.1:8000/me', {
+                    credentials: 'include' 
+                });
+                if (!res.ok) window.location.href = 'login.html';
+                else {
+                    const data = await res.json();
+                    populateDashboard(data);
+                }
+            } catch {
+                window.location.href = 'login.html';
+            }
+        }
+        checkAuth();
 
-        function loadCompanyData() {
-            const companyData = JSON.parse(localStorage.getItem('ecoCompany') || '{}');
-            const name = companyData.companyName || companyData.name || 'Green Collect Ltd';
-            const email = companyData.adminEmail || 'admin@ecocollect.com';
+        function populateDashboard(data) {
+            const name = data.name || 'Green Collect Ltd';
+            const email = data.email || '';
             const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
             document.getElementById('sidebarName').textContent = name;
             document.getElementById('dropdownName').textContent = name;
             document.getElementById('dropdownEmail').textContent = email;
-            document.getElementById('leaderboardName').textContent = 'Your Team (' + name + ')';
+            document.getElementById('leaderboardName').textContent = `Your Team (${name})`;
             ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = initials;
             });
-            const hour = new Date().getHours();
-            const greetEl = document.getElementById('greeting');
-            if (hour < 12) greetEl.textContent = 'Good Morning, Collector 👋';
-            else if (hour < 17) greetEl.textContent = 'Good Afternoon, Collector ☀️';
-            else greetEl.textContent = 'Good Evening, Collector 🌙';
         }
 
         loadCompanyData();
-        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -989,10 +994,6 @@
                 credentials: 'include'
             }).catch(() => {});
             
-            // Clear all possible session data
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('ecoCompany');
-            localStorage.removeItem('ecoUser'); 
             
             window.location.href = 'login.html';
         }
