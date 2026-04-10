@@ -1120,24 +1120,71 @@
         else           { hint.textContent = '✗ Passwords do not match'; hint.style.color = 'var(--red)'; }
     }
 
-    function changePassword() {
+    async function changePassword() {
         const current = document.getElementById('currentPassword').value;
-        const newPw   = document.getElementById('newPassword').value;
-        const confirm = document.getElementById('confirmPassword').value;
+        const newPw = document.getElementById('newPassword').value;
+        const confirmPw = document.getElementById('confirmPassword').value;
 
-        if (!current)          { showToast('error', 'Error', 'Please enter your current password'); return; }
-        if (newPw.length < 8)  { showToast('error', 'Error', 'New password must be at least 8 characters'); return; }
-        if (newPw !== confirm)  { showToast('error', 'Error', 'New passwords do not match'); return; }
-        if (current === newPw)  { showToast('warning', 'Notice', 'New password must differ from current'); return; }
+        if (!current) {
+            showToast('error', 'Error', 'Please enter your current password');
+            return;
+        }
 
-        // TODO: wire to POST /me/change-password
-        showToast('success', 'Password Updated', 'Your password has been changed successfully');
-        document.getElementById('currentPassword').value        = '';
-        document.getElementById('newPassword').value            = '';
-        document.getElementById('confirmPassword').value        = '';
-        document.getElementById('strengthFill').style.width     = '0';
-        document.getElementById('strengthLabel').textContent    = 'Enter a password to see strength';
-        document.getElementById('matchHint').textContent        = '';
+        if (newPw.length < 8) {
+            showToast('error', 'Error', 'New password must be at least 8 characters');
+            return;
+        }
+
+        if (newPw !== confirmPw) {
+            showToast('error', 'Error', 'New passwords do not match');
+            return;
+        }
+
+        if (current === newPw) {
+            showToast('warning', 'Notice', 'New password must differ from current');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/me/change-password', {
+                method: 'POST',
+                credentials: 'include',   // IMPORTANT: sends your access_token cookie
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    current_password: current,
+                    new_password: newPw
+                })
+            });
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = {};
+            }
+
+            if (!response.ok) {
+                throw new Error(data.detail || 'Failed to change password');
+            }
+
+            showToast('success', 'Password Updated', data.message || 'Your password has been changed successfully');
+
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthLabel = document.getElementById('strengthLabel');
+            const matchHint = document.getElementById('matchHint');
+
+            if (strengthFill) strengthFill.style.width = '0';
+            if (strengthLabel) strengthLabel.textContent = 'Enter a password to see strength';
+            if (matchHint) matchHint.textContent = '';
+        } catch (error) {
+            showToast('error', 'Error', error.message);
+        }
     }
 
     // ═══════ THEME ═══════
@@ -1256,13 +1303,15 @@
     // Calls POST /logout to clear the httpOnly cookie on the server side,
     // then removes any leftover localStorage flags from the old auth system.
     async function logout() {
-        await fetch(`${API_BASE}/logout`, {
+        await fetch('http://127.0.0.1:8000/logout', {
             method: 'POST',
             credentials: 'include'
         }).catch(() => {});
+
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('ecoUser');
-        window.location.href = 'login.html';
+
+        window.location.replace('login.html');
     }
     document.getElementById('logoutSidebar').addEventListener('click', logout);
 

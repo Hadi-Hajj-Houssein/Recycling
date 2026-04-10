@@ -996,15 +996,17 @@
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         });
 
-        async function logout() {
-            await fetch('http://127.0.0.1:8000/logout', {
-                method: 'POST',
-                credentials: 'include'
-            }).catch(() => {});
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('ecoUser');
-            window.location.href = 'login.html';
-        }
+            async function logout() {
+                await fetch('http://127.0.0.1:8000/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                }).catch(() => {});
+
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('ecoUser');
+
+                window.location.replace('login.html');
+            }
 
         document.getElementById('logoutSidebar').addEventListener('click', (e) => { e.preventDefault(); logout(); });
         document.getElementById('logoutDropdown').addEventListener('click', logout);
