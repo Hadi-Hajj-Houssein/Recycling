@@ -14,7 +14,7 @@ from models.Recyclables import Recyclable_Item
 
 from routers.recyclables_in import router as recyclables_router
 from routers.recycling import router as dashboard_router
-from routers import signup, login, company_signup, company_selection, user_requests
+from routers import signup, login, company_signup, company_selection, user_requests,me
 
 Base.metadata.create_all(bind=engine)
 
@@ -50,6 +50,7 @@ app.include_router(recyclables_router)
 app.include_router(company_selection.router)
 app.include_router(dashboard_router)
 app.include_router(user_requests.router)
+app.include_router(me.router)
 #app.include_router(testroute.router)
 
 app.mount("/static", StaticFiles(directory="frontend", html=True), name="static")
