@@ -26,8 +26,8 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = None
     username: Optional[str] = None
     email: Optional[str] = None
-    phone: Optional[str] = None
-    location: Optional[str] = None
+    phone_number: Optional[str] = None
+    #location: Optional[str] = None
 
 class PassChange(BaseModel):
     current_password: str
@@ -44,7 +44,7 @@ def get_me(user_id: int = Depends(get_curr_user_id), db: Session = Depends(get_d
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        #"phone": user.phone,
+        "phone_number": user.phone_number,
         #"location": user.location
     }
 
@@ -64,6 +64,9 @@ def update_me(user_data: UserUpdate, user_id: int = Depends(get_curr_user_id), d
         user.username = user_data.username
     if user_data.email is not None:
         user.email = user_data.email
+
+    if user_data.phone_number is not None:
+        user.phone_number = user_data.phone_number
     db.commit()
     db.refresh(user)
     return {
@@ -71,6 +74,8 @@ def update_me(user_data: UserUpdate, user_id: int = Depends(get_curr_user_id), d
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "phone_number": user.phone_number,
+        #"location": user.location
     }
 
 
@@ -88,7 +93,6 @@ def change_password(user_data: PassChange, user_id: int = Depends(get_curr_user_
     
     if user_data.current_password == user_data.new_password:
         raise HTTPException(status_code=400, detail="New password must differ from current")
-    
     user.password = get_password_hash(user_data.new_password)
     db.commit()
 

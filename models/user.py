@@ -10,7 +10,7 @@ class User(Base):
     username = Column(String(450), nullable=False)
     first_name = Column(String(450), nullable=False)
     last_name = Column(String(450), nullable=False)
-    
+    phone_number = Column(String(20), nullable=True)
     amount = Column(Float, nullable=False, default=0.0)
     recyclables      = relationship("Recyclables", back_populates="user", uselist=False) 
     recyclable_items = relationship("Recyclable_Item", back_populates="user")   
