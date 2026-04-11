@@ -644,7 +644,7 @@
                         <label for="password">Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" required placeholder="Create a strong password" autocomplete="new-password" minlength="6">
+                            <input type="password" id="password" name="password" required placeholder="Create a strong password" autocomplete="new-password" minlength="6" maxlength="72">
                             <button type="button" class="toggle-password" onclick="togglePass('password', this)" aria-label="Toggle password">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -748,7 +748,7 @@
     const API_VERIFYCODE  = `${API_BASE}/verify-code`;
     const emailRegex      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    let pendingFormData = null;   // holds {email, username, password} while verifying
+    //let pendingFormData = null;   // holds {email, username, password} while verifying
     let countdownTimer  = null;
 
     // ── Helpers ────────────────────────────────────────────────────────────
@@ -886,15 +886,15 @@
         btn.disabled = true;
         hideVerifyMessages();
         clearOtp();
-
+        if (!stored) return;
         try {
             const res = await fetch(API_SENDCODE, {
                 method : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({ email: pendingFormData.email })
+                body: JSON.stringify({ email: stored.email })
             });
             if (!res.ok) throw new Error('Failed to resend');
-            showVerifySuccess(`New code sent to ${pendingFormData.email}`);
+            showVerifySuccess(`New code sent to ${stored.email}`);
             startCountdown(60);
             document.querySelectorAll('.otp-input')[0].focus();
         } catch {
@@ -925,6 +925,11 @@
 
     // ── Verify and then register ───────────────────────────────────────────
     async function submitVerification() {
+        const stored = JSON.parse(localStorage.getItem("pendingSignup"));
+        if (!stored) {
+            showVerifyError("Session expired. Please sign up again.");
+            return;
+        }
         const code = getOtpValue();
 
         if (code.length !== 6) {
@@ -939,10 +944,14 @@
 
         try {
             // 1. Verify the code
+            if (!stored) {
+                showVerifyError("Session expired. Please sign up again.");
+                return;
+            }
             const verRes  = await fetch(API_VERIFYCODE, {
                 method : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({ email: pendingFormData.email, code })
+                body   : JSON.stringify({ email: stored.email, code })
             });
             const verData = await verRes.json().catch(() => ({}));
 
@@ -956,22 +965,21 @@
             // 2. Code correct — now actually register the user
             showVerifySuccess('Email verified! Creating your account...');
 
+            
             const fd = new FormData();
-            fd.append('email',           pendingFormData.email);
-            fd.append('username',        pendingFormData.username);
-            fd.append('password',        pendingFormData.password);
-            fd.append('confirmPassword', pendingFormData.password);
+            fd.append('email',           stored.email);
+            fd.append('username',        stored.username);
+            const password = document.getElementById('password').value;
+
+            fd.append('password', password);
+            fd.append('confirmPassword', password);
 
             const regRes  = await fetch(API_SIGNUP_URL, { method: 'POST', body: fd });
             const regData = await regRes.json().catch(() => ({}));
 
             if (!regRes.ok) throw new Error(regData.detail || 'Registration failed');
 
-            localStorage.setItem('ecoUser', JSON.stringify({
-                email    : pendingFormData.email,
-                username : pendingFormData.username,
-                loginTime: new Date().toISOString()
-            }));
+            localStorage.removeItem("pendingSignup");
 
             clearInterval(countdownTimer);
             setTimeout(() => window.location.href = 'login.html', 1200);
@@ -1074,7 +1082,6 @@
             const email           = emailEl.value.trim();
             const password        = passwordEl.value;
             const confirmPassword = confirmEl.value;
-
             if (username.length < 3) {
                 showError('Username must be at least 3 characters');
                 usernameEl.classList.add('error-input'); usernameEl.focus(); return;
@@ -1108,7 +1115,11 @@
                 if (!res.ok) throw new Error('Failed to send verification code');
 
                 // Save form data — will be submitted after code verified
-                pendingFormData = { email, username, password };
+                localStorage.setItem("pendingSignup", JSON.stringify({
+                    email,
+                    username,
+                }));
+
                 showVerifyStep(email);
 
             } catch (err) {
