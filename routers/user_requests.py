@@ -19,7 +19,6 @@ def get_db():
 
 @router.get("/api/requests")
 def get_all_requests(db: Session = Depends(get_db)):
-    # Use Recyclable_Item (with the underscore) to match your import!
     query_results = db.query(Recyclable_Item, User).join(User, Recyclable_Item.user_id == User.id).all()
     
     formatted_data = []
