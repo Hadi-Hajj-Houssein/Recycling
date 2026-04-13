@@ -951,54 +951,65 @@
     </main>
 
     <script>
+        const now = new Date();
         async function checkAuth() {
             try {
                 const res = await fetch('http://127.0.0.1:8000/me', {
                     credentials: 'include' 
                 });
-                if (!res.ok) window.location.href = 'login.html';
-                else {
-                    const data = await res.json();
-                    populateDashboard(data);
+                
+                if (!res.ok) {
+                    console.error("Server returned an error:", res.status);
+                    window.location.href = 'login.html';
+                    return;
                 }
-            } catch {
-                window.location.href = 'login.html';
+
+                const data = await res.json();
+                console.log("User Data Received:", data);
+                populateDashboard(data);
+                
+                // Only load data AFTER we are sure the user is authed
+                if (typeof loadCompanyData === "function") {
+                    loadCompanyData();
+                }
+
+            } catch (error) {
+                // This is the CRITICAL part: log the error instead of redirecting
+                console.error("JavaScript Crash in checkAuth:", error);
+                window.location.href = 'login.html'; // Keep this commented until fixed
             }
         }
-        checkAuth();
 
         function populateDashboard(data) {
-            const name = data.name || 'Green Collect Ltd';
+            // Ensure name is a string to avoid .split() errors
+            const name = data.name || data.company_name || 'Green Collect Ltd';
             const email = data.email || '';
-            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-
+            
             document.getElementById('sidebarName').textContent = name;
             document.getElementById('dropdownName').textContent = name;
-            document.getElementById('dropdownEmail').textContent = email;
-            document.getElementById('leaderboardName').textContent = `Your Team (${name})`;
+            
+            const emailEl = document.getElementById('dropdownEmail');
+            if (emailEl) emailEl.textContent = email;
+
+            // Safer initials logic
+            const initials = name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
             ['sidebarAvatar', 'topbarAvatar', 'leaderboardAvatar'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = initials;
             });
         }
 
-        loadCompanyData();
+        //loadCompanyData();
 
         document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         });
 
-        async function logout() {
-            await fetch('http://127.0.0.1:8000/logout', {
-                method: 'POST',
-                credentials: 'include'
-            }).catch(() => {});
-            
-            
-            window.location.href = 'login.html';
-        }
-        document.getElementById('logoutSidebar').addEventListener('click', (e) => { e.preventDefault(); logout(); });
-        document.getElementById('logoutDropdown').addEventListener('click', logout);
+        document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
+            await fetch('/logout', { method: 'POST' }).catch(() => {});
+            window.location.href = '/static/login.html';
+        });
 
         function toggleDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
         document.addEventListener('click', (e) => {
@@ -1023,7 +1034,7 @@
         mobileToggle.addEventListener('click', () => { sidebar.classList.add('mobile-open'); sidebar.classList.remove('collapsed'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
         overlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; });
 
-        const now = new Date();
+        
         const barData = [
             { label: 'Jan', value: 1200 }, { label: 'Feb', value: 1800 }, { label: 'Mar', value: 2500 },
             { label: 'Apr', value: 2000 }, { label: 'May', value: 3100 }, { label: 'Jun', value: 2800 },
@@ -1080,3 +1091,6 @@
     </script>
 </body>
 </html>
+
+
+

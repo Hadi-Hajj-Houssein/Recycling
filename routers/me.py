@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db_main import SessionLocal
 from models.user import User
+from models.company import Company
 from functionalities.auth import get_curr_user_id
 from typing import Optional
 from pydantic import BaseModel
@@ -36,17 +37,24 @@ class PassChange(BaseModel):
 @router.get("/me")
 def get_me(user_id: int = Depends(get_curr_user_id), db: Session = Depends(get_db)): # FastAPI pauses get_me and runs get_curr_user_id first.
     user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return {
-        "username": user.username,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "phone_number": user.phone_number,
-        #"location": user.location
-    }
+    company = db.query(Company).filter(Company.id == user_id).first()
+    if user:
+        return {
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "phone_number": user.phone_number,
+            #"location": user.location
+        }
+    else:
+        if company:
+            return {
+                "name": company.name,
+                "email": company.email,
+            }
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
 
 
 @router.put("/me") # change pass 

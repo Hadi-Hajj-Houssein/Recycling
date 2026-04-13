@@ -25,7 +25,7 @@ def get_all_requests(db: Session = Depends(get_db)):
     formatted_data = []
     for item, user in query_results:
         formatted_data.append({
-            "id": f"REQ-{item.id}",
+            "id": f"{item.id}",
             "name": f"{user.first_name} {user.last_name}",
             "initials": f"{user.first_name[0]}{user.last_name[0]}",
             "area": "Lebanon", 

@@ -1,11 +1,12 @@
 async function logout() {
-        await fetch('http://127.0.0.1:8000/logout', {
-            method: 'POST',
-            credentials: 'include'
-        }).catch(() => {});
+    await fetch('/logout', {  // use relative URL, same origin
+        method: 'POST'
+        // no credentials needed, same origin sends cookies automatically
+    }).catch(() => {});
 
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('ecoUser');
+    // remove these — you're not using localStorage for auth anymore
+    // localStorage.removeItem('isLoggedIn');
+    // localStorage.removeItem('ecoUser');
 
-        window.location.replace('login.html');
-    }
+    window.location.replace('/static/login.html');  // full path
+}

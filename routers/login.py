@@ -16,6 +16,18 @@ def get_db():
     finally:
         db.close()
 
+def set_auth_cookie(response: Response, token: str):
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        path="/",
+        max_age=7200  # 2 hours
+        # NO domain= here — let the browser infer localhost
+    )
+
 @router.post("/login")
 def login(
     response: Response,
@@ -29,21 +41,8 @@ def login(
             data={"sub": str(user.id), "role": "user"},
             expires_minutes=120
         )
-
-        response.set_cookie(
-            key="access_token",
-            value=token,
-            httponly=True,
-            samesite="lax",
-            secure=False,        # False for localhost
-            domain="127.0.0.1",  # explicit domain
-            path="/"
-        )
-
-        return {
-            "role": "user",
-            "user_id": user.id
-        }
+        set_auth_cookie(response, token)
+        return {"role": "user", "user_id": user.id}
 
     company = db.query(Company).filter(Company.email == email).first()
     if company and pwd_context.verify(password, company.password):
@@ -51,20 +50,7 @@ def login(
             data={"sub": str(company.id), "role": "company"},
             expires_minutes=120
         )
-
-        response.set_cookie(
-            key="access_token",
-            value=token,
-            httponly=True,
-            secure=False,   # set True in production with HTTPS
-            samesite="lax",
-            max_age=15 * 60,
-            path="/"
-        )
-
-        return {
-            "role": "company",
-            "company_id": company.id
-        }
+        set_auth_cookie(response, token)
+        return {"role": "company", "company_id": company.id}
 
     raise HTTPException(status_code=401, detail="Invalid email or password")

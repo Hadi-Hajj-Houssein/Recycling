@@ -246,6 +246,43 @@
         .drawer-actions { display: flex; gap: 10px; padding: 20px 24px; border-top: 1px solid var(--border); }
         .drawer-actions .btn { flex: 1; justify-content: center; }
 
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px); right: 0;
+            width: 220px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            opacity: 0; visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.25s ease;
+            z-index: 200;
+        }
+        .profile-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .profile-dropdown .dropdown-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4px;
+        }
+        .profile-dropdown .dropdown-header h4 { font-size: 13px; font-weight: 600; }
+        .profile-dropdown .dropdown-header p { font-size: 11px; color: var(--text-muted); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px; cursor: pointer;
+            transition: all 0.2s;
+            border: none; background: none;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            text-align: left;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+        .dropdown-item.danger { color: var(--red); }
+        .dropdown-item.danger:hover { background: rgba(231,76,60,0.08); }
+        .dropdown-item i { width: 16px; text-align: center; font-size: 14px; }
+
         .animate-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.45s ease forwards; }
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
         .animate-in:nth-child(1) { animation-delay: 0.05s; }
@@ -330,26 +367,33 @@
 
 <!-- Main -->
 <main class="main" id="mainContent">
-
     <header class="topbar">
         <div class="topbar-left">
             <button class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></button>
             <div class="topbar-greeting">
-                <h2>Collected Materials</h2>
+                <h2>User Requests</h2>
                 <p id="currentDate"></p>
             </div>
         </div>
         <div class="topbar-right">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search anything...">
-            </div>
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search anything..."></div>
             <button class="topbar-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
             <button class="topbar-btn"><i class="fas fa-envelope"></i></button>
-            <div class="topbar-avatar" id="topbarAvatar">GC</div>
+            <div style="position:relative;">
+            <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">GC</div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-header">
+                    <h4 id="dropdownName">Green Collect Ltd</h4>
+                    <p id="dropdownEmail">info@greencollect.com</p>
+                </div>
+                <button class="dropdown-item"><i class="fas fa-user"></i> Company Profile</button>
+                <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
+                <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
+                <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+            </div>
+</div>
         </div>
     </header>
-
     <div class="content">
 
         <!-- Page Header — Log Collection button removed -->
@@ -506,214 +550,236 @@
 </div>
 
 <script>
+console.log("SCRIPT LOADED");
+
+// ✅ GLOBALS (prevent crashes)
 let pickups = [];
-const typeIcons = { plastic:'🥤', paper:'📄', glass:'🍶', metal:'🔩', ewaste:'💻' };
-const typeBg = { plastic:'rgba(46,204,113,0.1)', paper:'rgba(52,152,219,0.1)', glass:'rgba(241,196,15,0.1)', metal:'rgba(155,89,182,0.1)', ewaste:'rgba(231,76,60,0.1)' };
-
-let currentFilter = 'all';
-let currentPage = 1;
-const perPage = 10;
 let filtered = [];
+let currentPage = 1;
+let perPage = 10;
+let currentFilter = 'all';
 
-// Replace the (function checkAuth()) IIFE at the top
+// ✅ Set date safely
+window.onload = function() {
+    const dateEl = document.getElementById('currentDate');
+    if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('en-US', { 
+            weekday:'long', year:'numeric', month:'long', day:'numeric' 
+        });
+    }
+};
+
+// ✅ AUTH CHECK
 async function checkAuth() {
     try {
+        console.log("Checking auth...");
         const res = await fetch('http://127.0.0.1:8000/me', {
-            credentials: 'include' // sends the HttpOnly cookie automatically
+            credentials: 'include' 
         });
-        if (!res.ok) window.location.href = 'login.html';
-        else {
-            const data = await res.json();
-            populateDashboard(data); // use real user data
+        
+        if (!res.ok) {
+            console.warn("Auth failed:", res.status);
+            window.location.href = 'login.html';
+            return;
         }
-    } catch {
-        window.location.href = 'login.html';
+
+        const data = await res.json();
+        console.log("Auth success:", data);
+
+        const elements = {
+            'sidebarName': data.name || data.company_name,
+            'dropdownName': data.name || data.company_name,
+            'sidebarAvatar': (data.name || data.company_name || 'G').charAt(0),
+            'topbarAvatar': (data.name || data.company_name || 'G').charAt(0)
+        };
+
+        for (const [id, value] of Object.entries(elements)) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        if (typeof loadPickups === 'function') loadPickups();
+
+    } catch (error) {
+        console.error("Auth error:", error);
     }
 }
+
 checkAuth();
+
+// ✅ LOAD DATA
 async function loadPickups() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/pickups');
+        const res = await fetch('http://127.0.0.1:8000/pickups', {
+            credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch pickups");
+
         const data = await res.json();
         pickups = data;
         filtered = [...pickups];
+        renderTable();
+
     } catch(e) {
+        console.warn("Pickups load failed:", e);
         pickups = [];
         filtered = [];
+        renderTable();
     }
-    renderTable();
 }
-loadPickups();
 
+//dropdown
+function toggleDropdown() {
+    document.getElementById('profileDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('profileDropdown');
+    const avatar = document.getElementById('topbarAvatar');
+    if (dropdown && !dropdown.contains(e.target) && e.target !== avatar) {
+        dropdown.classList.remove('show');
+    }
+});
+
+document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
+    await fetch('/logout', { method: 'POST' }).catch(() => {});
+    window.location.href = '/static/login.html';
+});
+
+
+// ✅ FILTER
 function filterData() {
-    const status = document.getElementById('statusFilter').value;
-    const search = document.getElementById('tableSearch').value.toLowerCase();
+    const status = document.getElementById('statusFilter')?.value || '';
+    const search = document.getElementById('tableSearch')?.value.toLowerCase() || '';
+
     filtered = pickups.filter(p => {
         const matchType = currentFilter === 'all' || p.types.includes(currentFilter);
         const matchStatus = !status || p.status === status;
-        const matchSearch = !search || p.client.toLowerCase().includes(search) || p.id.toLowerCase().includes(search) || p.driver.toLowerCase().includes(search);
+        const matchSearch = !search || 
+            p.client.toLowerCase().includes(search) ||
+            p.id.toLowerCase().includes(search) ||
+            p.driver.toLowerCase().includes(search);
+
         return matchType && matchStatus && matchSearch;
     });
+
     currentPage = 1;
     renderTable();
 }
 
+// ✅ TABLE
 function renderTable() {
     const tbody = document.getElementById('tableBody');
+    if (!tbody) return;
+
     const start = (currentPage - 1) * perPage;
     const page = filtered.slice(start, start + perPage);
-    document.getElementById('rowCount').textContent = `(${filtered.length} records)`;
-    document.getElementById('pageInfo').textContent = filtered.length
-        ? `Showing ${start + 1}–${Math.min(start + perPage, filtered.length)} of ${filtered.length}`
-        : 'No records found';
+
+    const rowCount = document.getElementById('rowCount');
+    if (rowCount) rowCount.textContent = `(${filtered.length} records)`;
+
+    const pageInfo = document.getElementById('pageInfo');
+    if (pageInfo) {
+        pageInfo.textContent = filtered.length
+            ? `Showing ${start + 1}–${Math.min(start + perPage, filtered.length)} of ${filtered.length}`
+            : 'No records found';
+    }
 
     tbody.innerHTML = page.length ? page.map(p => `
         <tr onclick="openDrawer('${p.id}')">
-            <td>
-                <div class="material-cell">
-                    <div class="material-icon" style="background:${typeBg[p.types[0]]};font-size:18px;">${typeIcons[p.types[0]]}</div>
-                    <div>
-                        <div class="material-name">${p.types.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(' + ')}</div>
-                        <div class="material-sub">${p.id}</div>
-                    </div>
-                </div>
-            </td>
-            <td><div class="material-name" style="font-size:13px;">${p.client}</div><div class="material-sub">${p.address}</div></td>
-            <td style="font-weight:600;color:var(--text-primary);">${p.weight}</td>
-            <td style="color:var(--text-secondary);font-size:12.5px;">${p.driver}</td>
-            <td style="color:var(--text-muted);font-size:12px;">${new Date(p.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
-            <td><span class="badge-status ${p.status}">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span></td>
-            <td>
-                <div class="row-actions" onclick="event.stopPropagation()">
-                    <button class="row-btn" title="View"><i class="fas fa-eye"></i></button>
-                    <button class="row-btn" title="Edit"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="row-btn danger" title="Delete"><i class="fas fa-trash"></i></button>
-                </div>
-            </td>
+            <td>${p.types.join(' + ')}</td>
+            <td>${p.client}</td>
+            <td>${p.weight}</td>
+            <td>${p.driver}</td>
+            <td>${new Date(p.date).toLocaleDateString()}</td>
+            <td>${p.status}</td>
         </tr>
-    `).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">No records match your filters</td></tr>';
+    `).join('') 
+    : '<tr><td colspan="6">No records</td></tr>';
 
     renderPagination();
 }
 
+// ✅ PAGINATION
 function renderPagination() {
-    const pages = Math.ceil(filtered.length / perPage);
     const pg = document.getElementById('pagination');
+    if (!pg) return;
+
+    const pages = Math.ceil(filtered.length / perPage);
     pg.innerHTML = '';
-    if (pages <= 1) return;
-    const prev = document.createElement('button');
-    prev.className = 'page-btn'; prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
-    prev.disabled = currentPage === 1;
-    prev.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
-    pg.appendChild(prev);
+
     for (let i = 1; i <= pages; i++) {
         const b = document.createElement('button');
-        b.className = 'page-btn' + (i === currentPage ? ' active' : '');
         b.textContent = i;
         b.onclick = () => { currentPage = i; renderTable(); };
         pg.appendChild(b);
     }
-    const next = document.createElement('button');
-    next.className = 'page-btn'; next.innerHTML = '<i class="fas fa-chevron-right"></i>';
-    next.disabled = currentPage === pages;
-    next.onclick = () => { if (currentPage < pages) { currentPage++; renderTable(); } };
-    pg.appendChild(next);
 }
 
-function openDrawer(id) {
-    const p = pickups.find(x => x.id === id);
-    if (!p) return;
-    document.getElementById('drawerTitle').textContent = `${p.id} — ${p.client}`;
-    const tl = [
-        { label: 'Request Received', time: p.date + ' 08:00 AM', s:'done' },
-        { label: 'Driver Assigned', time: p.date + ' 09:15 AM', s: p.status !== 'pending' && p.status !== 'cancelled' ? 'done' : 'pending' },
-        { label: 'En Route to Client', time: p.date + ' 10:30 AM', s: p.status === 'completed' || p.status === 'processing' ? (p.status === 'processing' ? 'active' : 'done') : 'pending' },
-        { label: 'Materials Collected', time: p.date + ' 11:45 AM', s: p.status === 'completed' ? 'done' : 'pending' },
-        { label: 'Delivered to Facility', time: p.date + ' 01:00 PM', s: p.status === 'completed' ? 'done' : 'pending' },
-    ];
-    const tlIcon = { done:'<i class="fas fa-check"></i>', active:'<i class="fas fa-circle" style="font-size:6px;"></i>', pending:'<i class="fas fa-clock"></i>' };
-    document.getElementById('drawerBody').innerHTML = `
-        <span class="drawer-badge ${p.status}">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
-        <div class="drawer-section-title">Collection Details</div>
-        <div class="detail-grid" style="margin-bottom:20px;">
-            <div class="detail-item"><div class="d-label">Client</div><div class="d-value">${p.client}</div></div>
-            <div class="detail-item"><div class="d-label">Total Weight</div><div class="d-value">${p.weight}</div></div>
-            <div class="detail-item"><div class="d-label">Driver</div><div class="d-value">${p.driver}</div></div>
-            <div class="detail-item"><div class="d-label">Date</div><div class="d-value">${new Date(p.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div></div>
-        </div>
-        <div class="detail-item" style="margin-bottom:20px;"><div class="d-label">📍 Pickup Address</div><div class="d-value" style="font-size:13px;margin-top:4px;">${p.address}</div></div>
-        ${p.note ? `<div class="detail-item" style="margin-bottom:20px;"><div class="d-label">📝 Note</div><div class="d-value" style="font-size:12.5px;color:var(--text-secondary);font-weight:400;margin-top:4px;">${p.note}</div></div>` : ''}
-        <div class="drawer-section-title" style="margin-top:8px;">Materials Collected</div>
-        <div class="material-chips" style="margin-bottom:24px;">
-            ${p.materials.map(m => `<div class="m-chip"><div class="chip-color" style="background:${m.color};"></div><span class="chip-kg">${m.kg} kg</span><span class="chip-name">${m.name}</span></div>`).join('')}
-        </div>
-        <div class="drawer-section-title">Pickup Timeline</div>
-        <div class="timeline">
-            ${tl.map((step, i) => `
-                <div class="timeline-step">
-                    ${i < tl.length - 1 ? '<div class="tl-line"></div>' : ''}
-                    <div class="tl-dot ${step.s}">${tlIcon[step.s]}</div>
-                    <div class="tl-content"><div class="tl-title">${step.label}</div><div class="tl-time">${step.time}</div></div>
-                </div>
-            `).join('')}
-        </div>
-    `;
-    const actionBtn = document.getElementById('drawerActionBtn');
-    if (p.status === 'completed') { actionBtn.innerHTML = '<i class="fas fa-check-double"></i> Already Collected'; actionBtn.style.opacity = '0.5'; actionBtn.style.pointerEvents = 'none'; }
-    else if (p.status === 'cancelled') { actionBtn.innerHTML = '<i class="fas fa-redo"></i> Reschedule'; actionBtn.style.opacity = '1'; actionBtn.style.pointerEvents = 'auto'; }
-    else { actionBtn.innerHTML = '<i class="fas fa-check"></i> Mark as Collected'; actionBtn.style.opacity = '1'; actionBtn.style.pointerEvents = 'auto'; }
-    document.getElementById('detailOverlay').classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeDrawer(e) { if (e.target === document.getElementById('detailOverlay')) closeDrawerDirect(); }
-function closeDrawerDirect() { document.getElementById('detailOverlay').classList.remove('show'); document.body.style.overflow = ''; }
-
-document.getElementById('typeFilters').addEventListener('click', e => {
-    const chip = e.target.closest('.filter-chip');
-    if (!chip) return;
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    currentFilter = chip.dataset.filter;
-    filterData();
-});
-document.getElementById('statusFilter').addEventListener('change', filterData);
-document.getElementById('dateFilter').addEventListener('change', filterData);
-document.getElementById('tableSearch').addEventListener('input', filterData);
-
+// ✅ EXPORT
 function exportToCSV() {
-    const headers = ['ID','Client','Address','Weight','Driver','Date','Status','Materials','Note'];
-    const csvContent = [headers.join(','), ...filtered.map(p => [`"${p.id}"`,`"${p.client}"`,`"${p.address}"`,p.weight,`"${p.driver}"`,p.date,p.status,`"${p.materials.map(m=>m.name).join(', ')}"`,`"${p.note||''}"`].join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const headers = ['ID','Client','Address','Weight','Driver','Date','Status'];
+
+    const csvContent = [
+        headers.join(','),
+        ...filtered.map(p => [
+            p.id, p.client, p.address, p.weight, p.driver, p.date, p.status
+        ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const link = document.createElement('a');
-    link.setAttribute('href', URL.createObjectURL(blob));
-    link.setAttribute('download', `ecocollect-materials-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
+    link.href = URL.createObjectURL(blob);
+    link.download = 'materials.csv';
     link.click();
-    document.body.removeChild(link);
 }
 
-document.getElementById('exportBtn').addEventListener('click', exportToCSV);
-
-const sidebar = document.getElementById('sidebar');
-const mainContent = document.getElementById('mainContent');
-const sidebarToggle = document.getElementById('sidebarToggle');
-const toggleIcon = sidebarToggle.querySelector('i');
-sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); mainContent.classList.toggle('expanded'); toggleIcon.classList.toggle('fa-chevron-left'); toggleIcon.classList.toggle('fa-chevron-right'); });
-const mobileToggle = document.getElementById('mobileToggle');
-const overlay = document.getElementById('sidebarOverlay');
-mobileToggle.addEventListener('click', () => { sidebar.classList.add('mobile-open'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
-overlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; });
-
-document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-function handleResize() {
-    if (window.innerWidth > 768) { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; }
-    if (window.innerWidth <= 1024 && window.innerWidth > 768) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }
+const logoutBtn = document.getElementById('logoutSidebar');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async e => {
+        e.preventDefault();
+        await fetch('/logout', { method: 'POST' }).catch(() => {});
+        window.location.href = '/static/login.html';
+    });
 }
-window.addEventListener('resize', handleResize);
-handleResize();
+
+// ✅ SAFE EVENT LISTENERS
+document.addEventListener('DOMContentLoaded', () => {
+const typeFilters = document.getElementById('typeFilters');
+if (typeFilters) {
+    typeFilters.addEventListener('click', e => {
+        const chip = e.target.closest('.filter-chip');
+        if (!chip) return;
+
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        currentFilter = chip.dataset.filter;
+        filterData();
+    });
+}
+const logoutBtn = document.getElementById('logoutSidebar');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async e => {
+            e.preventDefault();
+            await fetch('/logout', { method: 'POST' }).catch(() => {});
+            window.location.href = '/static/login.html';
+        });
+    }
+});
+
+const statusFilter = document.getElementById('statusFilter');
+if (statusFilter) statusFilter.addEventListener('change', filterData);
+
+const dateFilter = document.getElementById('dateFilter');
+if (dateFilter) dateFilter.addEventListener('change', filterData);
+
+const tableSearch = document.getElementById('tableSearch');
+if (tableSearch) tableSearch.addEventListener('input', filterData);
+
+const exportBtn = document.getElementById('exportBtn');
+if (exportBtn) exportBtn.addEventListener('click', exportToCSV);
+
 </script>
 </body>
 </html>

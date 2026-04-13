@@ -233,6 +233,62 @@
         .empty-state h3 { font-size:16px; color:var(--text-secondary); margin-bottom:8px; }
         .empty-state p { font-size:13px; }
 
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px); right: 0;
+            width: 220px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            opacity: 0; visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.25s ease;
+            z-index: 200;
+        }
+        .profile-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .profile-dropdown .dropdown-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4px;
+        }
+        .profile-dropdown .dropdown-header h4 { font-size: 13px; font-weight: 600; }
+        .profile-dropdown .dropdown-header p { font-size: 11px; color: var(--text-muted); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px; cursor: pointer;
+            transition: all 0.2s;
+            border: none; background: none;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            text-align: left;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+        .dropdown-item.danger { color: var(--red); }
+        .dropdown-item.danger:hover { background: rgba(231,76,60,0.08); }
+        .dropdown-item i { width: 16px; text-align: center; font-size: 14px; }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1f1f1f;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.2s;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* ── Animations ── */
         .animate-in { opacity:0; transform:translateY(16px); animation:fadeUp 0.45s ease forwards; }
         @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
@@ -306,7 +362,19 @@
             <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search anything..."></div>
             <button class="topbar-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
             <button class="topbar-btn"><i class="fas fa-envelope"></i></button>
-            <div class="topbar-avatar" id="topbarAvatar">GC</div>
+            <div style="position:relative;">
+            <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">GC</div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-header">
+                    <h4 id="dropdownName">Green Collect Ltd</h4>
+                    <p id="dropdownEmail">info@greencollect.com</p>
+                </div>
+                <button class="dropdown-item"><i class="fas fa-user"></i> Company Profile</button>
+                <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
+                <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
+                <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+            </div>
+</div>
         </div>
     </header>
 
@@ -388,75 +456,416 @@
 </div>
 
 <script>
-/* ── Static sample data (replace with API fetch) ── */
-let REQUESTS = [];
+/* ══════════════════════════════════════════
+   CONSTANTS & STATE
+══════════════════════════════════════════ */
+const MAT_ICONS    = { plastic:'🥤', paper:'📄', glass:'🍶', metal:'🔩', ewaste:'💻', organic:'🌱' };
+const STATUS_LABELS = { 
+    pending: "Pending",
+    assigned: "Accepted",
+ };
 
-async function loadLiveRequests() {
-    try {
-        // Change this line from '/pickups' to '/api/requests'
-        const response = await fetch('http://127.0.0.1:8000/api/requests');
-        
-        if (!response.ok) throw new Error("Database fetch failed");
-        
-        const data = await response.json();
-        
-        // This is where we update the global REQUESTS variable with DB data
-        REQUESTS = data; 
-        render(); 
-        updateSummary(REQUESTS);
-    } catch (err) {
-        console.error("Connection Error:", err);
-    }
-}
-
-const MAT_ICONS = { plastic:'🥤', paper:'📄', glass:'🍶', metal:'🔩', ewaste:'💻', organic:'🌱' };
-const STATUS_LABELS = { new:'New', urgent:'Urgent', scheduled:'Scheduled', awaiting:'Awaiting' };
-
-let currentArea = 'all';
-let currentMat = '';
+let REQUESTS      = [];
+let currentArea   = 'all';
+let currentMat    = '';
 let currentStatus = '';
 let currentSearch = '';
-let viewMode = 'grid';
+let viewMode      = 'grid';
 
-// Replace the (function checkAuth()) IIFE at the top
+/* ══════════════════════════════════════════
+   AUTH — runs first, everything else after
+══════════════════════════════════════════ */
 async function checkAuth() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/me', {
-            credentials: 'include' // sends the HttpOnly cookie automatically
-        });
-        if (!res.ok) window.location.href = 'login.html';
-        else {
-            const data = await res.json();
-            populateDashboard(data); // use real user data
+        const res = await fetch('/me');
+        if (!res.ok) {
+            window.location.href = '/static/login.html';
+            return;
         }
-    } catch {
-        window.location.href = 'login.html';
+        const data = await res.json();
+        populateSidebar(data);
+    } catch (e) {
+        console.error('AUTH CRASH — actual error:', e); // read this before it redirects
+        window.location.href = '/static/login.html';
+    }
+
+    // Outside the try-catch — data errors can't trigger auth redirect anymore
+    loadLiveRequests();
+}
+
+function populateSidebar(data) {
+    const name     = data.name || data.company_name || 'Green Collect Ltd';
+    const initials = name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const nameEl   = document.getElementById('sidebarName');
+    if (nameEl) nameEl.textContent = name;
+    ['sidebarAvatar', 'topbarAvatar'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = initials;
+    });
+}
+
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+async function loadLiveRequests() {
+    try {
+        const res = await fetch('/api/requests');
+        if (res.status === 401) {
+            window.location.href = '/static/login.html';
+            return;
+        }
+        if (!res.ok) {
+            console.warn('Requests fetch failed:', res.status);
+            return; // show empty state, don't redirect
+        }
+        REQUESTS = await res.json();
+        buildAreaButtons();
+        render();
+    } catch (e) {
+        console.warn('Requests fetch error:', e);
+        // network error — show empty state, don't redirect
     }
 }
-checkAuth();
 
+function toggleDropdown() {
+    document.getElementById('profileDropdown').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('profileDropdown');
+    const avatar = document.getElementById('topbarAvatar');
+    if (dropdown && !dropdown.contains(e.target) && e.target !== avatar) {
+        dropdown.classList.remove('show');
+    }
+});
+
+document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
+    await fetch('/logout', { method: 'POST' }).catch(() => {});
+    window.location.href = '/static/login.html';
+});
+
+/* ══════════════════════════════════════════
+   FILTERS
+══════════════════════════════════════════ */
 function getFiltered() {
+    const s = currentSearch.toLowerCase();
     return REQUESTS.filter(r => {
-        const areaOk = currentArea === 'all' || r.area === currentArea;
-        const matOk = !currentMat || r.materials.includes(currentMat);
-        const statusOk = !currentStatus || r.status === currentStatus;
-        const s = currentSearch.toLowerCase();
-        const searchOk = !s || r.name.toLowerCase().includes(s) || r.address.toLowerCase().includes(s) || r.area.toLowerCase().includes(s);
+        const areaOk   = currentArea   === 'all' || r.area === currentArea;
+        const matOk    = !currentMat    || r.materials.includes(currentMat);
+        const statusOk = r.status === 'pending';
+        const searchOk = !s || r.name.toLowerCase().includes(s)
+                            || r.address.toLowerCase().includes(s)
+                            || r.area.toLowerCase().includes(s);
         return areaOk && matOk && statusOk && searchOk;
     });
 }
 
 function buildAreaButtons() {
-    const areas = [...new Set(REQUESTS.map(r => r.area))].sort();
     const container = document.getElementById('areaFilters');
+    if (!container) return;
+
+    // clear dynamic buttons (keep "All" if it's hardcoded in HTML)
+    container.querySelectorAll('[data-area]:not([data-area="all"])').forEach(b => b.remove());
+
+    const areas = [...new Set(REQUESTS.map(r => r.area))].sort();
     areas.forEach(area => {
         const btn = document.createElement('button');
-        btn.className = 'filter-chip';
+        btn.className    = 'filter-chip';
         btn.dataset.area = area;
-        btn.textContent = area;
+        btn.textContent  = area;
         container.appendChild(btn);
     });
-    container.addEventListener('click', e => {
+}
+
+function updateSummary(filtered) {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('sumTotal',  filtered.length);
+    set('sumNew',    filtered.filter(r => r.status === 'new').length);
+    set('sumUrgent', filtered.filter(r => r.status === 'urgent').length);
+    set('sumWeight', filtered.reduce((s, r) => s + r.weight, 0) + ' kg');
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+function render() {
+    const filtered = getFiltered();
+    updateSummary(filtered);
+
+    const html = viewMode === 'grid' ? renderGrid(filtered) : renderList(filtered);
+    const container = document.getElementById('resultsContainer');
+    if (container) container.innerHTML = html;
+}
+
+function emptyState() {
+    return `<div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No requests found</h3>
+        <p>Try changing your filters</p>
+    </div>`;
+}
+
+function renderGrid(filtered) {
+    if (!filtered.length) return emptyState();
+
+    const groups = filtered.reduce((acc, r) => {
+        (acc[r.area] = acc[r.area] || []).push(r);
+        return acc;
+    }, {});
+
+    return Object.entries(groups).map(([area, items]) => {
+        const totalKg = items.reduce((s, r) => s + r.weight, 0);
+        return `
+        <div class="area-section">
+            <div class="area-header">
+                <div class="area-icon">📍</div>
+                <div>
+                    <div class="area-name">${area}</div>
+                    <div class="area-meta">${totalKg} kg total est. weight</div>
+                </div>
+                <div class="area-count">${items.length} request${items.length !== 1 ? 's' : ''}</div>
+            </div>
+            <div class="requests-grid">
+                ${items.map(r => renderCard(r)).join('')}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderCard(r) {
+    return `
+    <div class="request-card${r.status === 'urgent' ? ' urgent' : ''}" onclick="openDrawer('REQ-${r.id}')">
+        <div class="rc-top">
+            <div class="rc-user">
+                <div class="rc-avatar" style="background:${r.avatarBg};">${r.initials}</div>
+                <div>
+                    <div class="rc-name">${r.name}</div>
+                    <div class="rc-id">REQ-${r.id}</div>
+                </div>
+            </div>
+            <span class="rc-status ${r.status}">${STATUS_LABELS[r.status]}</span>
+        </div>
+        <div class="rc-location"><i class="fas fa-map-marker-alt"></i>${r.address}</div>
+        <div class="rc-materials">
+            ${r.materials.map(m => `
+                <span class="mat-tag ${m}">${MAT_ICONS[m]} ${m.charAt(0).toUpperCase() + m.slice(1)}</span>
+            `).join('')}
+        </div>
+        <div class="rc-bottom">
+            <div class="rc-weight">${r.weight} <span>kg est.</span></div>
+            <div class="rc-date">
+                <i class="fas fa-calendar-alt" style="margin-right:4px;color:var(--green);font-size:10px;"></i>
+                ${new Date(r.date).toLocaleDateString('en-US', { month:'short', day:'numeric' })}
+            </div>
+        </div>
+        <div class="rc-actions" onclick="event.stopPropagation()">
+            <button class="rc-btn assign" onclick="acceptRequest('${r.id}')"><i class="fas fa-truck"></i> Accept</button>
+            <button class="rc-btn view"   onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i> Details</button>
+        </div>
+    </div>`;
+}
+
+function renderList(filtered) {
+    if (!filtered.length) return emptyState();
+    return `<div class="requests-list">
+        ${filtered.map(r => `
+        <div class="request-list-item" onclick="openDrawer('${r.id}')">
+            <div class="rli-avatar" style="background:${r.avatarBg};">${r.initials}</div>
+            <div class="rli-name">${r.name}</div>
+            <div class="rli-location">
+                <i class="fas fa-map-marker-alt" style="color:var(--green);margin-right:4px;font-size:10px;"></i>${r.area}
+            </div>
+            <div class="rli-mats">
+                ${r.materials.map(m => `<span class="rli-mat mat-tag ${m}">${MAT_ICONS[m]}</span>`).join('')}
+            </div>
+            <div class="rli-weight">${r.weight} kg</div>
+            <div class="rli-date">${new Date(r.date).toLocaleDateString('en-US', { month:'short', day:'numeric' })}</div>
+            <div class="rli-status"><span class="rc-status ${r.status}">${STATUS_LABELS[r.status]}</span></div>
+            <div class="rli-actions" onclick="event.stopPropagation()">
+                <button class="rli-btn primary" onclick="acceptRequest('${r.id}')"><i class="fas fa-truck"></i></button>
+                <button class="rli-btn"         onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i></button>
+            </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   DRAWER
+══════════════════════════════════════════ */
+function openDrawer(id) {
+    const r = REQUESTS.find(x => x.id === id);
+    if (!r) return;
+
+    const titleEl = document.getElementById('drawerTitle');
+    if (titleEl) titleEl.textContent = `REQ-${r.id} — ${r.name}`;
+
+    const bodyEl = document.getElementById('drawerBody');
+    if (bodyEl) bodyEl.innerHTML = `
+        <div class="user-profile-row">
+            <div class="up-avatar" style="background:${r.avatarBg};">${r.initials}</div>
+            <div>
+                <div class="up-name">${r.name}</div>
+                <div class="up-meta">${r.phone} · Joined ${r.joined}</div>
+            </div>
+            <div class="up-score">
+                <div class="score-val">${r.score}</div>
+                <div class="score-lbl">Eco Score</div>
+            </div>
+        </div>
+        <span class="rc-status ${r.status}" style="margin-bottom:20px;display:inline-flex;">
+            ${STATUS_LABELS[r.status]}
+        </span>
+        <div class="db-section">
+            <div class="db-title">Request Details</div>
+            <div class="db-grid" style="margin-bottom:12px;">
+                <div class="db-item"><div class="dl">Request ID</div><div class="dv">REQ-${r.id}</div></div>
+                <div class="db-item"><div class="dl">Est. Weight</div><div class="dv">${r.weight} kg</div></div>
+                <div class="db-item"><div class="dl">Area</div><div class="dv">${r.area}</div></div>
+                <div class="db-item"><div class="dl">Preferred Date</div>
+                    <div class="dv">${new Date(r.date).toLocaleDateString('en-US', { month:'long', day:'numeric' })}</div>
+                </div>
+            </div>
+            <div class="db-item">
+                <div class="dl">📍 Full Address</div>
+                <div class="dv" style="font-size:13px;margin-top:4px;">${r.address}</div>
+            </div>
+        </div>
+        <div class="db-section">
+            <div class="db-title">Materials Requested</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${r.materials.map(m => `
+                    <span class="mat-tag ${m}" style="font-size:13px;padding:8px 14px;">
+                        ${MAT_ICONS[m]} ${m.charAt(0).toUpperCase() + m.slice(1)}
+                    </span>
+                `).join('')}
+            </div>
+        </div>
+        ${r.notes ? `
+        <div class="db-section">
+            <div class="db-title">User Notes</div>
+            <div class="db-item">
+                <div class="dv" style="font-size:12.5px;font-weight:400;color:var(--text-secondary);line-height:1.6;">
+                    ${r.notes}
+                </div>
+            </div>
+        </div>` : ''}
+    `;
+
+    const assignBtn = document.getElementById('drawerAssignBtn');
+    if (assignBtn) assignBtn.onclick = () => acceptRequest(id, true);
+
+    const overlay = document.getElementById('drawerOverlay');
+    if (overlay) overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer(e) {
+    if (e.target === document.getElementById('drawerOverlay')) closeDrawerDirect();
+}
+
+function closeDrawerDirect() {
+    const overlay = document.getElementById('drawerOverlay');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+async function acceptRequest(id, fromDrawer = false) {
+    try {
+        const res = await fetch(`/api/requests/${id}/assign`, {
+            method: "PATCH"
+        });
+
+        if (!res.ok) throw new Error("Failed to update");
+
+        // optional: get backend response (good practice)
+        const data = await res.json();
+
+        // 🔥 update local state
+        const req = REQUESTS.find(r => r.id === id);
+        if (req) req.status = 'assigned';
+
+        if (fromDrawer) closeDrawerDirect();
+
+        render();
+        showToast("Accepted ✔");
+
+    } catch (err) {
+        console.error(err);
+        showToast("Failed ❌");
+    }
+}
+
+function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.add("show"), 10);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 2000);
+}
+
+/* ══════════════════════════════════════════
+   SIDEBAR & UI
+══════════════════════════════════════════ */
+function initSidebar() {
+    const sidebar       = document.getElementById('sidebar');
+    const mainContent   = document.getElementById('mainContent');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mobileToggle  = document.getElementById('mobileToggle');
+    const overlay       = document.getElementById('sidebarOverlay');
+
+    if (sidebarToggle && sidebar && mainContent) {
+        const icon = sidebarToggle.querySelector('i');
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            icon?.classList.toggle('fa-chevron-left');
+            icon?.classList.toggle('fa-chevron-right');
+        });
+    }
+
+    if (mobileToggle && overlay && sidebar) {
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.add('mobile-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        if (!sidebar || !overlay || !mainContent) return;
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        if (window.innerWidth <= 1024 && window.innerWidth > 768) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+        }
+    });
+}
+
+async function logout() {
+    await fetch('/logout', { method: 'POST' }).catch(() => {});
+    window.location.href = '/static/login.html';
+}
+
+/* ══════════════════════════════════════════
+   EVENT LISTENERS
+══════════════════════════════════════════ */
+function initEventListeners() {
+    document.getElementById('areaFilters')?.addEventListener('click', e => {
         const chip = e.target.closest('.filter-chip');
         if (!chip) return;
         document.querySelectorAll('#areaFilters .filter-chip').forEach(c => c.classList.remove('active'));
@@ -464,191 +873,42 @@ function buildAreaButtons() {
         currentArea = chip.dataset.area;
         render();
     });
+
+    document.getElementById('matFilter')?.addEventListener('change', e => { currentMat = e.target.value; render(); });
+    document.getElementById('statusFilter')?.addEventListener('change', e => { currentStatus = e.target.value; render(); });
+    document.getElementById('reqSearch')?.addEventListener('input', e => { currentSearch = e.target.value; render(); });
+
+    document.getElementById('gridViewBtn')?.addEventListener('click', () => {
+        viewMode = 'grid';
+        document.getElementById('gridViewBtn')?.classList.add('active');
+        document.getElementById('listViewBtn')?.classList.remove('active');
+        render();
+    });
+
+    document.getElementById('listViewBtn')?.addEventListener('click', () => {
+        viewMode = 'list';
+        document.getElementById('listViewBtn')?.classList.add('active');
+        document.getElementById('gridViewBtn')?.classList.remove('active');
+        render();
+    });
+
+    document.getElementById('logoutSidebar')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+
+    const dateEl = document.getElementById('currentDate');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', {
+        weekday:'long', year:'numeric', month:'long', day:'numeric'
+    });
 }
 
-function updateSummary(filtered) {
-    document.getElementById('sumTotal').textContent = filtered.length;
-    document.getElementById('sumNew').textContent = filtered.filter(r => r.status === 'new').length;
-    document.getElementById('sumUrgent').textContent = filtered.filter(r => r.status === 'urgent').length;
-    const totalKg = filtered.reduce((s, r) => s + r.weight, 0);
-    document.getElementById('sumWeight').textContent = totalKg + ' kg';
-}
-
-function renderCards(groups) {
-    let html = '';
-    if (!Object.keys(groups).length) {
-        html = `<div class="empty-state"><div class="empty-icon">📭</div><h3>No requests found</h3><p>Try changing your filters</p></div>`;
-    } else {
-        for (const [area, items] of Object.entries(groups)) {
-            const totalKg = items.reduce((s, r) => s + r.weight, 0);
-            html += `
-            <div class="area-section">
-                <div class="area-header">
-                    <div class="area-icon">📍</div>
-                    <div><div class="area-name">${area}</div><div class="area-meta">${totalKg} kg total est. weight</div></div>
-                    <div class="area-count">${items.length} request${items.length !== 1 ? 's' : ''}</div>
-                </div>
-                <div class="requests-grid">
-                    ${items.map(r => `
-                    <div class="request-card${r.status==='urgent'?' urgent':''}" onclick="openDrawer('${r.id}')">
-                        <div class="rc-top">
-                            <div class="rc-user">
-                                <div class="rc-avatar" style="background:${r.avatarBg};">${r.initials}</div>
-                                <div><div class="rc-name">${r.name}</div><div class="rc-id">${r.id}</div></div>
-                            </div>
-                            <span class="rc-status ${r.status}">${STATUS_LABELS[r.status]}</span>
-                        </div>
-                        <div class="rc-location"><i class="fas fa-map-marker-alt"></i>${r.address}</div>
-                        <div class="rc-materials">
-                            ${r.materials.map(m => `<span class="mat-tag ${m}">${MAT_ICONS[m]} ${m.charAt(0).toUpperCase()+m.slice(1)}</span>`).join('')}
-                        </div>
-                        <div class="rc-bottom">
-                            <div class="rc-weight">${r.weight} <span>kg est.</span></div>
-                            <div class="rc-date"><i class="fas fa-calendar-alt" style="margin-right:4px;color:var(--green);font-size:10px;"></i>${new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
-                        </div>
-                        <div class="rc-actions" onclick="event.stopPropagation()">
-                            <button class="rc-btn assign" onclick="assignDriver('${r.id}')"><i class="fas fa-truck"></i> Accept</button>
-                            <button class="rc-btn view" onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i> Details</button>
-                        </div>
-                    </div>
-                    `).join('')}
-                </div>
-            </div>`;
-        }
-    }
-    return html;
-}
-
-function renderList(filtered) {
-    if (!filtered.length) return `<div class="empty-state"><div class="empty-icon">📭</div><h3>No requests found</h3><p>Try changing your filters</p></div>`;
-    return `<div class="requests-list">${filtered.map(r => `
-        <div class="request-list-item" onclick="openDrawer('${r.id}')">
-            <div class="rli-avatar" style="background:${r.avatarBg};">${r.initials}</div>
-            <div class="rli-name">${r.name}</div>
-            <div class="rli-location"><i class="fas fa-map-marker-alt" style="color:var(--green);margin-right:4px;font-size:10px;"></i>${r.area}</div>
-            <div class="rli-mats">${r.materials.map(m=>`<span class="rli-mat mat-tag ${m}">${MAT_ICONS[m]}</span>`).join('')}</div>
-            <div class="rli-weight">${r.weight} kg</div>
-            <div class="rli-date">${new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
-            <div class="rli-status"><span class="rc-status ${r.status}">${STATUS_LABELS[r.status]}</span></div>
-            <div class="rli-actions" onclick="event.stopPropagation()">
-                <button class="rli-btn primary" title="Accept" onclick="assignDriver('${r.id}')"><i class="fas fa-truck"></i></button>
-                <button class="rli-btn" title="View details" onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i></button>
-            </div>
-        </div>
-    `).join('')}</div>`;
-}
-
-function render() {
-    const filtered = getFiltered();
-    updateSummary(filtered);
-
-    let html = '';
-    if (viewMode === 'grid') {
-        const groups = filtered.reduce((acc, r) => { (acc[r.area] = acc[r.area] || []).push(r); return acc; }, {});
-        html = renderCards(groups);
-    } else {
-        html = renderList(filtered);
-    }
-    document.getElementById('resultsContainer').innerHTML = html;
-}
-
-function openDrawer(id) {
-    const r = REQUESTS.find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('drawerTitle').textContent = `${r.id} — ${r.name}`;
-    document.getElementById('drawerBody').innerHTML = `
-        <div class="user-profile-row">
-            <div class="up-avatar" style="background:${r.avatarBg};">${r.initials}</div>
-            <div>
-                <div class="up-name">${r.name}</div>
-                <div class="up-meta">${r.phone} · Joined ${r.joined}</div>
-            </div>
-            <div class="up-score"><div class="score-val">${r.score}</div><div class="score-lbl">Eco Score</div></div>
-        </div>
-        <span class="rc-status ${r.status}" style="margin-bottom:20px;display:inline-flex;">${STATUS_LABELS[r.status]}</span>
-
-        <div class="db-section">
-            <div class="db-title">Request Details</div>
-            <div class="db-grid" style="margin-bottom:12px;">
-                <div class="db-item"><div class="dl">Request ID</div><div class="dv">${r.id}</div></div>
-                <div class="db-item"><div class="dl">Est. Weight</div><div class="dv">${r.weight} kg</div></div>
-                <div class="db-item"><div class="dl">Area</div><div class="dv">${r.area}</div></div>
-                <div class="db-item"><div class="dl">Preferred Date</div><div class="dv">${new Date(r.date).toLocaleDateString('en-US',{month:'long',day:'numeric'})}</div></div>
-            </div>
-            <div class="db-item"><div class="dl">📍 Full Address</div><div class="dv" style="font-size:13px;margin-top:4px;">${r.address}</div></div>
-        </div>
-
-        <div class="db-section">
-            <div class="db-title">Materials Requested</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                ${r.materials.map(m => `<span class="mat-tag ${m}" style="font-size:13px;padding:8px 14px;">${MAT_ICONS[m]} ${m.charAt(0).toUpperCase()+m.slice(1)}</span>`).join('')}
-            </div>
-        </div>
-
-        ${r.notes ? `
-        <div class="db-section">
-            <div class="db-title">User Notes</div>
-            <div class="db-item"><div class="dv" style="font-size:12.5px;font-weight:400;color:var(--text-secondary);line-height:1.6;">${r.notes}</div></div>
-        </div>` : ''}
-    `;
-    const assignBtn = document.getElementById('drawerAssignBtn');
-    assignBtn.onclick = () => assignDriver(id, true);
-    document.getElementById('drawerOverlay').classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeDrawer(e) { if (e.target === document.getElementById('drawerOverlay')) closeDrawerDirect(); }
-function closeDrawerDirect() { document.getElementById('drawerOverlay').classList.remove('show'); document.body.style.overflow = ''; }
-
-/* ── Init ── */
-buildAreaButtons();
-render();
-loadLiveRequests();
-
-document.getElementById('matFilter').addEventListener('change', e => { currentMat = e.target.value; render(); });
-document.getElementById('statusFilter').addEventListener('change', e => { currentStatus = e.target.value; render(); });
-document.getElementById('reqSearch').addEventListener('input', e => { currentSearch = e.target.value; render(); });
-
-document.getElementById('gridViewBtn').addEventListener('click', () => {
-    viewMode = 'grid';
-    document.getElementById('gridViewBtn').classList.add('active');
-    document.getElementById('listViewBtn').classList.remove('active');
-    render();
+/* ══════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    initSidebar();
+    initEventListeners();
+    render(); // show empty state immediately while auth loads
+    checkAuth(); // fetch /me → populateSidebar → loadLiveRequests
 });
-document.getElementById('listViewBtn').addEventListener('click', () => {
-    viewMode = 'list';
-    document.getElementById('listViewBtn').classList.add('active');
-    document.getElementById('gridViewBtn').classList.remove('active');
-    render();
-});
-
-/* ── Sidebar ── */
-const sidebar = document.getElementById('sidebar');
-const mainContent = document.getElementById('mainContent');
-const sidebarToggle = document.getElementById('sidebarToggle');
-const toggleIcon = sidebarToggle.querySelector('i');
-sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); mainContent.classList.toggle('expanded'); toggleIcon.classList.toggle('fa-chevron-left'); toggleIcon.classList.toggle('fa-chevron-right'); });
-const mobileToggle = document.getElementById('mobileToggle');
-const overlay = document.getElementById('sidebarOverlay');
-mobileToggle.addEventListener('click', () => { sidebar.classList.add('mobile-open'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
-overlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; });
-document.getElementById('logoutSidebar').addEventListener('click', e => { e.preventDefault(); localStorage.removeItem('isLoggedIn'); localStorage.removeItem('ecoCompany'); window.location.href = 'login.html'; });
-
-document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-const companyData = JSON.parse(localStorage.getItem('ecoCompany') || '{}');
-const name = companyData.companyName || companyData.name || 'Green Collect Ltd';
-const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-document.getElementById('sidebarName').textContent = name;
-['sidebarAvatar', 'topbarAvatar'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = initials; });
-
-function handleResize() {
-    if (window.innerWidth > 768) { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; }
-    if (window.innerWidth <= 1024 && window.innerWidth > 768) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }
-}
-window.addEventListener('resize', handleResize);
-handleResize();
-
 </script>
 </body>
 </html>
