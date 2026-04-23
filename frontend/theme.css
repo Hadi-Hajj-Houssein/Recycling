@@ -66,36 +66,108 @@ input, textarea, select {
 body, .topbar, .card, input, textarea, select {
     transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
-/* Sidebar logo text — fixes the white-on-white issue globally */
 .sidebar-logo .text {
     color: var(--text-primary);
     transition: color 0.4s;
 }
 
-/* Topbar light mode — fixes the black bar globally */
 [data-theme="light"] .topbar {
     background: rgba(240, 245, 241, 0.92);
 }
 
-/* Search inputs — fixes invisible text in light mode globally */
 .search-box input {
     color: var(--text-primary);
     background: var(--bg-input);
 }
 
-/* Cards hover in light mode — subtle instead of invisible */
 [data-theme="light"] .card:hover,
 [data-theme="light"] .settings-card:hover {
     border-color: rgba(46, 204, 113, 0.2);
     box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 
-/* Nav item hover in light mode — not too transparent */
 [data-theme="light"] .nav-item:hover {
     background: rgba(46, 204, 113, 0.06);
 }
 
-/* Dropdown backgrounds in light mode */
 [data-theme="light"] .profile-dropdown {
     box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed, 64px);
+}
+
+.sidebar.collapsed .sidebar-nav {
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar.collapsed .nav-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar.collapsed .nav-item {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.sidebar.collapsed .nav-item i {
+    font-size: 18px;
+    margin: 0;
+    width: auto;
+    min-width: auto;
+}
+
+.sidebar.collapsed .sidebar-logo .text,
+.sidebar.collapsed .nav-section-title,
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .nav-item .badge,
+.sidebar.collapsed .sidebar-user .user-info {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    padding: 22px 0;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+    display: flex;
+}
+
+.sidebar.collapsed .sidebar-user {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.topbar {
+    background: var(--topbar-bg, rgba(6, 14, 9, 0.85));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: background 0.4s ease;
+}
+
+[data-theme="light"] .topbar {
+    background: rgba(240, 245, 241, 0.92) !important;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px !important;
+    }
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    .main {
+        margin-left: 0 !important;
+    }
 }

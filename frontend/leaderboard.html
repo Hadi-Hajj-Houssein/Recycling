@@ -1,871 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="theme.css">
+    <script src="theme.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - EcoCycle</title>
+    <title>Coming Soon - EcoCycle</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --sidebar-width: 260px;
-            --sidebar-collapsed: 76px;
-            --topbar-height: 70px;
-            --bg-primary: #060e09;
-            --bg-secondary: #0a1a0f;
-            --bg-card: rgba(255,255,255,0.025);
-            --border: rgba(255,255,255,0.06);
-            --border-hover: rgba(46,204,113,0.15);
-            --green: #2ecc71;
-            --green-dark: #27ae60;
-            --green-glow: rgba(46,204,113,0.3);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255,255,255,0.6);
-            --text-muted: rgba(255,255,255,0.35);
-            --blue: #3498db;
-            --yellow: #f1c40f;
-            --orange: #e67e22;
-            --red: #e74c3c;
-            --purple: #9b59b6;
-            --teal: #1abc9c;
-            --gold: #f1c40f;
-            --silver: #bdc3c7;
-            --bronze: #cd7f32;
-        }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
         }
 
-        /* ═══════ SIDEBAR ═══════ */
-        .sidebar {
-            position: fixed; left: 0; top: 0;
-            width: var(--sidebar-width); height: 100vh;
-            background: var(--bg-secondary); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; z-index: 1000;
-            transition: all 0.35s cubic-bezier(0.4,0,0.2,1); overflow: hidden;
+        /* Ambient background blobs */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            opacity: 0.12;
         }
-        .sidebar-header {
-            padding: 22px 20px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            min-height: var(--topbar-height); flex-shrink: 0;
+        .bg-blob-1 {
+            width: 400px; height: 400px;
+            background: var(--green);
+            top: -100px; left: -100px;
         }
-        .sidebar-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; white-space: nowrap; }
-        .sidebar-logo .icon {
-            width: 38px; height: 38px; min-width: 38px;
+        .bg-blob-2 {
+            width: 300px; height: 300px;
+            background: var(--teal);
+            bottom: -80px; right: -80px;
+        }
+        .bg-blob-3 {
+            width: 200px; height: 200px;
+            background: var(--blue);
+            top: 50%; left: 60%;
+            opacity: 0.06;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px 24px;
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: fadeUp 0.7s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            margin-bottom: 48px;
+        }
+
+        .logo-icon {
+            width: 44px; height: 44px;
             background: linear-gradient(135deg, var(--green), var(--teal));
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; box-shadow: 0 4px 12px var(--green-glow);
-        }
-        .sidebar-logo .text { font-size: 20px; font-weight: 700; color: #fff; }
-        .sidebar-logo .text span { color: var(--green); }
-        .sidebar-toggle {
-            background: none; border: none; color: var(--text-muted); font-size: 18px;
-            cursor: pointer; padding: 6px; border-radius: 8px; transition: all 0.3s;
+            border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 16px var(--green-glow);
         }
-        .sidebar-toggle:hover { background: rgba(255,255,255,0.05); color: var(--green); }
-        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; overflow-x: hidden; }
-        .sidebar-nav::-webkit-scrollbar { width: 3px; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .nav-section { margin-bottom: 24px; }
-        .nav-section-title {
-            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--text-muted); padding: 0 14px; margin-bottom: 8px; white-space: nowrap; overflow: hidden;
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
-        .nav-item {
-            display: flex; align-items: center; gap: 14px;
-            padding: 11px 14px; border-radius: 12px; color: var(--text-secondary);
-            text-decoration: none; font-size: 13.5px; font-weight: 500;
-            transition: all 0.25s ease; margin-bottom: 2px; white-space: nowrap; position: relative; cursor: pointer;
+        .logo-text span { color: var(--green); }
+
+        .icon-wrap {
+            width: 88px; height: 88px;
+            background: rgba(46,204,113,0.08);
+            border: 1px solid rgba(46,204,113,0.15);
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 28px;
+            animation: pulse 3s ease-in-out infinite;
         }
-        .nav-item i { font-size: 16px; width: 20px; min-width: 20px; text-align: center; }
-        .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
-        .nav-item.active { background: rgba(46,204,113,0.1); color: var(--green); }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 20px; background: var(--green); border-radius: 0 3px 3px 0;
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(46,204,113,0.15); }
+            50%       { box-shadow: 0 0 0 12px rgba(46,204,113,0); }
         }
-        .nav-item .badge {
-            margin-left: auto; background: var(--red); color: #fff;
-            font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: rgba(46,204,113,0.08);
+            border: 1px solid rgba(46,204,113,0.2);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
         }
-        .nav-item.logout-btn { color: var(--red); margin-top: 8px; }
-        .nav-item.logout-btn:hover { background: rgba(231,76,60,0.08); }
-        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); flex-shrink: 0; }
-        .sidebar-user {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 12px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: background 0.3s;
+
+        .badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: blink 1.5s ease infinite;
         }
-        .sidebar-user:hover { background: rgba(255,255,255,0.04); }
-        .sidebar-user .avatar {
-            width: 36px; height: 36px; min-width: 36px; border-radius: 10px;
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.2; }
+        }
+
+        h1 {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
+        h1 span { color: var(--green); }
+
+        p.subtitle {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .divider {
+            width: 48px; height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--teal));
+            border-radius: 2px;
+            margin: 0 auto 40px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
             background: linear-gradient(135deg, var(--green), var(--teal));
-            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
-        }
-        .sidebar-user .user-info h4 { font-size: 13px; font-weight: 600; }
-        .sidebar-user .user-info p { font-size: 11px; color: var(--text-muted); }
-        .sidebar.collapsed { width: var(--sidebar-collapsed); }
-        .sidebar.collapsed .sidebar-logo .text,
-        .sidebar.collapsed .nav-section-title,
-        .sidebar.collapsed .nav-item span,
-        .sidebar.collapsed .nav-item .badge,
-        .sidebar.collapsed .sidebar-user .user-info { opacity: 0; width: 0; overflow: hidden; }
-        .sidebar.collapsed .sidebar-header { justify-content: center; padding: 22px 12px; }
-        .sidebar.collapsed .sidebar-toggle { display: none; }
-        .sidebar.collapsed .nav-item { justify-content: center; padding: 12px; }
-        .sidebar.collapsed .nav-item i { font-size: 18px; }
-        .sidebar.collapsed .sidebar-user { justify-content: center; padding: 10px; }
-
-        /* ═══════ MAIN ═══════ */
-        .main { margin-left: var(--sidebar-width); min-height: 100vh; transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1); }
-        .main.expanded { margin-left: var(--sidebar-collapsed); }
-
-        .topbar {
-            position: sticky; top: 0; z-index: 100; height: var(--topbar-height);
-            background: rgba(6,14,9,0.9); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
-        }
-        .topbar-left { display: flex; align-items: center; gap: 20px; }
-        .mobile-toggle { display: none; background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 6px; }
-        .topbar-greeting h2 { font-size: 18px; font-weight: 600; }
-        .topbar-greeting p { font-size: 12px; color: var(--text-muted); }
-        .topbar-right { display: flex; align-items: center; gap: 8px; }
-        .topbar-btn {
-            width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border); color: var(--text-secondary); font-size: 16px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s; position: relative;
-        }
-        .topbar-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
-        .notif-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--bg-primary); }
-        .topbar-avatar {
-            width: 38px; height: 38px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--green), var(--teal));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 700; cursor: pointer; margin-left: 4px; transition: transform 0.3s;
-        }
-        .topbar-avatar:hover { transform: scale(1.05); }
-        .profile-dropdown {
-            position: absolute; top: calc(100% + 8px); right: 0; width: 220px;
-            background: var(--bg-secondary); border: 1px solid var(--border);
-            border-radius: 16px; padding: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            opacity: 0; visibility: hidden; transform: translateY(-10px);
-            transition: all 0.25s ease; z-index: 200;
-        }
-        .profile-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .profile-dropdown .dropdown-header { padding: 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
-        .profile-dropdown .dropdown-header h4 { font-size: 13px; font-weight: 600; }
-        .profile-dropdown .dropdown-header p { font-size: 11px; color: var(--text-muted); }
-        .dropdown-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: 10px; color: var(--text-secondary);
-            font-size: 13px; cursor: pointer; transition: all 0.2s;
-            border: none; background: none; width: 100%; font-family: 'Poppins', sans-serif; text-align: left;
-        }
-        .dropdown-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
-        .dropdown-item.danger { color: var(--red); }
-        .dropdown-item.danger:hover { background: rgba(231,76,60,0.08); }
-        .dropdown-item i { width: 16px; text-align: center; }
-
-        .sidebar-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; transition: opacity 0.3s;
-        }
-        .sidebar-overlay.active { opacity: 1; }
-
-        /* ═══════ CONTENT ═══════ */
-        .content { padding: 28px 32px 60px; }
-
-        /* ═══════ PAGE HERO ═══════ */
-        .lb-hero {
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, rgba(46,204,113,0.06) 0%, rgba(26,188,156,0.03) 50%, transparent 100%);
-            border: 1px solid rgba(46,204,113,0.1);
-            border-radius: 24px; padding: 36px 36px 32px;
-            margin-bottom: 24px;
-        }
-        .lb-hero::before {
-            content: '🏆';
-            position: absolute; right: 36px; top: 50%; transform: translateY(-50%);
-            font-size: 100px; opacity: 0.06; pointer-events: none; line-height: 1;
-        }
-        .lb-hero h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
-        .lb-hero h1 span { color: var(--green); }
-        .lb-hero p { font-size: 13.5px; color: var(--text-muted); max-width: 480px; line-height: 1.6; }
-        .lb-hero-stats { display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap; }
-        .hero-stat { display: flex; flex-direction: column; gap: 2px; }
-        .hero-stat .val { font-size: 22px; font-weight: 700; color: var(--green); }
-        .hero-stat .lbl { font-size: 11.5px; color: var(--text-muted); }
-
-        /* ═══════ TABS + FILTER ROW ═══════ */
-        .controls-row {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 14px; margin-bottom: 22px; flex-wrap: wrap;
-        }
-        .tab-bar {
-            display: flex; background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border); border-radius: 14px; padding: 4px; gap: 3px;
-        }
-        .tab-btn {
-            padding: 8px 18px; border-radius: 10px; font-size: 13px; font-weight: 500;
-            cursor: pointer; border: none; background: none; color: var(--text-muted);
-            font-family: 'Poppins', sans-serif; transition: all 0.25s; white-space: nowrap;
-        }
-        .tab-btn.active { background: rgba(46,204,113,0.12); color: var(--green); font-weight: 600; }
-        .tab-btn:hover:not(.active) { color: var(--text-secondary); }
-
-        .filter-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .search-box { position: relative; }
-        .search-box input {
-            width: 200px; padding: 9px 14px 9px 36px;
-            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-            border-radius: 12px; color: #fff; font-family: 'Poppins', sans-serif;
-            font-size: 13px; outline: none; transition: all 0.3s;
-        }
-        .search-box input::placeholder { color: var(--text-muted); }
-        .search-box input:focus { border-color: var(--green); background: rgba(46,204,113,0.04); width: 230px; }
-        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
-
-        .sort-select {
-            padding: 9px 14px; background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border); border-radius: 12px;
-            color: var(--text-secondary); font-family: 'Poppins', sans-serif;
-            font-size: 13px; outline: none; cursor: pointer;
-        }
-        .sort-select option { background: #0a1a0f; }
-
-        /* ═══════ TOP 3 PODIUM ═══════ */
-        .podium {
-            display: flex; align-items: flex-end; justify-content: center;
-            gap: 16px; margin-bottom: 28px; padding: 0 20px;
-        }
-        .podium-slot {
-            display: flex; flex-direction: column; align-items: center; gap: 0;
-            flex: 1; max-width: 200px;
-        }
-        .podium-slot .p-avatar-wrap { position: relative; margin-bottom: 14px; }
-        .podium-slot .p-avatar {
-            width: 72px; height: 72px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 800; color: #fff;
-            border: 3px solid transparent; transition: transform 0.3s;
-            position: relative; z-index: 1;
-        }
-        .podium-slot:nth-child(2) .p-avatar { width: 88px; height: 88px; font-size: 26px; }
-        .podium-slot .p-avatar:hover { transform: scale(1.05); }
-        .podium-slot .p-crown {
-            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-            font-size: 22px; line-height: 1; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
-        }
-        .podium-slot:nth-child(2) .p-crown { font-size: 28px; top: -24px; }
-        .podium-slot .p-name { font-size: 13.5px; font-weight: 600; text-align: center; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
-        .podium-slot .p-pts { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
-        .podium-slot .p-kg { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
-        .podium-block {
-            width: 100%; border-radius: 16px 16px 0 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; font-weight: 900; color: rgba(255,255,255,0.15);
-            padding: 14px 0;
-        }
-        .podium-slot:nth-child(1) .podium-block { height: 90px; background: linear-gradient(180deg, rgba(189,195,199,0.15), rgba(189,195,199,0.06)); border: 1px solid rgba(189,195,199,0.2); }
-        .podium-slot:nth-child(2) .podium-block { height: 120px; background: linear-gradient(180deg, rgba(241,196,15,0.18), rgba(241,196,15,0.05)); border: 1px solid rgba(241,196,15,0.25); }
-        .podium-slot:nth-child(3) .podium-block { height: 70px; background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.05)); border: 1px solid rgba(205,127,50,0.2); }
-        .podium-slot:nth-child(1) .p-pts { color: var(--silver); }
-        .podium-slot:nth-child(2) .p-pts { color: var(--gold); }
-        .podium-slot:nth-child(3) .p-pts { color: var(--bronze); }
-        .podium-slot:nth-child(2) .p-avatar { box-shadow: 0 0 32px rgba(241,196,15,0.3); }
-
-        /* ═══════ LIST ═══════ */
-        .lb-list { display: flex; flex-direction: column; gap: 6px; }
-
-        .lb-row {
-            display: flex; align-items: center; gap: 14px;
-            padding: 14px 18px; border-radius: 16px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            transition: all 0.25s ease; cursor: pointer; position: relative; overflow: hidden;
-        }
-        .lb-row::after {
-            content: ''; position: absolute; inset: 0; border-radius: 16px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.015));
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
-        }
-        .lb-row:hover { border-color: rgba(255,255,255,0.1); transform: translateX(3px); }
-        .lb-row:hover::after { opacity: 1; }
-        .lb-row.is-you {
-            background: rgba(46,204,113,0.06);
-            border-color: rgba(46,204,113,0.18);
-        }
-        .lb-row.is-you::before {
-            content: 'YOU'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
-            color: var(--green); background: rgba(46,204,113,0.12);
-            padding: 3px 8px; border-radius: 6px;
+            color: #fff;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(46,204,113,0.3);
         }
 
-        .lb-rank {
-            font-size: 15px; font-weight: 700; min-width: 32px; text-align: center;
-            flex-shrink: 0;
-        }
-        .lb-rank.gold { color: var(--gold); }
-        .lb-rank.silver { color: var(--silver); }
-        .lb-rank.bronze { color: var(--bronze); }
-        .lb-rank.normal { color: var(--text-muted); }
-
-        .lb-avatar {
-            width: 42px; height: 42px; min-width: 42px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(46,204,113,0.4);
         }
 
-        .lb-info { flex: 1; min-width: 0; }
-        .lb-info h4 { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lb-info .lb-sub { font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; margin-top: 2px; flex-wrap: wrap; }
-        .lb-info .lb-sub span { display: flex; align-items: center; gap: 4px; }
+        .back-btn:active { transform: translateY(0); }
 
-        .lb-bar-wrap { width: 120px; flex-shrink: 0; }
-        .lb-bar-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
-        .lb-bar-fill { height: 100%; border-radius: 3px; transition: width 1.2s ease; }
-        .lb-bar-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; text-align: right; }
-
-        .lb-pts {
-            font-size: 15px; font-weight: 700; color: var(--green);
-            min-width: 80px; text-align: right; flex-shrink: 0;
-        }
-        .lb-pts .pts-label { font-size: 10px; color: var(--text-muted); font-weight: 400; display: block; }
-
-        .lb-change {
-            font-size: 11px; font-weight: 600; min-width: 36px; text-align: center; flex-shrink: 0;
-        }
-        .lb-change.up { color: var(--green); }
-        .lb-change.down { color: var(--red); }
-        .lb-change.same { color: var(--text-muted); }
-
-        /* ═══════ MY RANK STICKY FOOTER ═══════ */
-        .my-rank-bar {
-            position: fixed; bottom: 0; left: var(--sidebar-width); right: 0;
-            background: rgba(6,14,9,0.95); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(46,204,113,0.18);
-            padding: 14px 32px; z-index: 50;
-            display: flex; align-items: center; gap: 16px;
-            transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
-        }
-        .my-rank-bar.expanded { left: var(--sidebar-collapsed); }
-        .my-rank-bar .mrlabel { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
-        .my-rank-bar .mrinfo { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-        .my-rank-bar .mravatar {
-            width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-            background: linear-gradient(135deg, var(--green), var(--teal));
-            display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
-        }
-        .my-rank-bar .mrname { font-size: 13px; font-weight: 600; }
-        .my-rank-bar .mrstats { font-size: 11.5px; color: var(--text-muted); }
-        .my-rank-bar .mrpts { font-size: 18px; font-weight: 800; color: var(--green); flex-shrink: 0; }
-        .my-rank-bar .mrrank { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
-        .my-rank-bar .mrrank span { font-size: 20px; font-weight: 800; color: var(--text-primary); }
-        .my-rank-bar .mr-progress { flex: 1; max-width: 200px; flex-shrink: 0; }
-        .my-rank-bar .mr-progress .mprLabel { font-size: 10.5px; color: var(--text-muted); margin-bottom: 5px; }
-        .my-rank-bar .mr-progress .mprTrack { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
-        .my-rank-bar .mr-progress .mprFill { height: 100%; background: linear-gradient(90deg, var(--green), var(--teal)); border-radius: 3px; }
-
-        /* ═══════ BADGES ═══════ */
-        .badge-section { margin-bottom: 28px; }
-        .badge-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-        .badges-grid { display: flex; gap: 12px; flex-wrap: wrap; }
-        .badge-pill {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 500;
-            border: 1px solid; white-space: nowrap;
-        }
-        .badge-pill.earned { background: rgba(46,204,113,0.08); border-color: rgba(46,204,113,0.2); color: var(--green); }
-        .badge-pill.locked { background: rgba(255,255,255,0.02); border-color: var(--border); color: var(--text-muted); filter: grayscale(0.5); }
-
-        /* ═══════ EMPTY / LOADING ═══════ */
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
-        .empty-state i { font-size: 40px; margin-bottom: 14px; opacity: 0.3; display: block; }
-
-        /* skeleton */
-        .skel { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: skel 1.5s infinite; border-radius: 8px; }
-        @keyframes skel { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-
-        /* ═══════ ANIMATIONS ═══════ */
-        .fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.45s ease forwards; }
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-
-        /* ═══════ RESPONSIVE ═══════ */
-        @media (max-width: 1024px) {
-            .lb-bar-wrap { display: none; }
-        }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.3); }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .sidebar-overlay { display: block; }
-            .main { margin-left: 0 !important; }
-            .mobile-toggle { display: flex; }
-            .topbar { padding: 0 20px; }
-            .content { padding: 20px 16px 100px; }
-            .my-rank-bar { left: 0 !important; padding: 12px 20px; }
-            .podium { gap: 10px; padding: 0; }
-            .podium-slot .p-avatar { width: 58px; height: 58px; font-size: 18px; }
-            .podium-slot:nth-child(2) .p-avatar { width: 70px; height: 70px; font-size: 22px; }
-            .lb-row { padding: 12px 14px; gap: 10px; }
-            .lb-row.is-you::before { display: none; }
-            .lb-pts { min-width: 60px; font-size: 13px; }
-            .lb-change { display: none; }
-            .search-box input { width: 160px; }
-            .mr-progress { display: none; }
-            .lb-hero::before { display: none; }
-            .lb-hero { padding: 24px 22px; }
-        }
-        @media (max-width: 480px) {
-            .podium { gap: 6px; }
-            .lb-hero-stats { gap: 18px; }
-            .tab-btn { padding: 7px 12px; font-size: 12px; }
+        .footer-note {
+            margin-top: 48px;
+            font-size: 12px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
 
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <a href="index.html" class="sidebar-logo">
-            <div class="icon">♻️</div>
-            <div class="text">Eco<span>Cycle</span></div>
+    <div class="container">
+        <a href="dashboard.html" class="logo">
+            <div class="logo-icon">♻️</div>
+            <div class="logo-text">Eco<span>Cycle</span></div>
         </a>
-        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-chevron-left"></i></button>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="nav-section">
-            <div class="nav-section-title">Main</div>
-            <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
-            <a href="Recyclables.html" class="nav-item"><i class="fas fa-recycle"></i><span>My Recyclables</span><div class="badge">1</div></a>
-            <a href="pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
-            <a href="company_select.html" class="nav-item"><i class="fas fa-building"></i><span>Companies</span></a>
-        </div>
-        <div class="nav-section">
-            <div class="nav-section-title">Analytics</div>
-            <a href="reports.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
-            <a href="impact.html" class="nav-item"><i class="fas fa-leaf"></i><span>Impact</span></a>
-            <a href="leaderboard.html" class="nav-item active"><i class="fas fa-trophy"></i><span>Leaderboard</span></a>
-        </div>
-        <div class="nav-section">
-            <div class="nav-section-title">Account</div>
-            <a href="ecopoints.html" class="nav-item"><i class="fas fa-star"></i><span>Eco Points</span><div class="badge" style="background:var(--green);">1,240</div></a>
-            <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
-            <a href="help&faq.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
-            <a href="#" class="nav-item logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
-        </div>
-    </nav>
-    <div class="sidebar-footer">
-        <div class="sidebar-user">
-            <div class="avatar" id="sidebarAvatar">JD</div>
-            <div class="user-info">
-                <h4 id="sidebarName">Jane Doe</h4>
-                <p>Eco Warrior 🌿</p>
-            </div>
-        </div>
-    </div>
-</aside>
 
-<!-- Main -->
-<main class="main" id="mainContent">
-    <header class="topbar">
-        <div class="topbar-left">
-            <button class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></button>
-            <div class="topbar-greeting">
-                <h2>🏆 Leaderboard</h2>
-                <p id="currentDate"></p>
-            </div>
-        </div>
-        <div class="topbar-right">
-            <button class="topbar-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
-            <button class="topbar-btn"><i class="fas fa-envelope"></i></button>
-            <div style="position:relative;">
-                <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">JD</div>
-                <div class="profile-dropdown" id="profileDropdown">
-                    <div class="dropdown-header">
-                        <h4 id="dropdownName">Jane Doe</h4>
-                        <p id="dropdownEmail">jane@example.com</p>
-                    </div>
-                    <button class="dropdown-item"><i class="fas fa-user"></i> My Profile</button>
-                    <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
-                    <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
-                </div>
-            </div>
-        </div>
-    </header>
+        <div class="icon-wrap">🚧</div>
 
-    <div class="content">
+        <div class="badge">Under Development</div>
 
-        <!-- Hero -->
-        <div class="lb-hero fade-up">
-            <h1>Eco <span>Champions</span> Board</h1>
-            <p>Compete with recyclers in your community. The more you recycle, the higher you climb. Points reset monthly — keep the streak alive!</p>
-            <div class="lb-hero-stats">
-                <div class="hero-stat"><div class="val" id="heroTotal">—</div><div class="lbl">Total Participants</div></div>
-                <div class="hero-stat"><div class="val" id="heroKg">—</div><div class="lbl">kg Recycled This Month</div></div>
-                <div class="hero-stat"><div class="val" id="heroReset">—</div><div class="lbl">Days Until Reset</div></div>
-            </div>
-        </div>
+        <h1>Coming <span>Soon</span></h1>
 
-        <!-- Controls -->
-        <div class="controls-row fade-up">
-            <div class="tab-bar" id="scopeTabs">
-                <button class="tab-btn active" data-scope="global">🌍 Global</button>
-                <button class="tab-btn" data-scope="local">📍 Local</button>
-                <button class="tab-btn" data-scope="friends">👥 Friends</button>
-            </div>
-            <div class="filter-right">
-                <div class="tab-bar" id="periodTabs">
-                    <button class="tab-btn active" data-period="monthly">Monthly</button>
-                    <button class="tab-btn" data-period="alltime">All Time</button>
-                </div>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search users…" id="searchInput" oninput="handleSearch(this.value)">
-                </div>
-                <select class="sort-select" id="sortSelect" onchange="handleSort(this.value)">
-                    <option value="points">Sort: Points</option>
-                    <option value="kg">Sort: kg Recycled</option>
-                    <option value="streak">Sort: Streak</option>
-                    <option value="pickups">Sort: Pickups</option>
-                </select>
-            </div>
-        </div>
+        <div class="divider"></div>
 
-        <!-- Podium -->
-        <div class="podium fade-up" id="podium"></div>
+        <p class="subtitle">
+            This section is currently being built.<br>
+            We're working hard to bring it to you.
+        </p>
 
-        <!-- Badges earned -->
-        <div class="badge-section fade-up">
-            <h3>🎖️ Your Badges</h3>
-            <div class="badges-grid" id="badgesGrid"></div>
-        </div>
+        <a href="dashboard.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
 
-        <!-- Full list -->
-        <div class="lb-list fade-up" id="lbList"></div>
-
+        <p class="footer-note">EcoCycle &mdash; Building a greener future 🌿</p>
     </div>
 
-    <!-- My rank sticky bar -->
-    <div class="my-rank-bar" id="myRankBar">
-        <span class="mrlabel">Your Rank</span>
-        <div class="mrinfo">
-            <div class="mravatar" id="mrAvatar">JD</div>
-            <div>
-                <div class="mrname" id="mrName">Jane Doe</div>
-                <div class="mrstats" id="mrStats">2,847 kg • 12 pickups</div>
-            </div>
-        </div>
-        <div class="mrrank">Rank <span id="mrRankNum">#7</span></div>
-        <div class="mr-progress">
-            <div class="mprLabel" id="mprLabel">—pts to next rank</div>
-            <div class="mprTrack"><div class="mprFill" id="mprFill" style="width:0%"></div></div>
-        </div>
-        <div class="mrpts" id="mrPts">1,240 <small style="font-size:11px;font-weight:400;color:var(--text-muted);">pts</small></div>
-    </div>
-</main>
-
-<script>
-// ═══════ AUTH ═══════
-(function() {
-    if (localStorage.getItem('isLoggedIn') !== 'true') {
-        setTimeout(() => { if (localStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html'; }, 100);
-    }
-})();
-
-// ═══════ USER ═══════
-const userData = JSON.parse(localStorage.getItem('ecoUser') || '{}');
-const userName = userData.name || userData.username || 'You';
-const userEmail = userData.email || 'user@example.com';
-const userInitials = userName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-
-['sidebarAvatar','topbarAvatar','mrAvatar'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.textContent = userInitials;
-});
-document.getElementById('sidebarName').textContent = userName;
-document.getElementById('dropdownName').textContent = userName;
-document.getElementById('dropdownEmail').textContent = userEmail;
-document.getElementById('mrName').textContent = userName;
-document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-// ═══════ AUTH HEADERS ═══════
-function authHeaders() {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || '';
-    return { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) };
-}
-
-// ═══════ STATE ═══════
-let state = { scope: 'global', period: 'monthly', sort: 'points', search: '', data: [] };
-
-// ═══════ MOCK DATA ═══════
-const AVATAR_GRADIENTS = [
-    ['#f1c40f','#e67e22'],['#bdc3c7','#95a5a6'],['#cd7f32','#a04000'],
-    ['#2ecc71','#1abc9c'],['#3498db','#2980b9'],['#9b59b6','#8e44ad'],
-    ['#e74c3c','#c0392b'],['#1abc9c','#16a085'],['#e67e22','#d35400'],['#34495e','#2c3e50']
-];
-const NAMES = ['Mark Rivera','Sarah Johnson','Aisha Lee','Carlos Mendez','Priya Patel',
-    'Tom Walker','Nadia Kovac','Liam Osei','Fatima Zahra','Ryo Tanaka',
-    'Emma Dubois','Hassan Ali','Yuna Kim','Pedro Santos','Anna Müller',
-    'James Okonkwo','Sofia Rossi','Daniel Park','Maya Singh','Lucas Nkosi'];
-
-function makeMockData() {
-    const you = {
-        id: 'you', name: userName, initials: userInitials,
-        points: 1240, kg: 2847, pickups: 14, streak: 12,
-        gradient: ['#2ecc71','#1abc9c'], isYou: true,
-        badge: 'Eco Warrior 🌿', change: 2
-    };
-    const others = NAMES.map((name, i) => {
-        const pts = Math.round(500 + Math.random() * 3500);
-        return {
-            id: 'u' + i, name,
-            initials: name.split(' ').map(w=>w[0]).join('').toUpperCase(),
-            points: pts, kg: Math.round(pts * 2.1 + Math.random() * 400),
-            pickups: Math.round(4 + Math.random() * 20),
-            streak: Math.round(1 + Math.random() * 30),
-            gradient: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
-            isYou: false, badge: null,
-            change: Math.round(-3 + Math.random() * 6)
-        };
-    });
-    return [...others, you].sort((a, b) => b.points - a.points);
-}
-
-const BADGES = [
-    { emoji:'🌱', label:'First Recycle', earned: true },
-    { emoji:'♻️', label:'100kg Club', earned: true },
-    { emoji:'🔥', label:'10-Day Streak', earned: true },
-    { emoji:'🏆', label:'Top 10', earned: true },
-    { emoji:'⚡', label:'Speed Recycler', earned: true },
-    { emoji:'🌍', label:'Carbon Hero', earned: false },
-    { emoji:'💎', label:'Diamond Rank', earned: false },
-    { emoji:'🚀', label:'1000kg Club', earned: false },
-];
-
-// ═══════ FETCH (with fallback) ═══════
-async function fetchLeaderboard() {
-    try {
-        const res = await fetch(`http://127.0.0.1:8000/leaderboard?scope=${state.scope}&period=${state.period}`, {
-            credentials: 'include', headers: authHeaders()
-        });
-        if (res.status === 401) { window.location.href = 'login.html'; return; }
-        if (res.ok) {
-            const d = await res.json();
-            state.data = d.users || makeMockData();
-            renderHero(d.meta || {});
-            return;
-        }
-    } catch(_) {}
-    state.data = makeMockData();
-    const daysLeft = 30 - new Date().getDate();
-    renderHero({ total: state.data.length, total_kg: state.data.reduce((a,u)=>a+u.kg,0), days_until_reset: daysLeft });
-}
-
-// ═══════ HERO ═══════
-function renderHero(meta) {
-    document.getElementById('heroTotal').textContent = (meta.total || state.data.length).toLocaleString();
-    document.getElementById('heroKg').textContent = (meta.total_kg || state.data.reduce((a,u)=>a+u.kg,0)).toLocaleString() + ' kg';
-    document.getElementById('heroReset').textContent = (meta.days_until_reset ?? (30 - new Date().getDate())) + ' days';
-}
-
-// ═══════ RENDER ═══════
-function getFiltered() {
-    let list = [...state.data];
-    if (state.search) list = list.filter(u => u.name.toLowerCase().includes(state.search.toLowerCase()));
-    list.sort((a, b) => b[state.sort] - a[state.sort]);
-    return list;
-}
-
-function renderAll() {
-    const list = getFiltered();
-    renderPodium(list.slice(0, 3));
-    renderList(list.slice(3));
-    renderMyBar(list);
-    renderBadges();
-}
-
-function renderPodium(top3) {
-    // Reorder: 2nd, 1st, 3rd for visual layout
-    const order = [top3[1], top3[0], top3[2]].filter(Boolean);
-    const crowns = ['🥈','🥇','🥉'];
-    const orderCrowns = [crowns[1], crowns[0], crowns[2]]; // for positions: silver, gold, bronze
-    const podium = document.getElementById('podium');
-    podium.innerHTML = '';
-    // slot 0 = 2nd place (silver), slot 1 = 1st place (gold), slot 2 = 3rd place (bronze)
-    order.forEach((user, i) => {
-        if (!user) return;
-        const slot = document.createElement('div');
-        slot.className = 'podium-slot';
-        const realRank = top3.indexOf(user) + 1;
-        slot.innerHTML = `
-            <div class="p-avatar-wrap">
-                <div class="p-crown">${orderCrowns[i]}</div>
-                <div class="p-avatar" style="background:linear-gradient(135deg,${user.gradient[0]},${user.gradient[1]});${realRank===1?'border-color:'+user.gradient[0]+';':''}">${user.initials}</div>
-            </div>
-            <div class="p-name">${user.isYou ? userName : user.name}</div>
-            <div class="p-pts">${user.points.toLocaleString()} pts</div>
-            <div class="p-kg">${user.kg.toLocaleString()} kg</div>
-            <div class="podium-block">#${realRank}</div>`;
-        podium.appendChild(slot);
-    });
-}
-
-function renderList(list) {
-    const container = document.getElementById('lbList');
-    container.innerHTML = '';
-    if (!list.length) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i><p>No users found</p></div>';
-        return;
-    }
-    const maxPts = state.data[0]?.points || 1;
-    list.forEach((user, i) => {
-        const rank = i + 4; // starts at 4 since top 3 are in podium
-        const row = document.createElement('div');
-        row.className = 'lb-row' + (user.isYou ? ' is-you' : '');
-        row.style.animationDelay = (i * 0.03) + 's';
-        const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : 'normal';
-        const changeTxt = user.change > 0 ? `<i class="fas fa-arrow-up"></i> ${user.change}` : user.change < 0 ? `<i class="fas fa-arrow-down"></i> ${Math.abs(user.change)}` : '—';
-        const changeClass = user.change > 0 ? 'up' : user.change < 0 ? 'down' : 'same';
-        const barPct = Math.round((user.points / maxPts) * 100);
-        row.innerHTML = `
-            <div class="lb-rank ${rankClass}">${rank}</div>
-            <div class="lb-avatar" style="background:linear-gradient(135deg,${user.gradient[0]},${user.gradient[1]});">${user.isYou ? userInitials : user.initials}</div>
-            <div class="lb-info">
-                <h4>${user.isYou ? userName : user.name}</h4>
-                <div class="lb-sub">
-                    <span><i class="fas fa-weight-hanging" style="color:var(--green);opacity:.7;"></i>${user.kg.toLocaleString()} kg</span>
-                    <span><i class="fas fa-truck" style="color:var(--blue);opacity:.7;"></i>${user.pickups} pickups</span>
-                    <span><i class="fas fa-fire" style="color:var(--orange);opacity:.7;"></i>${user.streak}d streak</span>
-                </div>
-            </div>
-            <div class="lb-bar-wrap">
-                <div class="lb-bar-track"><div class="lb-bar-fill" style="width:0%;background:linear-gradient(90deg,${user.gradient[0]},${user.gradient[1]});" data-w="${barPct}%"></div></div>
-                <div class="lb-bar-label">${barPct}% of #1</div>
-            </div>
-            <div class="lb-change ${changeClass}">${changeTxt}</div>
-            <div class="lb-pts">${user.points.toLocaleString()}<span class="pts-label">eco pts</span></div>`;
-        container.appendChild(row);
-        setTimeout(() => {
-            const fill = row.querySelector('.lb-bar-fill');
-            if (fill) fill.style.width = fill.dataset.w;
-        }, 100 + i * 40);
-    });
-}
-
-function renderMyBar(sortedList) {
-    const myIdx = sortedList.findIndex(u => u.isYou);
-    if (myIdx === -1) return;
-    const me = sortedList[myIdx];
-    const myRank = myIdx + 1;
-    document.getElementById('mrRankNum').textContent = '#' + myRank;
-    document.getElementById('mrPts').innerHTML = me.points.toLocaleString() + ' <small style="font-size:11px;font-weight:400;color:var(--text-muted);">pts</small>';
-    document.getElementById('mrStats').textContent = me.kg.toLocaleString() + ' kg • ' + me.pickups + ' pickups';
-    if (myIdx > 0) {
-        const above = sortedList[myIdx - 1];
-        const diff = above.points - me.points;
-        const pct = Math.round((me.points / above.points) * 100);
-        document.getElementById('mprLabel').textContent = diff.toLocaleString() + ' pts to #' + myIdx;
-        document.getElementById('mprFill').style.width = pct + '%';
-    } else {
-        document.getElementById('mprLabel').textContent = "You're #1! 🎉";
-        document.getElementById('mprFill').style.width = '100%';
-    }
-}
-
-function renderBadges() {
-    const grid = document.getElementById('badgesGrid');
-    grid.innerHTML = '';
-    BADGES.forEach(b => {
-        const el = document.createElement('div');
-        el.className = 'badge-pill ' + (b.earned ? 'earned' : 'locked');
-        el.innerHTML = `<span>${b.emoji}</span><span>${b.label}</span>${!b.earned ? '<i class="fas fa-lock" style="font-size:10px;margin-left:2px;"></i>' : ''}`;
-        grid.appendChild(el);
-    });
-}
-
-// ═══════ INTERACTIONS ═══════
-document.getElementById('scopeTabs').addEventListener('click', e => {
-    if (!e.target.classList.contains('tab-btn')) return;
-    document.querySelectorAll('#scopeTabs .tab-btn').forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
-    state.scope = e.target.dataset.scope;
-    load();
-});
-
-document.getElementById('periodTabs').addEventListener('click', e => {
-    if (!e.target.classList.contains('tab-btn')) return;
-    document.querySelectorAll('#periodTabs .tab-btn').forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
-    state.period = e.target.dataset.period;
-    load();
-});
-
-function handleSearch(val) { state.search = val; renderAll(); }
-function handleSort(val) { state.sort = val; renderAll(); }
-
-// ═══════ SIDEBAR ═══════
-const sidebar = document.getElementById('sidebar');
-const mainContent = document.getElementById('mainContent');
-const myRankBar = document.getElementById('myRankBar');
-const sidebarToggle = document.getElementById('sidebarToggle');
-const toggleIcon = sidebarToggle.querySelector('i');
-
-sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-    mainContent.classList.toggle('expanded');
-    myRankBar.classList.toggle('expanded');
-    toggleIcon.classList.toggle('fa-chevron-left');
-    toggleIcon.classList.toggle('fa-chevron-right');
-});
-
-const mobileToggle = document.getElementById('mobileToggle');
-const overlay = document.getElementById('sidebarOverlay');
-mobileToggle.addEventListener('click', () => { sidebar.classList.add('mobile-open'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
-overlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; });
-
-function toggleDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
-document.addEventListener('click', e => {
-    const dd = document.getElementById('profileDropdown'), av = document.getElementById('topbarAvatar');
-    if (!dd.contains(e.target) && !av.contains(e.target)) dd.classList.remove('show');
-});
-
-    async function logout() {
-        await fetch('http://127.0.0.1:8000/logout', {
-            method: 'POST',
-            credentials: 'include'
-        }).catch(() => {});
-
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('ecoUser');
-
-        window.location.replace('login.html');
-    }
-document.getElementById('logoutSidebar').addEventListener('click', e => { e.preventDefault(); logout(); });
-document.getElementById('logoutDropdown').addEventListener('click', logout);
-
-if (window.innerWidth <= 1024) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); myRankBar.classList.add('expanded'); }
-window.addEventListener('resize', () => {
-    if (window.innerWidth <= 1024) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); myRankBar.classList.add('expanded'); }
-});
-
-// ═══════ INIT ═══════
-async function load() {
-    await fetchLeaderboard();
-    renderAll();
-}
-load();
-</script>
 </body>
 </html>

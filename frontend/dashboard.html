@@ -34,6 +34,7 @@
             z-index: 1000;
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            will-change: transform;
         }
 
         .sidebar-header {
@@ -177,7 +178,7 @@
         .sidebar.collapsed .nav-item .badge,
         .sidebar.collapsed .sidebar-user .user-info { opacity: 0; width: 0; overflow: hidden; }
         .sidebar.collapsed .sidebar-header { justify-content: center; padding: 22px 12px; }
-        .sidebar.collapsed .sidebar-toggle { display: none; }
+        .sidebar.collapsed .sidebar-toggle { display: flex; }
         .sidebar.collapsed .nav-item { justify-content: center; padding: 12px; }
         .sidebar.collapsed .nav-item i { font-size: 18px; }
         .sidebar.collapsed .sidebar-user { justify-content: center; padding: 10px; }
@@ -628,7 +629,7 @@
                     <span>My Recyclables</span>
                     <div class="badge">1</div>
                 </a>
-                <a href="pickups.html" class="nav-item"><i class="fas fa-calendar-check"></i><span>Pickups</span></a>
+                <a href="pickups.html"      class="nav-item"><i class="fas fa-truck"></i><span>Pickup Queue</span></a>
                 <a href="company_select.html" class="nav-item"><i class="fas fa-building"></i><span>Companies</span></a>
             </div>
             <div class="nav-section">
@@ -648,10 +649,10 @@
 
         <div class="sidebar-footer">
             <div class="sidebar-user">
-                <div class="avatar" id="sidebarAvatar">JD</div>
+                <div class="avatar" id="sidebarAvatar">HH</div>
                 <div class="user-info">
-                    <h4 id="sidebarName">Jane Doe</h4>
-                    <p>Eco Warrior 🌿</p>
+                    <h4 id="sidebarName">USER</h4>
+                    <p>testing</p>
                 </div>
             </div>
         </div>
@@ -854,25 +855,25 @@
                             <div class="leaderboard-item">
                                 <div class="rank gold">1</div>
                                 <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#f1c40f,#e67e22);">MR</div>
-                                <div class="leaderboard-info"><h4>Mark Rivera</h4><p>4,520 kg</p></div>
+                                <div class="leaderboard-info"><h4>Pierre Adaime</h4><p>4,520 kg</p></div>
                                 <div class="leaderboard-score">2,180 pts</div>
                             </div>
                             <div class="leaderboard-item">
                                 <div class="rank silver">2</div>
                                 <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#bdc3c7,#95a5a6);">SJ</div>
-                                <div class="leaderboard-info"><h4>Sarah Johnson</h4><p>3,890 kg</p></div>
+                                <div class="leaderboard-info"><h4>Rafi</h4><p>3,890 kg</p></div>
                                 <div class="leaderboard-score">1,850 pts</div>
                             </div>
                             <div class="leaderboard-item">
                                 <div class="rank bronze">3</div>
                                 <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#e67e22,#d35400);">AL</div>
-                                <div class="leaderboard-info"><h4>Aisha Lee</h4><p>3,210 kg</p></div>
+                                <div class="leaderboard-info"><h4>kaddoum</h4><p>3,210 kg</p></div>
                                 <div class="leaderboard-score">1,540 pts</div>
                             </div>
                             <div class="leaderboard-item you">
                                 <div class="rank">7</div>
                                 <div class="leaderboard-avatar" id="leaderboardAvatar" style="background:linear-gradient(135deg,var(--green),var(--teal));">JD</div>
-                                <div class="leaderboard-info"><h4 id="leaderboardName">You (Jane Doe)</h4><p>2,847 kg</p></div>
+                                <div class="leaderboard-info"><h4 id="leaderboardName">habchy</h4><p>2,847 kg</p></div>
                                 <div class="leaderboard-score">1,240 pts</div>
                             </div>
                         </div>
@@ -977,6 +978,8 @@
         const overlay = document.getElementById('sidebarOverlay');
 
         mobileToggle.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed'); 
+            mainContent.classList.remove('expanded');
             sidebar.classList.add('mobile-open');
             sidebar.classList.remove('collapsed');
             overlay.classList.add('active');
@@ -1070,6 +1073,13 @@
             if (window.innerWidth <= 1024 && window.innerWidth > 768) {
                 sidebar.classList.add('collapsed');
                 mainContent.classList.add('expanded');
+            }
+            if (window.innerWidth <= 1024 && window.innerWidth > 768) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
             }
         }
         window.addEventListener('resize', handleResize);

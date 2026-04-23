@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db_main import SessionLocal
@@ -28,6 +29,8 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[str] = None
     phone_number: Optional[str] = None
+    status: Optional[str] = None
+    scheduled_date: Optional[datetime] = None
     #location: Optional[str] = None
 
 class PassChange(BaseModel):
@@ -45,6 +48,8 @@ def get_me(user_id: int = Depends(get_curr_user_id), db: Session = Depends(get_d
             "first_name": user.first_name,
             "last_name": user.last_name,
             "phone_number": user.phone_number,
+            #"status": user.status,
+            #"scheduled_date": user.scheduled_date,
             #"location": user.location
         }
     else:
@@ -83,6 +88,8 @@ def update_me(user_data: UserUpdate, user_id: int = Depends(get_curr_user_id), d
         "first_name": user.first_name,
         "last_name": user.last_name,
         "phone_number": user.phone_number,
+        #"status": user.status,
+        #"scheduled_date": user.scheduled_date,
         #"location": user.location
     }
 

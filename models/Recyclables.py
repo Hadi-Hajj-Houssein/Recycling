@@ -15,5 +15,6 @@ class Recyclable_Item(Base):
     condition = Column(String, default='clean')
     status    = Column(String, default='pending')
     date      = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    scheduled_date = Column(DateTime, nullable=True)
     user = relationship("User", back_populates="recyclable_items")
     company = relationship("Company", back_populates="assigned_items")
