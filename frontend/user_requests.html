@@ -471,27 +471,19 @@ let currentMat    = '';
 let currentStatus = '';
 let currentSearch = '';
 let viewMode      = 'grid';
-
-/* ══════════════════════════════════════════
-   AUTH — runs first, everything else after
-══════════════════════════════════════════ */
-async function checkAuth() {
-    try {
-        const res = await fetch('/me');
-        if (!res.ok) {
-            window.location.href = '/static/login.html';
-            return;
-        }
-        const data = await res.json();
-        populateSidebar(data);
-    } catch (e) {
-        console.error('AUTH CRASH — actual error:', e); // read this before it redirects
-        window.location.href = '/static/login.html';
+// authentication 
+(function checkAuth() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const ecoUser = localStorage.getItem('ecoUser');
+    if (isLoggedIn !== 'true' || !ecoUser) {
+        setTimeout(() => {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        }, 100);
+        return;
     }
-
-    // Outside the try-catch — data errors can't trigger auth redirect anymore
-    loadLiveRequests();
-}
+})();
 
 function populateSidebar(data) {
     const name     = data.name || data.company_name || 'Green Collect Ltd';
@@ -511,7 +503,7 @@ async function loadLiveRequests() {
     try {
         const res = await fetch('/api/requests');
         if (res.status === 401) {
-            window.location.href = '/static/login.html';
+            window.location.href = '/login.html';
             return;
         }
         if (!res.ok) {
@@ -540,7 +532,7 @@ document.addEventListener('click', (e) => {
 
 document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
     await fetch('/logout', { method: 'POST' }).catch(() => {});
-    window.location.href = '/static/login.html';
+    window.location.href = '/login.html';
 });
 
 /* ══════════════════════════════════════════
@@ -858,12 +850,9 @@ function initSidebar() {
 
 async function logout() {
     await fetch('/logout', { method: 'POST' }).catch(() => {});
-    window.location.href = '/static/login.html';
+    window.location.href = '/login.html';
 }
 
-/* ══════════════════════════════════════════
-   EVENT LISTENERS
-══════════════════════════════════════════ */
 function initEventListeners() {
     document.getElementById('areaFilters')?.addEventListener('click', e => {
         const chip = e.target.closest('.filter-chip');

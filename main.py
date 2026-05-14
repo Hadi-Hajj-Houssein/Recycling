@@ -56,7 +56,6 @@ app.include_router(accept_request.router)
 app.include_router(cancel_request.router)
 #app.include_router(testroute.router)
 
-app.mount("/static", StaticFiles(directory="frontend", html=True), name="static")
 
 @app.get("/")
 def home():

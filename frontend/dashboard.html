@@ -795,9 +795,9 @@
             <div class="dashboard-grid">
                 <div class="card animate-in">
                     <div class="card-header">
-                        <h3>Pickups Activity</h3>
-                        <button class="card-action">View All</button>
-                    </div>
+                                <h3>Pickups Activity</h3>
+                                <a class="card-action" href="pickups.html">View All</a>
+                            </div> 
                     <div class="activity-list">
                         <div class="activity-item">
                             <div class="activity-icon pickup"><i class="fas fa-truck"></i></div>
@@ -829,8 +829,10 @@
 
                 <div style="display:flex;flex-direction:column;gap:18px;">
                     <div class="card animate-in">
-                        <div class="card-header"><h3>Next Pickup</h3><button class="card-action">Manage</button></div>
-                        <div class="upcoming-pickup">
+                            <div class="card-header">
+                                <h3>Next Pickup</h3>
+                                <a class="card-action" href="pickups.html">Manage</a>
+                            </div>                        <div class="upcoming-pickup">
                             <div class="pickup-date">
                                 <div class="date-box"><div class="day">28</div><div class="month">Jan</div></div>
                                 <div class="pickup-info"><h4>EcoWaste Ltd.</h4><p>10:00 AM — 12:00 PM</p></div>
@@ -867,7 +869,7 @@
                             <div class="leaderboard-item">
                                 <div class="rank bronze">3</div>
                                 <div class="leaderboard-avatar" style="background:linear-gradient(135deg,#e67e22,#d35400);">AL</div>
-                                <div class="leaderboard-info"><h4>kaddoum</h4><p>3,210 kg</p></div>
+                                <div class="leaderboard-info"><h4>Rabih "The Nightmare" hamada  </h4><p>3,210 kg</p></div>
                                 <div class="leaderboard-score">1,540 pts</div>
                             </div>
                             <div class="leaderboard-item you">
@@ -1085,7 +1087,6 @@
         window.addEventListener('resize', handleResize);
         handleResize();
 
-        // ═══════ SCROLL ANIMATIONS ═══════
         const animObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1096,46 +1097,113 @@
         }, { threshold: 0.05 });
         document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
 
-        // ═══════ DASHBOARD DATA ═══════
+                
         async function loadDashboardData() {
             try {
                 const res = await fetch("http://127.0.0.1:8000/dashboard", {
                     method: "GET",
                     credentials: "include"
                 });
-
+        
                 const data = await res.json();
-
+        
                 if (!res.ok) {
                     console.error("Failed to load dashboard data:", data.detail);
                     return;
                 }
-
+        
                 function updateElement(id, value) {
                     const el = document.getElementById(id);
                     if (el) el.textContent = value;
                 }
-
-                updateElement("plastic_pct", data.plastic_pct + "%");
-                updateElement("paper_pct", data.paper_pct + "%");
-                updateElement("glass_pct", data.glass_pct + "%");
-                updateElement("metal_pct", data.metal_pct + "%");
-                updateElement("organic_pct", data.organic_pct + "%");
+        
+                updateElement("plastic_pct",     data.plastic_pct + "%");
+                updateElement("paper_pct",       data.paper_pct + "%");
+                updateElement("glass_pct",       data.glass_pct + "%");
+                updateElement("metal_pct",       data.metal_pct + "%");
+                updateElement("organic_pct",     data.organic_pct + "%");
                 updateElement("electronics_pct", data.electronics_pct + "%");
                 updateElement("completed_pickups", data.completed_pickups);
-
+        
                 const totalRecycled = data.total_recycled + " kg";
                 updateElement("stat_total_recycled", totalRecycled);
-
                 const valueEl = donutChart.querySelector(".value");
                 if (valueEl) valueEl.textContent = totalRecycled;
-
                 updateDonut(data);
-
+        
+                const activityList = document.querySelector(".activity-list");
+                if (activityList && data.activity && data.activity.length > 0) {
+                    const iconMap = {
+                        pickup:  { class: "pickup",  icon: "fa-truck"    },
+                        recycle: { class: "recycle", icon: "fa-box"      },
+                        reward:  { class: "reward",  icon: "fa-gift"     },
+                        alert:   { class: "alert",   icon: "fa-exclamation-triangle" },
+                    };
+                    activityList.innerHTML = data.activity.map(event => {
+                        const ic = iconMap[event.icon_type] || iconMap.recycle;
+                        return `
+                        <div class="activity-item">
+                            <div class="activity-icon ${ic.class}">
+                                <i class="fas ${ic.icon}"></i>
+                            </div>
+                            <div class="activity-details">
+                                <h4>${event.title}</h4>
+                                <p>${event.description}</p>
+                            </div>
+                            <div class="activity-time">${event.time_ago}</div>
+                        </div>`;
+                    }).join("");
+                } else if (activityList) {
+                    activityList.innerHTML = `
+                        <div style="text-align:center;padding:30px 0;color:var(--text-muted);font-size:13px;">
+                            <div style="font-size:36px;margin-bottom:10px;">📭</div>
+                            No activity yet. Start logging recyclables!
+                        </div>`;
+                }
+        
+                const pickupCard = document.querySelector(".upcoming-pickup");
+                if (pickupCard) {
+                    if (data.next_pickup) {
+                        const np = data.next_pickup;
+                        pickupCard.innerHTML = `
+                            <div class="pickup-date">
+                                <div class="date-box">
+                                    <div class="day">${np.date_day}</div>
+                                    <div class="month">${np.date_month}</div>
+                                </div>
+                                <div class="pickup-info">
+                                    <h4>${np.company}</h4>
+                                    <p>${np.time_range}</p>
+                                </div>
+                            </div>
+                            <div class="pickup-items">
+                                ${np.tags.map(tag => `<span class="pickup-tag">${tag}</span>`).join("")}
+                            </div>`;
+                    } else {
+                        pickupCard.innerHTML = `
+                            <div style="text-align:center;padding:20px 0;color:var(--text-muted);font-size:13px;width:100%;">
+                                <div style="font-size:32px;margin-bottom:8px;">📅</div>
+                                No upcoming pickups.<br>
+                                <a href="./pickups.html" style="color:var(--green);font-weight:600;">Schedule one →</a>
+                            </div>`;
+                    }
+                }
+        
+                const progressFill = document.querySelector(".progress-fill");
+                const progressStrong = document.querySelector(".progress-header strong");
+                if (progressFill && data.monthly_goal_pct !== undefined) {
+                    progressFill.style.width = data.monthly_goal_pct + "%";
+                }
+                if (progressStrong && data.monthly_goal_pct !== undefined) {
+                    progressStrong.textContent = data.monthly_goal_pct + "%";
+                }
+        
             } catch (err) {
                 console.error("Error loading dashboard data:", err);
             }
         }
+        
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
 
         document.addEventListener('DOMContentLoaded', loadDashboardData);
     </script>

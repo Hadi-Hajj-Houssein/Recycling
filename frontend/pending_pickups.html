@@ -547,26 +547,18 @@ let viewMode      = 'grid';
 // Add this near the top of your script
 const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
-/* ══════════════════════════════════════════
-   AUTH — runs first, everything else after
-══════════════════════════════════════════ */
-async function checkAuth() {
-    try {
-        const res = await fetch('/me');
-        if (!res.ok) {
-            window.location.href = '/static/login.html';
-            return;
-        }
-        const data = await res.json();
-        populateSidebar(data);
-    } catch (e) {
-        console.error('AUTH CRASH — actual error:', e);
-        window.location.href = '/static/login.html';
+(function checkAuth() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const ecoUser = localStorage.getItem('ecoUser');
+    if (isLoggedIn !== 'true' || !ecoUser) {
+        setTimeout(() => {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        }, 100);
+        return;
     }
-
-    // Outside the try-catch — data errors can't trigger auth redirect anymore
-    loadLivePickups();
-}
+})();
 
 function populateSidebar(data) {
     const name     = data.name || data.company_name || 'Green Collect Ltd';
@@ -585,7 +577,7 @@ function populateSidebar(data) {
 async function loadLivePickups() {
     try {
         const res = await fetch('/api/requests'); // ← same endpoint
-        if (res.status === 401) { window.location.href = '/static/login.html'; return; }
+        if (res.status === 401) { window.location.href = '/login.html'; return; }
         if (!res.ok) { console.warn('Pickups fetch failed:', res.status); return; }
         PICKUPS = await res.json();
         render();
@@ -992,12 +984,12 @@ document.getElementById('modalConfirmBtn')?.addEventListener('click', async () =
     document.getElementById('logoutSidebar')?.addEventListener('click', async e => {
         e.preventDefault();
         await fetch('/logout', { method: 'POST' }).catch(() => {});
-        window.location.href = '/static/login.html';
+        window.location.href = '/login.html';
     });
 
     document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
         await fetch('/logout', { method: 'POST' }).catch(() => {});
-        window.location.href = '/static/login.html';
+        window.location.href = '/login.html';
     });
 
     // ── Date ──

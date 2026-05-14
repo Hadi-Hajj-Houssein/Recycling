@@ -8,5 +8,5 @@ async function logout() {
     // localStorage.removeItem('isLoggedIn');
     // localStorage.removeItem('ecoUser');
 
-    window.location.replace('/static/login.html');  // full path
+    window.location.replace('/login.html');  // full path
 }

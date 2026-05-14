@@ -1008,7 +1008,7 @@
 
         document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
             await fetch('/logout', { method: 'POST' }).catch(() => {});
-            window.location.href = '/static/login.html';
+            window.location.href = '/login.html';
         });
 
         function toggleDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }

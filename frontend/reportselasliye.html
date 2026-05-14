@@ -522,7 +522,6 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <a href="index.html" class="sidebar-logo">
@@ -566,7 +565,6 @@
     </div>
 </aside>
 
-<!-- Main -->
 <main class="main" id="mainContent">
     <header class="topbar">
         <div class="topbar-left">
@@ -599,7 +597,6 @@
 
     <div class="content">
 
-        <!-- Page Header -->
         <div class="page-header">
             <div class="page-title">
                 <h1>📊 Your Recycling Reports</h1>
@@ -620,8 +617,6 @@
                 <button class="btn btn-primary" onclick="printReport()"><i class="fas fa-print"></i> Print Report</button>
             </div>
         </div>
-
-        <!-- Filter Bar -->
         <div class="filter-bar">
             <span class="filter-label">Period</span>
             <div class="filter-group" id="periodFilter">
@@ -649,8 +644,6 @@
                 <input type="date" class="date-input" id="dateTo">
             </div>
         </div>
-
-        <!-- KPI Strip -->
         <div class="kpi-strip" id="kpiStrip">
             <div class="kpi-card c-green fade-up">
                 <div class="kpi-icon green"><i class="fas fa-weight-hanging"></i></div>
@@ -683,10 +676,7 @@
                 <div class="kpi-change up" id="kpiStreakChange"><i class="fas fa-arrow-up"></i> —</div>
             </div>
         </div>
-
-        <!-- Row 1: Volume Trend + Material Breakdown -->
         <div class="charts-row">
-            <!-- Volume Trend Line Chart -->
             <div class="card fade-up">
                 <div class="card-header">
                     <div class="card-header-left">
@@ -706,7 +696,6 @@
                 </div>
             </div>
 
-            <!-- Material Donut -->
             <div class="card fade-up">
                 <div class="card-header">
                     <div class="card-header-left">
@@ -727,9 +716,7 @@
             </div>
         </div>
 
-        <!-- Row 2: Monthly Bar + Pickup Frequency + Mini Stats -->
         <div class="charts-row-3">
-            <!-- Monthly Bar -->
             <div class="card fade-up" style="grid-column: span 2;">
                 <div class="card-header">
                     <div class="card-header-left">
@@ -747,7 +734,6 @@
                 </div>
             </div>
 
-            <!-- Mini Stats Panel -->
             <div class="card fade-up" style="display:flex;flex-direction:column;gap:16px;">
                 <div class="card-header" style="margin-bottom:0;">
                     <div class="card-header-left">
@@ -777,7 +763,6 @@
             </div>
         </div>
 
-        <!-- Row 3: Heatmap -->
         <div class="card fade-up" style="margin-bottom:20px;">
             <div class="card-header">
                 <div class="card-header-left">
@@ -800,7 +785,6 @@
             </div>
         </div>
 
-        <!-- Row 4: Pickup History Table -->
         <div class="card fade-up" style="margin-bottom:20px;">
             <div class="card-header">
                 <div class="card-header-left">
@@ -839,7 +823,6 @@
             </div>
         </div>
 
-        <!-- Row 5: Company Comparison + Eco Score -->
         <div class="charts-row-equal">
             <div class="card fade-up">
                 <div class="card-header">
@@ -865,9 +848,6 @@
 </main>
 
 <script>
-// ═══════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════
 (function checkAuth() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const ecoUser = localStorage.getItem('ecoUser');
@@ -878,9 +858,6 @@
     }
 })();
 
-// ═══════════════════════════════════════════
-// USER
-// ═══════════════════════════════════════════
 function loadUserData() {
     const userData = JSON.parse(localStorage.getItem('ecoUser') || '{}');
     const name = userData.name || userData.username || 'User';
@@ -900,9 +877,6 @@ document.getElementById('currentDate').textContent = new Date().toLocaleDateStri
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
 });
 
-// ═══════════════════════════════════════════
-// AUTH TOKEN HELPER
-// ═══════════════════════════════════════════
 function getAuthToken() {
     return localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || '';
 }
@@ -925,9 +899,6 @@ async function apiFetch(url, options = {}) {
     return res;
 }
 
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
 let state = {
     period: '30d',
     type: 'all',
@@ -944,16 +915,12 @@ let state = {
     showCompareYear: false
 };
 
-// ═══════════════════════════════════════════
-// MOCK DATA GENERATOR (fallback when API unreachable)
-// ═══════════════════════════════════════════
 function generateMockData(period, type) {
     const materials = ['plastic','paper','glass','metal','electronics','organic'];
     const companies = ['GreenCycle Co.','EcoWaste Ltd.','CleanEarth Inc.','RecycleHub','EcoPartners'];
     const colors = { plastic:'#e74c3c', paper:'#3498db', glass:'#f1c40f', metal:'#9b59b6', electronics:'#1abc9c', organic:'#6aff00' };
     const weights = { plastic:35, paper:28, glass:12, metal:10, electronics:5, organic:10 };
 
-    // Trend data (last N points)
     const pts = period === '7d' ? 7 : period === '30d' ? 30 : period === '3m' ? 12 : period === '6m' ? 24 : 52;
     const trend = Array.from({length: pts}, (_, i) => ({
         label: i,
@@ -962,7 +929,6 @@ function generateMockData(period, type) {
         points: Math.round(50 + Math.random()*150)
     }));
 
-    // Monthly
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const monthly = months.map((m, i) => ({
         month: m,
@@ -970,7 +936,6 @@ function generateMockData(period, type) {
         prev: Math.round(60 + Math.random()*160 + Math.sin(i)*30)
     }));
 
-    // Materials (filtered)
     const filteredMats = type === 'all' ? materials : materials.filter(m => m === type);
     const totalW = filteredMats.reduce((a, m) => a + weights[m], 0);
     const matData = filteredMats.map(m => ({
@@ -981,7 +946,6 @@ function generateMockData(period, type) {
         color: colors[m]
     }));
 
-    // Pickup history
     const statuses = ['completed','completed','completed','scheduled','pending','cancelled'];
     const pickups = Array.from({length: 40}, (_, i) => {
         const d = new Date(); d.setDate(d.getDate() - i * Math.round(1+Math.random()*5));
@@ -997,7 +961,6 @@ function generateMockData(period, type) {
         };
     });
 
-    // Companies
     const companyMap = {};
     pickups.forEach(p => {
         companyMap[p.company] = (companyMap[p.company] || 0) + p.weight;
@@ -1006,13 +969,11 @@ function generateMockData(period, type) {
         .map(([name, kg]) => ({ name, kg }))
         .sort((a, b) => b.kg - a.kg).slice(0, 5);
 
-    // KPIs
     const totalKg = pickups.reduce((a,p) => a + p.weight, 0);
     const completedPickups = pickups.filter(p => p.status === 'completed').length;
     const totalPoints = pickups.reduce((a, p) => a + p.points, 0);
     const avgPerPickup = completedPickups ? Math.round(totalKg / completedPickups) : 0;
 
-    // Eco score
     const ecoScores = [
         { label: 'Consistency', value: 78, color: '#2ecc71' },
         { label: 'Variety', value: 65, color: '#3498db' },
@@ -1047,9 +1008,6 @@ function generateMockData(period, type) {
     };
 }
 
-// ═══════════════════════════════════════════
-// FETCH DATA
-// ═══════════════════════════════════════════
 async function fetchReportData() {
     const params = new URLSearchParams({
         period: state.period,
@@ -1062,7 +1020,7 @@ async function fetchReportData() {
         if (res && res.ok) {
             return await res.json();
         }
-    } catch (e) { /* fall through to mock */ }
+    } catch (e) { }
     return generateMockData(state.period, state.type);
 }
 
@@ -1080,9 +1038,6 @@ async function loadReport() {
     renderQuickMetrics(data);
 }
 
-// ═══════════════════════════════════════════
-// KPI CARDS
-// ═══════════════════════════════════════════
 function renderKPIs(kpis) {
     if (!kpis) return;
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -1105,9 +1060,6 @@ function renderKPIs(kpis) {
     setChange('kpiStreakChange', kpis.streak_change || '—', kpis.streak_change?.startsWith('+') ? 'up' : 'neutral');
 }
 
-// ═══════════════════════════════════════════
-// LINE CHART (SVG)
-// ═══════════════════════════════════════════
 function renderLineChart(trend) {
     if (!trend || !trend.length) return;
     const svg = document.getElementById('lineChartSvg');
@@ -1126,7 +1078,6 @@ function renderLineChart(trend) {
     const xScale = i => pad.left + (i / (trend.length - 1)) * cW;
     const yScale = v => pad.top + cH - ((v - minV) / (maxV - minV || 1)) * cH;
 
-    // Grid lines
     [0.25, 0.5, 0.75, 1].forEach(f => {
         const y = pad.top + cH * (1 - f);
         const line = document.createElementNS('http://www.w3.org/2000/svg','line');
@@ -1143,7 +1094,6 @@ function renderLineChart(trend) {
         svg.appendChild(label);
     });
 
-    // Area fill
     const areaPoints = trend.map((d, i) => `${xScale(i)},${yScale(d[key] || 0)}`).join(' ');
     const area = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     area.setAttribute('points', areaPoints + ` ${pad.left + cW},${pad.top + cH} ${pad.left},${pad.top + cH}`);
@@ -1161,7 +1111,6 @@ function renderLineChart(trend) {
     grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad); svg.appendChild(defs);
     svg.appendChild(area);
 
-    // Line
     const pathD = trend.map((d, i) => `${i === 0 ? 'M' : 'L'}${xScale(i)},${yScale(d[key] || 0)}`).join(' ');
     const path = document.createElementNS('http://www.w3.org/2000/svg','path');
     path.setAttribute('d', pathD); path.setAttribute('fill','none');
@@ -1175,7 +1124,6 @@ function renderLineChart(trend) {
         path.style.strokeDashoffset = '0';
     });
 
-    // Dots & X labels
     const step = Math.ceil(trend.length / 8);
     trend.forEach((d, i) => {
         const cx = xScale(i), cy = yScale(d[key] || 0);
@@ -1205,9 +1153,6 @@ function switchTrendView(view, btn) {
     if (state.data) renderLineChart(state.data.trend);
 }
 
-// ═══════════════════════════════════════════
-// DONUT CHART
-// ═══════════════════════════════════════════
 function renderDonut(materials, total) {
     if (!materials || !materials.length) return;
     const svg = document.getElementById('donutSvg');
@@ -1235,7 +1180,6 @@ function renderDonut(materials, total) {
         svg.appendChild(circle);
     });
 
-    // Legend
     const legend = document.getElementById('donutLegend');
     legend.innerHTML = '';
     materials.forEach(m => {
@@ -1251,9 +1195,6 @@ function renderDonut(materials, total) {
     });
 }
 
-// ═══════════════════════════════════════════
-// BAR CHART
-// ═══════════════════════════════════════════
 function renderBarChart(monthly) {
     if (!monthly || !monthly.length) return;
     const svg = document.getElementById('barChartSvg');
@@ -1269,7 +1210,6 @@ function renderBarChart(monthly) {
     const barW = state.showCompareYear ? (cW / monthly.length / 2) - 3 : (cW / monthly.length) - 4;
     const groupW = cW / monthly.length;
 
-    // Grid
     [0.25,0.5,0.75,1].forEach(f => {
         const y = pad.top + cH * (1 - f);
         const line = document.createElementNS('http://www.w3.org/2000/svg','line');
@@ -1331,7 +1271,6 @@ function renderBarChart(monthly) {
         svg.appendChild(lbl);
     });
 
-    // Glow filter
     const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
     const filter = document.createElementNS('http://www.w3.org/2000/svg','filter');
     filter.setAttribute('id','glow');
@@ -1352,9 +1291,6 @@ function toggleBarComparison() {
     if (state.data) renderBarChart(state.data.monthly);
 }
 
-// ═══════════════════════════════════════════
-// PICKUP TABLE
-// ═══════════════════════════════════════════
 let allTableData = [];
 
 function renderTable(pickups) {
@@ -1370,7 +1306,6 @@ function renderTablePage() {
         const q = state.tableSearch.toLowerCase();
         data = data.filter(d => d.company?.toLowerCase().includes(q) || d.materials?.toLowerCase().includes(q) || d.status?.includes(q));
     }
-    // Sort
     data.sort((a, b) => {
         let av = a[state.tableSortCol], bv = b[state.tableSortCol];
         if (state.tableSortCol === 'date') { av = new Date(av); bv = new Date(bv); }
@@ -1435,9 +1370,6 @@ function sortTable(col) {
     renderTablePage();
 }
 
-// ═══════════════════════════════════════════
-// COMPANY BARS
-// ═══════════════════════════════════════════
 function renderCompanyBars(companies) {
     if (!companies || !companies.length) return;
     const wrap = document.getElementById('companyBarsWrap');
@@ -1465,9 +1397,6 @@ function renderCompanyBars(companies) {
     });
 }
 
-// ═══════════════════════════════════════════
-// ECO SCORE
-// ═══════════════════════════════════════════
 function renderEcoScore(scores) {
     if (!scores || !scores.length) return;
     const wrap = document.getElementById('ecoScoreWrap');
@@ -1487,9 +1416,6 @@ function renderEcoScore(scores) {
     });
 }
 
-// ═══════════════════════════════════════════
-// HEATMAP
-// ═══════════════════════════════════════════
 function renderHeatmap() {
     const wrap = document.getElementById('heatmapWrap');
     wrap.innerHTML = '';
@@ -1528,7 +1454,6 @@ function renderHeatmap() {
         weeks.push(week);
     }
 
-    // Month labels
     let lastMonth = -1;
     weeks.forEach(week => {
         const m = week[0].getMonth();
@@ -1570,9 +1495,6 @@ function renderHeatmap() {
     document.getElementById('heatmapActivedays').textContent = Math.min(activeDays, 142);
 }
 
-// ═══════════════════════════════════════════
-// QUICK METRICS
-// ═══════════════════════════════════════════
 function renderQuickMetrics(data) {
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('msTopMaterial', data.top_material || '—');
@@ -1602,9 +1524,6 @@ function renderQuickMetrics(data) {
     }
 }
 
-// ═══════════════════════════════════════════
-// TOOLTIP
-// ═══════════════════════════════════════════
 const tooltip = document.getElementById('chartTooltip');
 function showTooltip(e, label, val) {
     document.getElementById('ttLabel').textContent = label;
@@ -1622,9 +1541,6 @@ function hideTooltip() {
     document.removeEventListener('mousemove', moveTip);
 }
 
-// ═══════════════════════════════════════════
-// FILTER INTERACTIONS
-// ═══════════════════════════════════════════
 document.getElementById('periodFilter').addEventListener('click', e => {
     if (!e.target.classList.contains('filter-chip')) return;
     document.querySelectorAll('#periodFilter .filter-chip').forEach(c => c.classList.remove('active'));
@@ -1648,15 +1564,11 @@ document.getElementById('dateTo').addEventListener('change', e => {
     state.dateTo = e.target.value; loadReport();
 });
 
-// Set default date inputs
 const today = new Date();
 const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1);
 document.getElementById('dateTo').value = today.toISOString().split('T')[0];
 document.getElementById('dateFrom').value = monthAgo.toISOString().split('T')[0];
 
-// ═══════════════════════════════════════════
-// EXPORT / PRINT
-// ═══════════════════════════════════════════
 function toggleExportMenu() {
     document.getElementById('exportMenu').classList.toggle('show');
 }
@@ -1697,9 +1609,6 @@ async function refreshData() {
     if (btn) { btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh'; btn.disabled = false; }
 }
 
-// ═══════════════════════════════════════════
-// SIDEBAR
-// ═══════════════════════════════════════════
 const sidebar = document.getElementById('sidebar');
 const mainContent = document.getElementById('mainContent');
 const sidebarToggle = document.getElementById('sidebarToggle');
@@ -1745,9 +1654,6 @@ document.addEventListener('click', e => {
 document.getElementById('logoutSidebar').addEventListener('click', e => { e.preventDefault(); logout(); });
 document.getElementById('logoutDropdown').addEventListener('click', logout);
 
-// ═══════════════════════════════════════════
-// RESIZE
-// ═══════════════════════════════════════════
 let resizeTimer;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
@@ -1759,9 +1665,6 @@ window.addEventListener('resize', () => {
 
 if (window.innerWidth <= 1024) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
 loadReport();
 </script>
 </body>

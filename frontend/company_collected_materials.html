@@ -643,7 +643,7 @@ document.addEventListener('click', (e) => {
 
 document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
     await fetch('/logout', { method: 'POST' }).catch(() => {});
-    window.location.href = '/static/login.html';
+    window.location.href = '/login.html';
 });
 
 
@@ -739,7 +739,7 @@ if (logoutBtn) {
     logoutBtn.addEventListener('click', async e => {
         e.preventDefault();
         await fetch('/logout', { method: 'POST' }).catch(() => {});
-        window.location.href = '/static/login.html';
+        window.location.href = '/login.html';
     });
 }
 
@@ -763,7 +763,7 @@ const logoutBtn = document.getElementById('logoutSidebar');
         logoutBtn.addEventListener('click', async e => {
             e.preventDefault();
             await fetch('/logout', { method: 'POST' }).catch(() => {});
-            window.location.href = '/static/login.html';
+            window.location.href = '/login.html';
         });
     }
 });

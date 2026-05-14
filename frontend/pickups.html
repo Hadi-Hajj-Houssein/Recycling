@@ -638,13 +638,18 @@ document.getElementById('confirmScheduleBtn').addEventListener('click', async fu
 });
 
 async function scheduleItem(id, dt) {
-  var updated = await apiRequest(API_BASE+'/'+id, 'PUT', { status:'scheduled', scheduled_date:dt });
+  var formatted = new Date(dt).toISOString();
+
+  var updated = await apiRequest(API_BASE + '/' + id, 'PUT', {
+    status: 'scheduled',
+    scheduled_date: formatted
+  });
+
   if (updated) {
     var idx = allItems.findIndex(function(i){ return i.id===id; });
-    if (idx!==-1) allItems[idx] = updated;
+    if (idx !== -1) allItems[idx] = updated;
   }
 }
-
 // ── Collect Modal ─────────────────────────────────────────────────────────────
 function openCollectModal(itemId) {
   var it = allItems.find(function(i){ return i.id===itemId; });
@@ -662,12 +667,19 @@ document.getElementById('cancelCollectModal').addEventListener('click', function
 document.getElementById('confirmCollectBtn').addEventListener('click', async function(){
   if (!collectTarget) return;
   var btn = this; btn.disabled = true;
-  var updated = await apiRequest(API_BASE+'/'+collectTarget.id, 'PUT', { status:'collected' });
+  var updated = await apiRequest(API_BASE+'/'+collectTarget.id, 'PUT', {
+    "type": collectTarget.type,
+    "name": collectTarget.name,
+    "weight": collectTarget.weight,
+    status:'collected' // rja3 zabbet el type 
+
+   });
   if (updated) {
     allItems = allItems.filter(function(i){ return i.id!==collectTarget.id; });
     showToast('✅','Item Collected!','Great job — '+esc(collectTarget.name)+' has been marked as collected.');
     renderAll();
   }
+  console.log(updated);// rja3
   btn.disabled = false;
   document.getElementById('collectModal').classList.remove('open');
 });

@@ -10,6 +10,7 @@ hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 from pydantic import EmailStr
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from dependencies import get_db, pwd_context
 def get_db():
     db = SessionLocal()
     try:

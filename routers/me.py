@@ -55,7 +55,7 @@ def get_me(user_id: int = Depends(get_curr_user_id), db: Session = Depends(get_d
     else:
         if company:
             return {
-                "name": company.name,
+                "name": company.company_name,
                 "email": company.email,
             }
         else:

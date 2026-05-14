@@ -7,6 +7,10 @@ from db_main import get_db
 from models.Recyclables import Recyclable_Item
 from functionalities.auth import get_curr_user_id
 from models.user_total_recycled import UserTotalRecycled
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
 router = APIRouter(prefix="/recyclables", tags=["recyclables"])
 class ItemIn(BaseModel):
     """Shape of data the frontend sends (POST / PUT body)."""
@@ -50,6 +54,18 @@ def _validate(data: ItemIn):
     if data.status not in VALID_STATUSES:
         raise HTTPException(status.HTTP_400_BAD_REQUEST,
                             f"status must be one of: {VALID_STATUSES}")
+
+
+
+class RecyclableUpdate(BaseModel):
+    status:         Optional[str]      = None
+    scheduled_date: Optional[datetime] = None
+    company_id:     Optional[int]      = None
+    name:           Optional[str]      = None
+    type:           Optional[str]      = None
+    weight:         Optional[float]    = None
+    condition:      Optional[str]      = None
+    desc:           Optional[str]      = None
 
 
 def _sync_summary(db: Session, user_id: int):
@@ -178,3 +194,53 @@ def delete_item(
     db.delete(item)
     db.commit()
     _sync_summary(db, current_user)
+
+    
+@router.put("/recyclables/{item_id}")
+def update_recyclable(
+    item_id: int,
+    body: RecyclableUpdate,
+    user_id: int = Depends(get_curr_user_id),
+    db: Session = Depends(get_db)
+):
+    item = db.query(Recyclable_Item).filter(
+        Recyclable_Item.id == item_id,
+        Recyclable_Item.user_id == user_id
+    ).first()
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    if body.status is not None:
+        allowed = {"pending", "scheduled", "collected"}
+        if body.status not in allowed:
+            raise HTTPException(status_code=400, detail=f"status must be one of {allowed}")
+        item.status = body.status
+
+    if body.scheduled_date is not None:
+        item.scheduled_date = body.scheduled_date
+
+    if body.company_id  is not None: item.company_id  = body.company_id
+    if body.name        is not None: item.name        = body.name
+    if body.type        is not None: item.type        = body.type
+    if body.weight      is not None: item.weight      = body.weight
+    if body.condition   is not None: item.condition   = body.condition
+    if body.desc        is not None: item.desc        = body.desc
+
+    db.commit()
+    db.refresh(item)
+
+    return {
+        "id":             item.id,
+        "user_id":        item.user_id,
+        "company_id":     item.company_id,
+        "company_name":   item.company_name if item.company else None,
+        "type":           item.type,
+        "name":           item.name,
+        "desc":           item.desc,
+        "weight":         item.weight,
+        "condition":      item.condition,
+        "status":         item.status,
+        "date":           item.date,
+        "scheduled_date": item.scheduled_date,
+    }
