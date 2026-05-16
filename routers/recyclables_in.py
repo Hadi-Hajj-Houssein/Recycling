@@ -216,10 +216,8 @@ def update_recyclable(
         if body.status not in allowed:
             raise HTTPException(status_code=400, detail=f"status must be one of {allowed}")
         item.status = body.status
-
     if body.scheduled_date is not None:
         item.scheduled_date = body.scheduled_date
-
     if body.company_id  is not None: item.company_id  = body.company_id
     if body.name        is not None: item.name        = body.name
     if body.type        is not None: item.type        = body.type
@@ -231,16 +229,6 @@ def update_recyclable(
     db.refresh(item)
 
     return {
-        "id":             item.id,
-        "user_id":        item.user_id,
-        "company_id":     item.company_id,
-        "company_name":   item.company_name if item.company else None,
-        "type":           item.type,
-        "name":           item.name,
-        "desc":           item.desc,
-        "weight":         item.weight,
-        "condition":      item.condition,
         "status":         item.status,
-        "date":           item.date,
-        "scheduled_date": item.scheduled_date,
+        
     }

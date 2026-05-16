@@ -11,10 +11,9 @@ from models.user_total_recycled import UserTotalRecycled
 from models.company import Company
 from models.Add_Recyclable import Recyclables
 from models.Recyclables import Recyclable_Item
-
 from routers.recyclables_in import router as recyclables_router
 from routers.recycling import router as dashboard_router
-from routers import signup, login, company_signup, company_selection, user_requests,me, logout, accept_request, cancel_request
+from routers import signup, login, company_signup, company_selection, user_requests,me, logout, accept_request, cancel_request, company_user_requests
 
 Base.metadata.create_all(bind=engine)
 
@@ -54,6 +53,7 @@ app.include_router(me.router)
 app.include_router(logout.router)
 app.include_router(accept_request.router)
 app.include_router(cancel_request.router)
+app.include_router(company_user_requests.router)
 #app.include_router(testroute.router)
 
 

@@ -4,16 +4,10 @@ from db_main import SessionLocal
 from models.company import Company
 from models.Recyclables import Recyclable_Item
 from pydantic import BaseModel
-
+from functionalities.auth import get_curr_company_id
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+from routers.dependencies import get_db
 
 class AssignCompanyRequest(BaseModel):
     company_id: int

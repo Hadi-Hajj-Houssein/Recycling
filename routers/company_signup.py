@@ -5,18 +5,11 @@ from db_main import SessionLocal
 from models.user import User
 from models.company import Company
 from models.user import User
+from routers.dependencies import get_db, pwd_context
 router = APIRouter()
 hash = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 from pydantic import EmailStr
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-from dependencies import get_db, pwd_context
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/signup-company")
 def signup(email: EmailStr = Form(...),company_name: str = Form(...), 

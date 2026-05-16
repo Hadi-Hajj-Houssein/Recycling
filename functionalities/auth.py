@@ -28,3 +28,18 @@ def get_curr_user_id(access_token: str | None = Cookie(default=None, alias="acce
         raise HTTPException(status_code=401, detail="Invalid token")
 
     return int(user_id)
+
+def get_curr_company_id(access_token: str | None = Cookie(default=None, alias="access_token")):
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        payload = decode_token(access_token)
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token expired or invalid")
+
+    company_id = payload.get("sub")
+    if not company_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    return int(company_id)

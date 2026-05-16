@@ -472,18 +472,18 @@ let currentStatus = '';
 let currentSearch = '';
 let viewMode      = 'grid';
 // authentication 
-(function checkAuth() {
+async function checkAuth() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const ecoUser = localStorage.getItem('ecoUser');
     if (isLoggedIn !== 'true' || !ecoUser) {
         setTimeout(() => {
             if (localStorage.getItem('isLoggedIn') !== 'true') {
-                window.location.href = 'login.html';
+                window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
             }
         }, 100);
         return;
     }
-})();
+};
 
 function populateSidebar(data) {
     const name     = data.name || data.company_name || 'Green Collect Ltd';
@@ -498,27 +498,43 @@ function populateSidebar(data) {
 
 /* ══════════════════════════════════════════
    DATA
-══════════════════════════════════════════ */
-async function loadLiveRequests() {
+══════════════════════════════════════════ */async function loadLiveRequests() {
+    console.log('Loading requests...');
     try {
-        const res = await fetch('/api/requests');
+        const res = await fetch('http://127.0.0.1:8000/company/user_requests', {
+            credentials: 'include'
+        });
+        
+        console.log('Response:', res);
+        
         if (res.status === 401) {
-            window.location.href = '/login.html';
+            window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
             return;
         }
         if (!res.ok) {
             console.warn('Requests fetch failed:', res.status);
-            return; // show empty state, don't redirect
+            return;
         }
+        
         REQUESTS = await res.json();
+        
+        // Normalize data
+        REQUESTS = REQUESTS.map(r => ({
+            ...r,
+            materials: r.materials || [r.type],  // Will work now and in future
+            address: r.address || 'No address',
+            area: r.area || 'Unknown',
+            avatarBg: `hsl(${Math.random() * 360}, 70%, 50%)`,
+            initials: (r.name || '?').split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2)
+        }));
+        
+        console.log('Normalized requests:', REQUESTS);
         buildAreaButtons();
         render();
     } catch (e) {
         console.warn('Requests fetch error:', e);
-        // network error — show empty state, don't redirect
     }
 }
-
 function toggleDropdown() {
     document.getElementById('profileDropdown').classList.toggle('show');
 }
@@ -532,7 +548,7 @@ document.addEventListener('click', (e) => {
 
 document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
     await fetch('/logout', { method: 'POST' }).catch(() => {});
-    window.location.href = '/login.html';
+    window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
 });
 
 /* ══════════════════════════════════════════
@@ -625,7 +641,7 @@ function renderGrid(filtered) {
 
 function renderCard(r) {
     return `
-    <div class="request-card${r.status === 'urgent' ? ' urgent' : ''}" onclick="openDrawer('REQ-${r.id}')">
+    <div class="request-card${r.status === 'urgent' ? ' urgent' : ''}" onclick="openDrawer(${r.id})">
         <div class="rc-top">
             <div class="rc-user">
                 <div class="rc-avatar" style="background:${r.avatarBg};">${r.initials}</div>
@@ -650,7 +666,7 @@ function renderCard(r) {
             </div>
         </div>
         <div class="rc-actions" onclick="event.stopPropagation()">
-            <button class="rc-btn assign" onclick="acceptRequest('${r.id}')"><i class="fas fa-truck"></i> Accept</button>
+            <button class="rc-btn assign" onclick="acceptRequest(${r.id})"><i class="fas fa-truck"></i> Accept</button>
             <button class="rc-btn view"   onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i> Details</button>
         </div>
     </div>`;
@@ -673,8 +689,8 @@ function renderList(filtered) {
             <div class="rli-date">${new Date(r.date).toLocaleDateString('en-US', { month:'short', day:'numeric' })}</div>
             <div class="rli-status"><span class="rc-status ${r.status}">${STATUS_LABELS[r.status]}</span></div>
             <div class="rli-actions" onclick="event.stopPropagation()">
-                <button class="rli-btn primary" onclick="acceptRequest('${r.id}')"><i class="fas fa-truck"></i></button>
-                <button class="rli-btn"         onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i></button>
+                <button class="rli-btn primary" onclick="acceptRequest(${r.id})"><i class="fas fa-truck"></i></button>
+                <button class="rli-btn"         onclick="openDrawer(${r.id})"><i class="fas fa-eye"></i></button>
             </div>
         </div>`).join('')}
     </div>`;
@@ -693,25 +709,24 @@ function openDrawer(id) {
     const bodyEl = document.getElementById('drawerBody');
     if (bodyEl) bodyEl.innerHTML = `
         <div class="user-profile-row">
-            <div class="up-avatar" style="background:${r.avatarBg};">${r.initials}</div>
             <div>
                 <div class="up-name">${r.name}</div>
-                <div class="up-meta">${r.phone} · Joined ${r.joined}</div>
-            </div>
+                <div class="up-meta">${r.phone}</div>
+            </div><!-- score rja3la
             <div class="up-score">
                 <div class="score-val">${r.score}</div>
                 <div class="score-lbl">Eco Score</div>
-            </div>
+            </div>-->
         </div>
-        <span class="rc-status ${r.status}" style="margin-bottom:20px;display:inline-flex;">
-            ${STATUS_LABELS[r.status]}
+        <span class="rc-status ${r.desc}" style="margin-bottom:20px;display:inline-flex;">
+            ${STATUS_LABELS[r.desc]}
         </span>
         <div class="db-section">
             <div class="db-title">Request Details</div>
             <div class="db-grid" style="margin-bottom:12px;">
                 <div class="db-item"><div class="dl">Request ID</div><div class="dv">REQ-${r.id}</div></div>
                 <div class="db-item"><div class="dl">Est. Weight</div><div class="dv">${r.weight} kg</div></div>
-                <div class="db-item"><div class="dl">Area</div><div class="dv">${r.area}</div></div>
+                // <div class="db-item"><div class="dl">Area</div><div class="dv">${r.area}</div></div>
                 <div class="db-item"><div class="dl">Preferred Date</div>
                     <div class="dv">${new Date(r.date).toLocaleDateString('en-US', { month:'long', day:'numeric' })}</div>
                 </div>
@@ -763,7 +778,8 @@ function closeDrawerDirect() {
 async function acceptRequest(id, fromDrawer = false) {
     try {
         const res = await fetch(`/api/requests/${id}/assign`, {
-            method: "PATCH"
+            method: "PATCH",
+            credentials: 'include' 
         });
 
         if (!res.ok) throw new Error("Failed to update");
@@ -849,10 +865,12 @@ function initSidebar() {
 }
 
 async function logout() {
-    await fetch('/logout', { method: 'POST' }).catch(() => {});
-    window.location.href = '/login.html';
+    await fetch(`http://127.0.0.1:8000/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('ecoUser');
+    window.location.replace('login.html');
 }
-
+document.getElementById('logoutSidebar').addEventListener('click', logout);
 function initEventListeners() {
     document.getElementById('areaFilters')?.addEventListener('click', e => {
         const chip = e.target.closest('.filter-chip');
@@ -897,6 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initEventListeners();
     render(); // show empty state immediately while auth loads
     checkAuth(); // fetch /me → populateSidebar → loadLiveRequests
+    loadLiveRequests();
 });
 </script>
 </body>

@@ -8,15 +8,9 @@ from sqlalchemy.orm import Session
 from db_main import SessionLocal
 from functionalities.auth import get_curr_user_id
 from models.Recyclables import Recyclable_Item
+from routers.dependencies import get_db
 
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 def pct(val: float, total: float) -> float:
     if total == 0:
