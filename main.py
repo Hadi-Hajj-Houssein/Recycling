@@ -11,9 +11,10 @@ from models.user_total_recycled import UserTotalRecycled
 from models.company import Company
 from models.Add_Recyclable import Recyclables
 from models.Recyclables import Recyclable_Item
+from models.requests import Request
 from routers.recyclables_in import router as recyclables_router
 from routers.recycling import router as dashboard_router
-from routers import signup, login, company_signup, company_selection, user_requests,me, logout, accept_request, cancel_request, company_user_requests
+from routers import company_decline_request, signup, login, company_signup, company_selection, user_requests,me, logout, company_user_requests , company_accept_request, company_decline_request
 
 Base.metadata.create_all(bind=engine)
 
@@ -51,12 +52,15 @@ app.include_router(dashboard_router)
 app.include_router(user_requests.router)
 app.include_router(me.router)
 app.include_router(logout.router)
-app.include_router(accept_request.router)
-app.include_router(cancel_request.router)
+
+
 app.include_router(company_user_requests.router)
+app.include_router(company_decline_request.router, prefix="/company")
+app.include_router(company_accept_request.router, prefix="/company")
 #app.include_router(testroute.router)
 
 
 @app.get("/")
 def home():
     return {"message": "Server is running"}
+

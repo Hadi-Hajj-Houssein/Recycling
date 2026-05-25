@@ -743,6 +743,7 @@
         }
         @media (max-width: 1024px) { .settings-tabs { flex-wrap: wrap; } }
     </style>
+    <script src="logout.js"></script>
 </head>
 <body>
 
@@ -1236,7 +1237,6 @@
 // ════════════════════════════════════════
 // CONFIG & STATE
 // ════════════════════════════════════════
-const API_BASE = 'http://127.0.0.1:8000';
 let _serverUserData = {};
 
 // ════════════════════════════════════════
@@ -1663,12 +1663,7 @@ function showToast(type, title, subtitle) {
 // ════════════════════════════════════════
 // LOGOUT
 // ════════════════════════════════════════
-async function logout() {
-    await fetch(`${API_BASE}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('ecoUser');
-    window.location.replace('login.html');
-}
+
 document.getElementById('logoutSidebar').addEventListener('click', logout);
 
 // ════════════════════════════════════════
@@ -1719,5 +1714,6 @@ function handleResize() {
 window.addEventListener('resize', handleResize);
 handleResize();
 </script>
+
 </body>
 </html>

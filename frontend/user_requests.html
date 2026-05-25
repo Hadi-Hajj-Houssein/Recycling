@@ -145,6 +145,8 @@
         .rc-status { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:8px; font-size:10.5px; font-weight:700; white-space:nowrap; }
         .rc-status::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
         .rc-status.new { color:#2ecc71; background:rgba(46,204,113,0.1); }
+        .rc-status.pending { color:#2ecc71; background:rgba(46,204,113,0.1); }
+        .rc-status.assigned { color:#3498db; background:rgba(52,152,219,0.1); }
         .rc-status.urgent { color:#e74c3c; background:rgba(231,76,60,0.1); }
         .rc-status.scheduled { color:#3498db; background:rgba(52,152,219,0.1); }
         .rc-status.awaiting { color:#f1c40f; background:rgba(241,196,15,0.1); }
@@ -175,6 +177,8 @@
         .rc-btn.assign:hover { background:var(--green-dark); }
         .rc-btn.view { background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-secondary); }
         .rc-btn.view:hover { background:rgba(255,255,255,0.07); color:var(--text-primary); }
+        .rc-btn.decline { background:rgba(231,76,60,0.1); border:1px solid rgba(231,76,60,0.3); color:var(--red); }
+        .rc-btn.decline:hover { background:rgba(231,76,60,0.2); }
 
         /* ── List view mode ── */
         .requests-list { display:flex; flex-direction:column; gap:8px; }
@@ -196,6 +200,8 @@
         .rli-btn:hover { background:rgba(255,255,255,0.05); color:var(--text-primary); }
         .rli-btn.primary { background:rgba(46,204,113,0.1); border-color:rgba(46,204,113,0.3); color:var(--green); }
         .rli-btn.primary:hover { background:rgba(46,204,113,0.2); }
+        .rli-btn.danger { background:rgba(231,76,60,0.1); border-color:rgba(231,76,60,0.3); color:var(--red); }
+        .rli-btn.danger:hover { background:rgba(231,76,60,0.2); }
 
         /* ── Detail Drawer ── */
         .drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; opacity:0; visibility:hidden; transition:all 0.3s; display:flex; align-items:flex-start; justify-content:flex-end; }
@@ -224,8 +230,24 @@
         .da .btn { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 0; border-radius:12px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.3s; border:none; }
         .da .btn-primary { background:var(--green); color:#fff; }
         .da .btn-primary:hover { background:var(--green-dark); }
+        .da .btn-primary:disabled { background:rgba(46,204,113,0.5); cursor:not-allowed; }
         .da .btn-secondary { background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-secondary); }
         .da .btn-secondary:hover { background:rgba(255,255,255,0.07); color:var(--text-primary); }
+        .da .btn-danger { background:rgba(231,76,60,0.1); border:1px solid rgba(231,76,60,0.3); color:var(--red); }
+        .da .btn-danger:hover { background:rgba(231,76,60,0.2); }
+
+        /* ── Modal / Confirmation ── */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:3000; opacity:0; visibility:hidden; transition:all 0.3s; display:flex; align-items:center; justify-content:center; }
+        .modal-overlay.show { opacity:1; visibility:visible; }
+        .modal { background:var(--bg-secondary); border:1px solid var(--border); border-radius:16px; padding:32px; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+        .modal h2 { font-size:18px; font-weight:700; margin-bottom:12px; }
+        .modal p { font-size:14px; color:var(--text-secondary); margin-bottom:24px; line-height:1.6; }
+        .modal-actions { display:flex; gap:12px; }
+        .modal-actions .btn { flex:1; padding:12px 0; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; border:none; font-family:'Poppins',sans-serif; display:flex; align-items:center; justify-content:center; gap:6px; }
+        .modal-actions .btn-confirm { background:var(--red); color:#fff; }
+        .modal-actions .btn-confirm:hover { background:rgba(231,76,60,0.9); }
+        .modal-actions .btn-cancel { background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-secondary); }
+        .modal-actions .btn-cancel:hover { background:rgba(255,255,255,0.07); color:var(--text-primary); }
 
         /* ── Empty state ── */
         .empty-state { text-align:center; padding:60px 20px; color:var(--text-muted); }
@@ -288,6 +310,9 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .toast.success { background: rgba(46,204,113,0.2); border-left: 3px solid var(--green); }
+        .toast.error { background: rgba(231,76,60,0.2); border-left: 3px solid var(--red); }
 
         /* ── Animations ── */
         .animate-in { opacity:0; transform:translateY(16px); animation:fadeUp 0.45s ease forwards; }
@@ -451,6 +476,19 @@
         <div class="da">
             <button class="btn btn-secondary" onclick="closeDrawerDirect()"><i class="fas fa-times"></i> Close</button>
             <button class="btn btn-primary" id="drawerAssignBtn"><i class="fas fa-truck"></i> Accept </button>
+            <button class="btn btn-danger" id="drawerDeclineBtn"><i class="fas fa-times"></i> Decline </button>
+        </div>
+    </div>
+</div>
+
+<!-- Decline Confirmation Modal -->
+<div class="modal-overlay" id="declineModal">
+    <div class="modal">
+        <h2>⚠️ Decline Request?</h2>
+        <p>Are you sure you want to decline this pickup request? This action will make the request available to other collectors.</p>
+        <div class="modal-actions">
+            <button class="btn btn-cancel" onclick="closeDeclineModal()"><i class="fas fa-times"></i> Cancel</button>
+            <button class="btn btn-confirm" id="confirmDeclineBtn"><i class="fas fa-check"></i> Confirm Decline</button>
         </div>
     </div>
 </div>
@@ -471,6 +509,8 @@ let currentMat    = '';
 let currentStatus = '';
 let currentSearch = '';
 let viewMode      = 'grid';
+let pendingDeclineId = null;  // Track which request is being declined
+
 // authentication 
 async function checkAuth() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -521,7 +561,7 @@ function populateSidebar(data) {
         // Normalize data
         REQUESTS = REQUESTS.map(r => ({
             ...r,
-            materials: r.materials || [r.type],  // Will work now and in future
+            materials: r.materials || [r.type],
             address: r.address || 'No address',
             area: r.area || 'Unknown',
             avatarBg: `hsl(${Math.random() * 360}, 70%, 50%)`,
@@ -535,6 +575,7 @@ function populateSidebar(data) {
         console.warn('Requests fetch error:', e);
     }
 }
+
 function toggleDropdown() {
     document.getElementById('profileDropdown').classList.toggle('show');
 }
@@ -546,10 +587,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
-    await fetch('/logout', { method: 'POST' }).catch(() => {});
-    window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
-});
 
 /* ══════════════════════════════════════════
    FILTERS
@@ -559,7 +596,9 @@ function getFiltered() {
     return REQUESTS.filter(r => {
         const areaOk   = currentArea   === 'all' || r.area === currentArea;
         const matOk    = !currentMat    || r.materials.includes(currentMat);
-        const statusOk = r.status === 'pending';
+        const statusOk =
+            r.status === 'pending' ||
+            r.status === 'scheduled';
         const searchOk = !s || r.name.toLowerCase().includes(s)
                             || r.address.toLowerCase().includes(s)
                             || r.area.toLowerCase().includes(s);
@@ -571,7 +610,6 @@ function buildAreaButtons() {
     const container = document.getElementById('areaFilters');
     if (!container) return;
 
-    // clear dynamic buttons (keep "All" if it's hardcoded in HTML)
     container.querySelectorAll('[data-area]:not([data-area="all"])').forEach(b => b.remove());
 
     const areas = [...new Set(REQUESTS.map(r => r.area))].sort();
@@ -587,7 +625,7 @@ function buildAreaButtons() {
 function updateSummary(filtered) {
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('sumTotal',  filtered.length);
-    set('sumNew',    filtered.filter(r => r.status === 'new').length);
+    set('sumNew',    filtered.filter(r => r.status === 'pending').length);
     set('sumUrgent', filtered.filter(r => r.status === 'urgent').length);
     set('sumWeight', filtered.reduce((s, r) => s + r.weight, 0) + ' kg');
 }
@@ -668,6 +706,7 @@ function renderCard(r) {
         <div class="rc-actions" onclick="event.stopPropagation()">
             <button class="rc-btn assign" onclick="acceptRequest(${r.id})"><i class="fas fa-truck"></i> Accept</button>
             <button class="rc-btn view"   onclick="openDrawer('${r.id}')"><i class="fas fa-eye"></i> Details</button>
+            <button class="rc-btn decline" onclick="openDeclineModal(${r.id})"><i class="fas fa-times"></i> Decline</button>
         </div>
     </div>`;
 }
@@ -691,6 +730,7 @@ function renderList(filtered) {
             <div class="rli-actions" onclick="event.stopPropagation()">
                 <button class="rli-btn primary" onclick="acceptRequest(${r.id})"><i class="fas fa-truck"></i></button>
                 <button class="rli-btn"         onclick="openDrawer(${r.id})"><i class="fas fa-eye"></i></button>
+                <button class="rli-btn danger"  onclick="openDeclineModal(${r.id})"><i class="fas fa-times"></i></button>
             </div>
         </div>`).join('')}
     </div>`;
@@ -711,25 +751,21 @@ function openDrawer(id) {
         <div class="user-profile-row">
             <div>
                 <div class="up-name">${r.name}</div>
-                <div class="up-meta">${r.phone}</div>
-            </div><!-- score rja3la
-            <div class="up-score">
-                <div class="score-val">${r.score}</div>
-                <div class="score-lbl">Eco Score</div>
-            </div>-->
+                <div class="up-meta">${r.phone || 'No phone'}</div>
+            </div>
         </div>
-        <span class="rc-status ${r.desc}" style="margin-bottom:20px;display:inline-flex;">
-            ${STATUS_LABELS[r.desc]}
+        <span class="rc-status ${r.status}" style="margin-bottom:20px;display:inline-flex;">
+            ${STATUS_LABELS[r.status]}
         </span>
         <div class="db-section">
             <div class="db-title">Request Details</div>
             <div class="db-grid" style="margin-bottom:12px;">
                 <div class="db-item"><div class="dl">Request ID</div><div class="dv">REQ-${r.id}</div></div>
                 <div class="db-item"><div class="dl">Est. Weight</div><div class="dv">${r.weight} kg</div></div>
-                // <div class="db-item"><div class="dl">Area</div><div class="dv">${r.area}</div></div>
                 <div class="db-item"><div class="dl">Preferred Date</div>
                     <div class="dv">${new Date(r.date).toLocaleDateString('en-US', { month:'long', day:'numeric' })}</div>
                 </div>
+                <div class="db-item"><div class="dl">Area</div><div class="dv">${r.area}</div></div>
             </div>
             <div class="db-item">
                 <div class="dl">📍 Full Address</div>
@@ -758,7 +794,10 @@ function openDrawer(id) {
     `;
 
     const assignBtn = document.getElementById('drawerAssignBtn');
-    if (assignBtn) assignBtn.onclick = () => acceptRequest(id, true);
+    const declineBtn = document.getElementById('drawerDeclineBtn');
+    
+    if (assignBtn) assignBtn.onclick = () => acceptRequest(r.id, true);
+    if (declineBtn) declineBtn.onclick = () => openDeclineModal(r.id);
 
     const overlay = document.getElementById('drawerOverlay');
     if (overlay) overlay.classList.add('show');
@@ -775,36 +814,70 @@ function closeDrawerDirect() {
     document.body.style.overflow = '';
 }
 
-async function acceptRequest(id, fromDrawer = false) {
+async function acceptRequest(id) {
     try {
-        const res = await fetch(`/api/requests/${id}/assign`, {
+        const res = await fetch(`http://127.0.0.1:8000/company/${id}/assign`, {
             method: "PATCH",
             credentials: 'include' 
         });
-
+        console.log('Assign response:', res);
         if (!res.ok) throw new Error("Failed to update");
 
-        // optional: get backend response (good practice)
         const data = await res.json();
 
-        // 🔥 update local state
+        // Update local state
         const req = REQUESTS.find(r => r.id === id);
         if (req) req.status = 'assigned';
 
-        if (fromDrawer) closeDrawerDirect();
+        //if (fromDrawer) closeDrawerDirect();
 
         render();
-        showToast("Accepted ✔");
+        showToast("✔ Request accepted!", "success");
 
     } catch (err) {
         console.error(err);
-        showToast("Failed ❌");
+        showToast("❌ Failed to accept", "error");
     }
 }
 
-function showToast(message) {
+async function declineRequest(id) {
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/company/${id}/decline`, {
+            method: "PATCH",
+            credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error("Failed to decline");
+
+        // Remove from local REQUESTS array
+        REQUESTS = REQUESTS.filter(r => r.id !== id);
+        
+        closeDeclineModal();
+        closeDrawerDirect();
+        render();
+        showToast("✔ Request declined", "success");
+
+    } catch (err) {
+        console.error(err);
+        showToast("❌ Failed to decline", "error");
+    }
+}
+
+function openDeclineModal(id) {
+    pendingDeclineId = id;
+    const modal = document.getElementById('declineModal');
+    if (modal) modal.classList.add('show');
+}
+
+function closeDeclineModal() {
+    const modal = document.getElementById('declineModal');
+    if (modal) modal.classList.remove('show');
+    pendingDeclineId = null;
+}
+
+function showToast(message, type = 'success') {
     const toast = document.createElement("div");
-    toast.className = "toast";
+    toast.className = `toast ${type}`;
     toast.textContent = message;
 
     document.body.appendChild(toast);
@@ -813,7 +886,7 @@ function showToast(message) {
 
     setTimeout(() => {
         toast.remove();
-    }, 2000);
+    }, 2500);
 }
 
 /* ══════════════════════════════════════════
@@ -864,13 +937,6 @@ function initSidebar() {
     });
 }
 
-async function logout() {
-    await fetch(`http://127.0.0.1:8000/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('ecoUser');
-    window.location.replace('login.html');
-}
-document.getElementById('logoutSidebar').addEventListener('click', logout);
 function initEventListeners() {
     document.getElementById('areaFilters')?.addEventListener('click', e => {
         const chip = e.target.closest('.filter-chip');
@@ -882,7 +948,6 @@ function initEventListeners() {
     });
 
     document.getElementById('matFilter')?.addEventListener('change', e => { currentMat = e.target.value; render(); });
-    document.getElementById('statusFilter')?.addEventListener('change', e => { currentStatus = e.target.value; render(); });
     document.getElementById('reqSearch')?.addEventListener('input', e => { currentSearch = e.target.value; render(); });
 
     document.getElementById('gridViewBtn')?.addEventListener('click', () => {
@@ -900,6 +965,13 @@ function initEventListeners() {
     });
 
     document.getElementById('logoutSidebar')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+    
+    // Decline modal confirm button
+    document.getElementById('confirmDeclineBtn')?.addEventListener('click', () => {
+        if (pendingDeclineId !== null) {
+            declineRequest(pendingDeclineId);
+        }
+    });
 
     const dateEl = document.getElementById('currentDate');
     if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', {
@@ -913,10 +985,11 @@ function initEventListeners() {
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initEventListeners();
-    render(); // show empty state immediately while auth loads
-    checkAuth(); // fetch /me → populateSidebar → loadLiveRequests
+    render();
+    checkAuth();
     loadLiveRequests();
 });
 </script>
+<script src="logout.js"></script>
 </body>
 </html>

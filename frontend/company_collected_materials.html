@@ -350,7 +350,10 @@
             <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Collection Score</span><div class="badge" style="background:var(--green);">1,240</div></a>
             <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
             <a href="#" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
-            <a href="#" class="nav-item logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
+            <a href="#" class="nav-item logout-btn" onclick="logout(); return false;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Log Out</span>
+            </a> 
         </div>
     </nav>
 
@@ -781,5 +784,6 @@ const exportBtn = document.getElementById('exportBtn');
 if (exportBtn) exportBtn.addEventListener('click', exportToCSV);
 
 </script>
+<script src="logout.js"></script>
 </body>
 </html>

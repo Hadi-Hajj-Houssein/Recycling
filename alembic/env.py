@@ -14,6 +14,7 @@ from models.company import Company
 from models.Add_Recyclable import Recyclables
 from models.Recyclables import Recyclable_Item
 from models.user_total_recycled import UserTotalRecycled
+from models.requests import Request
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

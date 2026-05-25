@@ -8,3 +8,7 @@ class Company(Base):
     email = Column(String(300), unique=True, nullable=False)
     password = Column(String(256), nullable=False)
     assigned_items = relationship("Recyclable_Item", back_populates="company")
+    requests = relationship(
+        "Request",
+        back_populates="company"
+    )

@@ -377,7 +377,10 @@
             <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Collection Score</span><div class="badge" style="background:var(--green);">1,240</div></a>
             <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
             <a href="help&faq.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
-            <a href="#" class="nav-item logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
+            <a href="#" class="nav-item logout-btn" onclick="logout(); return false;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Log Out</span>
+            </a>  
         </div>
     </nav>
     <div class="sidebar-footer">
@@ -1009,5 +1012,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuth(); // fetch /me → populateSidebar → loadLivePickups
 });
 </script>
+<script src="logout.js"></script>
 </body>
 </html>

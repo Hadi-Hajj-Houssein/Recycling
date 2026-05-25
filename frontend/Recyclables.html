@@ -266,6 +266,7 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 }
 @media(max-width:480px){.recyclables-grid{grid-template-columns:1fr}}
 </style>
+<script src="logout.js"></script>
 </head>
 <body>
 
@@ -467,7 +468,7 @@ body { font-family:'Poppins',sans-serif; background:var(--bg-primary); color:var
 </div>
 
 <script>
-
+RECYCLABLES_API = API_BASE + '/recyclables';
 // ── User info ──────────────────────────────────────────────────────────────────
 function loadUser() {
   var u    = JSON.parse(localStorage.getItem('ecoUser') || '{}');
@@ -482,8 +483,6 @@ document.getElementById('currentDate').textContent =
   new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-var API_BASE = 'http://127.0.0.1:8000/recyclables';
-
 var TYPES = {
   plastic:     { emoji: '🥤', label: 'Plastic',     color: '#2ecc71', bg: 'rgba(46,204,113,0.12)' },
   paper:       { emoji: '📄', label: 'Paper',       color: '#3498db', bg: 'rgba(52,152,219,0.12)' },
@@ -542,7 +541,7 @@ async function apiRequest(url, method, body) {
 
 // ── Data CRUD ──────────────────────────────────────────────────────────────────
 async function fetchItems() {
-  var data = await apiRequest(API_BASE);
+  var data = await apiRequest(RECYCLABLES_API);
   if (data) { items = data; renderAll(); }
 }
 async function fetchCompanies() {
@@ -553,7 +552,7 @@ async function fetchCompanies() {
 }
 
 async function createItem(payload) {
-  var created = await apiRequest(API_BASE, 'POST', payload);
+  var created = await apiRequest(RECYCLABLES_API, 'POST', payload);
   if (created) {
     items.unshift(created);
     renderAll();
@@ -564,7 +563,7 @@ async function createItem(payload) {
 }
 
 async function updateItem(id, payload) {
-  var updated = await apiRequest(API_BASE + '/' + id, 'PUT', payload);
+  var updated = await apiRequest(RECYCLABLES_API + '/' + id, 'PUT', payload);
   if (updated) {
     var idx = items.findIndex(function (i) { return i.id === id; });
     if (idx !== -1) items[idx] = updated;
@@ -575,7 +574,7 @@ async function updateItem(id, payload) {
 
 async function deleteItem(id) {
   if (!confirm('Remove this item from your recyclables?')) return;
-  await apiRequest(API_BASE + '/' + id, 'DELETE');
+  await apiRequest(RECYCLABLES_API + '/' + id, 'DELETE');
   items = items.filter(function (i) { return i.id !== id; });
   renderAll();
   showToast('🗑️', 'Item Removed', 'The recyclable has been deleted.');
@@ -892,16 +891,6 @@ document.getElementById('logoutSidebar').addEventListener('click', function (e) 
   e.preventDefault();
   logout();
 });
-async function logout() {
-    await fetch('http://127.0.0.1:8000/logout', {
-        method: 'POST',
-        credentials: 'include'
-    }).catch(() => {});
-
-    localStorage.clear();
-
-    window.location.replace('login.html');
-}
 function handleResize() {
   if (window.innerWidth > 768)  { sidebar.classList.remove('mobile-open'); ov.classList.remove('active'); document.body.style.overflow = ''; }
   if (window.innerWidth <= 1024 && window.innerWidth > 768) { sidebar.classList.add('collapsed'); mainContent.classList.add('expanded'); }

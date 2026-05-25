@@ -694,15 +694,6 @@
         }
         loadUserData();
 
-        async function logout() {
-            await fetch('http://127.0.0.1:8000/logout', {
-                method: 'POST',
-                credentials: 'include'
-            }).catch(() => {});
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('ecoUser');
-            window.location.href = 'login.html';
-        }
         document.getElementById('logoutSidebar').addEventListener('click', (e) => { e.preventDefault(); logout(); });
         document.getElementById('logoutDropdown').addEventListener('click', logout);
 
@@ -763,5 +754,6 @@
         });
 
     </script>
+    <script src="logout.js"></script>
 </body>
 </html>

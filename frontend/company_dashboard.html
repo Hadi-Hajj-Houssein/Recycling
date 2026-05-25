@@ -687,8 +687,10 @@
                 <a href="#" class="nav-item"><i class="fas fa-star"></i><span>Collection Score</span><div class="badge" style="background:var(--green);">1,240</div></a>
                 <a href="#" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
                 <a href="#" class="nav-item"><i class="fas fa-question-circle"></i><span>Help & FAQ</span></a>
-                <a href="#" class="nav-item logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i><span>Log Out</span></a>
-            </div>
+                <a href="#" class="nav-item logout-btn" onclick="logout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log Out</span>
+                </a>            </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -1054,7 +1056,7 @@
             const label = document.createElement('div'); label.className = 'chart-label'; label.textContent = d.label;
             group.appendChild(wrapper); group.appendChild(label); barChart.appendChild(group);
         });
-
+        
         const donutChart = document.getElementById('donutChart');
         const segments = [{ percent: 38, color: '#2ecc71' }, { percent: 28, color: '#3498db' }, { percent: 20, color: '#f1c40f' }, { percent: 14, color: '#9b59b6' }];
         const svgNS = 'http://www.w3.org/2000/svg';
@@ -1089,6 +1091,7 @@
         }, { threshold: 0.05 });
         document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
     </script>
+    <script src="logout.js"></script>
 </body>
 </html>
 
