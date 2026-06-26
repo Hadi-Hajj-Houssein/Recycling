@@ -104,8 +104,49 @@
         .filter-chip { padding: 7px 14px; border-radius: 10px; font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all 0.25s; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); font-family: 'Poppins', sans-serif; }
         .filter-chip:hover { border-color: var(--green); color: var(--green); }
         .filter-chip.active { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.3); color: var(--green); }
-        .filter-select { padding: 8px 32px 8px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 500; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); font-family: 'Poppins', sans-serif; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.3)'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; transition: all 0.25s; }
-        .filter-select:focus { border-color: var(--green); color: var(--text-primary); }
+        /* ── Custom material dropdown (replaces native select) ── */
+        .custom-select-wrap { position: relative; }
+        .custom-select-trigger {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 14px 8px 12px;
+            border-radius: 10px; font-size: 12.5px; font-weight: 500;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-secondary); font-family: 'Poppins', sans-serif;
+            cursor: pointer; user-select: none; white-space: nowrap;
+            transition: all 0.25s; min-width: 150px;
+        }
+        .custom-select-trigger:hover,
+        .custom-select-trigger.open { border-color: var(--green); color: var(--text-primary); }
+        .custom-select-trigger .caret {
+            margin-left: auto; font-size: 10px; color: rgba(255,255,255,0.35);
+            transition: transform 0.2s;
+        }
+        .custom-select-trigger.open .caret { transform: rotate(180deg); }
+        .custom-select-menu {
+            position: absolute; top: calc(100% + 6px); left: 0;
+            min-width: 100%; background: #0f2318;
+            border: 1px solid rgba(46,204,113,0.2); border-radius: 12px;
+            padding: 6px; z-index: 500;
+            opacity: 0; visibility: hidden; transform: translateY(-6px);
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        }
+        .custom-select-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+        .cso {
+            display: flex; align-items: center; gap: 9px;
+            padding: 9px 12px; border-radius: 8px;
+            font-size: 12.5px; font-weight: 500; color: var(--text-secondary);
+            cursor: pointer; white-space: nowrap; transition: all 0.18s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .cso:hover { background: rgba(46,204,113,0.08); color: var(--text-primary); }
+        .cso.selected { color: var(--green); background: rgba(46,204,113,0.1); }
+        .cso .cso-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            border: 2px solid currentColor; flex-shrink: 0; transition: all 0.18s;
+        }
+        .cso.selected .cso-dot { background: currentColor; }
+        .cso-label { color: inherit; }
         .filter-search { position: relative; margin-left: auto; }
         .filter-search input { padding: 8px 14px 8px 36px; border-radius: 10px; font-size: 12.5px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); font-family: 'Poppins', sans-serif; outline: none; transition: all 0.3s; width: 200px; }
         .filter-search input::placeholder { color: var(--text-muted); }
@@ -117,74 +158,237 @@
         .view-btn { width: 34px; height: 34px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .view-btn.active { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.3); color: var(--green); }
 
-        /* ── Pickup cards grid ── */
-        .pickups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px,1fr)); gap: 14px; }
+        /* ══════════════════════════════════════
+           PICKUP CARD — FIXED VERSION
+        ══════════════════════════════════════ */
+        .pickups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+            align-items: start; /* each card sizes to its own content */
+        }
 
-        .pickup-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; gap: 13px; }
+        .pickup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* FIXED HEIGHT — every card the same size */
+            height: 300px;
+            overflow: hidden;
+        }
         .pickup-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.18); }
         .pickup-card.delayed { border-color: rgba(230,126,34,0.2); }
         .pickup-card.delayed:hover { border-color: rgba(230,126,34,0.4); }
 
-        .pc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-        .pc-user { display: flex; align-items: center; gap: 10px; }
-        .pc-avatar { width: 38px; height: 38px; min-width: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; }
-        .pc-name { font-size: 13.5px; font-weight: 600; line-height: 1.3; }
-        .pc-id { font-size: 11px; color: var(--text-muted); }
+        /* ── Card top row: avatar + name block + status badge ── */
+        .pc-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
 
-        .pc-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 8px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
-        .pc-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-        .pc-status.enroute { color: #3498db; background: rgba(52,152,219,0.1); }
-        .pc-status.assigned { color: #f1c40f; background: rgba(241,196,15,0.1); }
-        .pc-status.collected { color: #2ecc71; background: rgba(46,204,113,0.1); }
-        .pc-status.delayed { color: #e67e22; background: rgba(230,126,34,0.1); }
+        /* FIX: avatar never shrinks */
+        .pc-avatar {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            flex-shrink: 0;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+        }
 
-        .pc-location { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-        .pc-location i { font-size: 11px; color: var(--green); margin-top: 2px; flex-shrink: 0; }
+        /* FIX: name block takes remaining space, text truncates */
+        .pc-name-block {
+            flex: 1;
+            min-width: 0; /* crucial for truncation in flex */
+            overflow: hidden;
+        }
 
-        .pc-driver { display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; font-size: 12px; }
-        .pc-driver i { font-size: 13px; color: var(--blue); }
-        .pc-driver .driver-name { font-weight: 600; color: var(--text-primary); }
-        .pc-driver .driver-eta { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+        .pc-name {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
 
-        /* material tags */
-        .pc-materials { display: flex; flex-wrap: wrap; gap: 6px; }
-        .mat-tag { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 500; border: 1px solid rgba(255,255,255,0.06); }
-        .mat-tag.plastic { background: rgba(46,204,113,0.08); color: #2ecc71; }
-        .mat-tag.paper { background: rgba(52,152,219,0.08); color: #3498db; }
-        .mat-tag.glass { background: rgba(241,196,15,0.08); color: #f1c40f; }
-        .mat-tag.metal { background: rgba(155,89,182,0.08); color: #9b59b6; }
-        .mat-tag.ewaste { background: rgba(231,76,60,0.08); color: #e74c3c; }
-        .mat-tag.organic { background: rgba(26,188,156,0.08); color: #1abc9c; }
+        .pc-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-        .pc-footer { display: flex; align-items: center; justify-content: space-between; }
+        /* FIX: status never wraps or gets pushed off */
+        .pc-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 9px;
+            border-radius: 8px;
+            font-size: 10.5px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .pc-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+        .pc-status.enroute  { color: #3498db; background: rgba(52,152,219,0.12); }
+        .pc-status.assigned { color: #f1c40f; background: rgba(241,196,15,0.12); }
+        .pc-status.collected{ color: #2ecc71; background: rgba(46,204,113,0.12); }
+        .pc-status.delayed  { color: #e67e22; background: rgba(230,126,34,0.12); }
+
+        /* ── Location row ── */
+        .pc-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            overflow: hidden;
+        }
+        .pc-location i { font-size: 11px; color: var(--green); flex-shrink: 0; }
+        .pc-location span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── Driver / phone row ── */
+        .pc-driver {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 11px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 12px;
+            min-width: 0;
+        }
+        .pc-driver i { font-size: 13px; flex-shrink: 0; }
+        .pc-driver .driver-name { font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
+        .pc-driver .driver-eta { margin-left: auto; font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+
+        /* ── Material tags ── */
+        .pc-materials {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 6px;
+            overflow: hidden;
+            /* one row only, extras clipped */
+            max-height: 32px;
+            flex-shrink: 0;
+        }
+
+        .mat-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 500;
+            border: 1px solid transparent;
+            /* FIX: explicit color & bg for every state — nothing inherits white */
+            background: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+        }
+        /* Named material variants */
+        .mat-tag.plastic  { background: rgba(46,204,113,0.1);  color: #2ecc71; border-color: rgba(46,204,113,0.2); }
+        .mat-tag.paper    { background: rgba(52,152,219,0.1);  color: #3498db; border-color: rgba(52,152,219,0.2); }
+        .mat-tag.glass    { background: rgba(241,196,15,0.1);  color: #f1c40f; border-color: rgba(241,196,15,0.2); }
+        .mat-tag.metal    { background: rgba(155,89,182,0.1);  color: #9b59b6; border-color: rgba(155,89,182,0.2); }
+        .mat-tag.ewaste   { background: rgba(231,76,60,0.1);   color: #e74c3c; border-color: rgba(231,76,60,0.2); }
+        .mat-tag.organic  { background: rgba(26,188,156,0.1);  color: #1abc9c; border-color: rgba(26,188,156,0.2); }
+        /* FIX: unknown/undefined material — styled neutrally, NOT white */
+        .mat-tag.unknown  { background: rgba(255,255,255,0.06); color: var(--text-secondary); border-color: rgba(255,255,255,0.08); }
+
+        /* ── Card footer: weight + date ── */
+        .pc-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
         .pc-weight { font-size: 13px; font-weight: 700; }
         .pc-weight span { font-size: 11px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
-        .pc-date { font-size: 11px; color: var(--text-muted); }
+        .pc-date { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
 
-        .pc-actions { display: flex; gap: 8px; }
-        .pc-btn { flex: 1; padding: 9px 0; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s; border: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .pc-btn.view { background: rgba(52,152,219,0.1); color: var(--blue); }
-        .pc-btn.view:hover { background: rgba(52,152,219,0.2); }
-        .pc-btn.cancel { background: rgba(231,76,60,0.08); color: var(--red); border: 1px solid rgba(231,76,60,0.15); }
-        .pc-btn.cancel:hover { background: rgba(231,76,60,0.15); }
+        /* ── Action buttons
+           FIX: always at the bottom, same height, no jumping
+        ── */
+        .pc-actions {
+            display: flex;
+            gap: 8px;
+            /* pushes to bottom if card is taller than content */
+            margin-top: auto;
+        }
+        .pc-btn {
+            flex: 1;
+            padding: 9px 0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .pc-btn.view {
+            background: rgba(52,152,219,0.18);
+            color: #74b9e8;
+            border: 1px solid rgba(52,152,219,0.4);
+        }
+        .pc-btn.view:hover {
+            background: rgba(52,152,219,0.30);
+            color: #a8d4f0;
+            border-color: rgba(52,152,219,0.7);
+        }
+        .pc-btn.cancel {
+            background: rgba(231,76,60,0.12);
+            color: #e74c3c;
+            border: 1px solid rgba(231,76,60,0.35);
+        }
+        .pc-btn.cancel:hover {
+            background: rgba(231,76,60,0.22);
+            border-color: rgba(231,76,60,0.6);
+        }
 
         /* ── List view ── */
         .pickups-list { display: flex; flex-direction: column; gap: 8px; }
         .pickup-list-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 15px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.25s; }
         .pickup-list-item:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
-        .pli-avatar { width: 36px; height: 36px; min-width: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
-        .pli-name { font-size: 13.5px; font-weight: 600; min-width: 160px; }
-        .pli-area { font-size: 12px; color: var(--text-muted); min-width: 120px; }
-        .pli-driver { font-size: 12px; color: var(--text-secondary); min-width: 130px; }
+        .pli-avatar { width: 36px; height: 36px; min-width: 36px; flex-shrink: 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+        .pli-name { font-size: 13px; font-weight: 600; min-width: 140px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pli-area { font-size: 12px; color: var(--text-muted); min-width: 110px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pli-driver { font-size: 12px; color: var(--text-secondary); min-width: 110px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .pli-mats { display: flex; gap: 5px; flex: 1; flex-wrap: wrap; }
         .pli-mat { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 500; }
-        .pli-weight { font-size: 13px; font-weight: 700; min-width: 70px; text-align: right; }
-        .pli-date { font-size: 11px; color: var(--text-muted); min-width: 80px; text-align: right; }
-        .pli-status { min-width: 100px; display: flex; justify-content: center; }
-        .pli-actions { display: flex; gap: 6px; margin-left: auto; }
+        .pli-weight { font-size: 13px; font-weight: 700; min-width: 65px; text-align: right; flex-shrink: 0; }
+        .pli-date { font-size: 11px; color: var(--text-muted); min-width: 70px; text-align: right; flex-shrink: 0; }
+        .pli-status { min-width: 90px; display: flex; justify-content: center; flex-shrink: 0; }
+        .pli-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; }
         .pli-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--text-muted); font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .pli-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .pli-btn.view-btn-list { background: rgba(52,152,219,0.1); border-color: rgba(52,152,219,0.3); color: var(--blue); }
+        .pli-btn.view-btn-list { background: rgba(52,152,219,0.1); border-color: rgba(52,152,219,0.3); color: #5dade2; }
         .pli-btn.view-btn-list:hover { background: rgba(52,152,219,0.2); }
         .pli-btn.cancel-btn-list { background: rgba(231,76,60,0.08); border-color: rgba(231,76,60,0.2); color: var(--red); }
         .pli-btn.cancel-btn-list:hover { background: rgba(231,76,60,0.15); }
@@ -206,22 +410,18 @@
         .db-item .dl { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
         .db-item .dv { font-size: 14px; font-weight: 600; }
         .user-profile-row { display: flex; align-items: center; gap: 14px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 20px; }
-        .up-avatar { width: 48px; height: 48px; min-width: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; }
-        .up-name { font-size: 15px; font-weight: 600; }
+        .up-avatar { width: 48px; height: 48px; min-width: 48px; flex-shrink: 0; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; }
+        .up-name { font-size: 15px; font-weight: 600; word-break: break-word; }
         .up-meta { font-size: 12px; color: var(--text-muted); }
         .up-score { margin-left: auto; text-align: center; }
         .up-score .score-val { font-size: 18px; font-weight: 700; color: var(--green); }
         .up-score .score-lbl { font-size: 10px; color: var(--text-muted); }
-
-        /* map placeholder */
         .map-placeholder { background: rgba(52,152,219,0.05); border: 1px solid rgba(52,152,219,0.15); border-radius: 12px; padding: 20px; text-align: center; }
         .map-placeholder i { font-size: 30px; color: var(--blue); margin-bottom: 8px; display: block; }
         .map-placeholder .map-area { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
         .map-placeholder .map-coords { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
         .map-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--blue); text-decoration: none; padding: 6px 14px; border: 1px solid rgba(52,152,219,0.2); border-radius: 8px; transition: all 0.2s; }
         .map-link:hover { background: rgba(52,152,219,0.08); }
-
-        /* driver row */
         .driver-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; }
         .driver-icon { width: 40px; height: 40px; border-radius: 11px; background: rgba(52,152,219,0.1); display: flex; align-items: center; justify-content: center; color: var(--blue); font-size: 17px; }
         .driver-info h4 { font-size: 13.5px; font-weight: 600; }
@@ -229,8 +429,6 @@
         .driver-eta { margin-left: auto; text-align: right; }
         .driver-eta .eta-val { font-size: 13px; font-weight: 700; color: var(--blue); }
         .driver-eta .eta-lbl { font-size: 10px; color: var(--text-muted); }
-
-        /* timeline */
         .timeline { display: flex; flex-direction: column; }
         .tl-item { display: flex; gap: 14px; position: relative; }
         .tl-item:not(:last-child)::after { content: ''; position: absolute; left: 10px; top: 24px; width: 1px; height: calc(100% - 8px); background: var(--border); }
@@ -241,7 +439,6 @@
         .tl-content { padding-bottom: 18px; }
         .tl-label { font-size: 12.5px; font-weight: 600; line-height: 1.3; }
         .tl-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
         .da { display: flex; gap: 10px; padding: 20px 24px; border-top: 1px solid var(--border); }
         .da .btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; border: none; }
         .da .btn-secondary { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-secondary); }
@@ -284,38 +481,12 @@
         .toast.success i { color: var(--green); }
         .toast.error i { color: var(--red); }
 
-        .profile-dropdown {
-            position: absolute;
-            top: calc(100% + 8px); right: 0;
-            width: 220px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px; padding: 8px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            opacity: 0; visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.25s ease;
-            z-index: 200;
-        }
+        .profile-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 220px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.25s ease; z-index: 200; }
         .profile-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .profile-dropdown .dropdown-header {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 4px;
-        }
+        .profile-dropdown .dropdown-header { padding: 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
         .profile-dropdown .dropdown-header h4 { font-size: 13px; font-weight: 600; }
         .profile-dropdown .dropdown-header p { font-size: 11px; color: var(--text-muted); }
-        .dropdown-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: 10px;
-            color: var(--text-secondary);
-            font-size: 13px; cursor: pointer;
-            transition: all 0.2s;
-            border: none; background: none;
-            width: 100%;
-            font-family: 'Poppins', sans-serif;
-            text-align: left;
-        }
+        .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s; border: none; background: none; width: 100%; font-family: 'Poppins', sans-serif; text-align: left; }
         .dropdown-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
         .dropdown-item.danger { color: var(--red); }
         .dropdown-item.danger:hover { background: rgba(231,76,60,0.08); }
@@ -336,7 +507,19 @@
         .animate-in:nth-child(4) { animation-delay: 0.2s; }
 
         @media(max-width:1200px) { .summary-row { grid-template-columns: repeat(2,1fr); } }
-        @media(max-width:768px) { .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.3); } .sidebar.mobile-open { transform: translateX(0); } .sidebar-overlay { display: block; } .main { margin-left: 0 !important; } .mobile-toggle { display: flex; } .topbar { padding: 0 20px; } .content { padding: 20px; } .pickups-grid { grid-template-columns: 1fr; } .filter-search { display: none; } .detail-drawer { width: 100vw; } .modal { width: calc(100vw - 40px); } }
+        @media(max-width:768px) {
+            .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.3); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .sidebar-overlay { display: block; }
+            .main { margin-left: 0 !important; }
+            .mobile-toggle { display: flex; }
+            .topbar { padding: 0 20px; }
+            .content { padding: 20px; }
+            .pickups-grid { grid-template-columns: 1fr; }
+            .filter-search { display: none; }
+            .detail-drawer { width: 100vw; }
+            .modal { width: calc(100vw - 40px); }
+        }
     </style>
 </head>
 <body>
@@ -355,7 +538,6 @@
     <nav class="sidebar-nav">
         <div class="nav-section">
             <div class="nav-section-title">Main</div>
-            <!-- FIXED: correct path to dashboard -->
             <a href="company_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
             <a href="company_collected_materials.html" class="nav-item">
                 <i class="fas fa-recycle"></i>
@@ -363,7 +545,6 @@
                 <div class="badge">1</div>
             </a>
             <a href="pending_pickups.html" class="nav-item active"><i class="fas fa-calendar-check"></i><span>Pending Pickups</span></a>
-            <!-- REPLACED: Collection Routes → User Requests -->
             <a href="user_requests.html" class="nav-item"><i class="fas fa-users"></i><span>User Requests</span><div class="badge">7</div></a>
         </div>
         <div class="nav-section">
@@ -380,7 +561,7 @@
             <a href="#" class="nav-item logout-btn" onclick="logout(); return false;">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Log Out</span>
-            </a>  
+            </a>
         </div>
     </nav>
     <div class="sidebar-footer">
@@ -409,18 +590,18 @@
             <button class="topbar-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
             <button class="topbar-btn"><i class="fas fa-envelope"></i></button>
             <div style="position:relative;">
-            <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">GC</div>
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="dropdown-header">
-                    <h4 id="dropdownName">Green Collect Ltd</h4>
-                    <p id="dropdownEmail">info@greencollect.com</p>
+                <div class="topbar-avatar" id="topbarAvatar" onclick="toggleDropdown()">GC</div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-header">
+                        <h4 id="dropdownName">Green Collect Ltd</h4>
+                        <p id="dropdownEmail">info@greencollect.com</p>
+                    </div>
+                    <button class="dropdown-item"><i class="fas fa-user"></i> Company Profile</button>
+                    <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
+                    <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
+                    <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
                 </div>
-                <button class="dropdown-item"><i class="fas fa-user"></i> Company Profile</button>
-                <button class="dropdown-item"><i class="fas fa-cog"></i> Settings</button>
-                <button class="dropdown-item"><i class="fas fa-question-circle"></i> Help</button>
-                <button class="dropdown-item danger" id="logoutDropdown"><i class="fas fa-sign-out-alt"></i> Log Out</button>
             </div>
-        </div>
         </div>
     </header>
 
@@ -469,15 +650,42 @@
                 <button class="filter-chip" data-status="collected">Collected</button>
                 <button class="filter-chip" data-status="delayed">Delayed</button>
             </div>
-            <select class="filter-select" id="matFilter">
-                <option value="">All Materials</option>
-                <option value="plastic">🥤 Plastic</option>
-                <option value="paper">📄 Paper</option>
-                <option value="glass">🍶 Glass</option>
-                <option value="metal">🔩 Metal</option>
-                <option value="ewaste">💻 E-Waste</option>
-                <option value="organic">🌱 Organic</option>
-            </select>
+            <div class="custom-select-wrap" id="matSelectWrap">
+                <div class="custom-select-trigger" id="matSelectTrigger">
+                    <span id="matSelectLabel">All Materials</span>
+                    <i class="fas fa-chevron-down caret"></i>
+                </div>
+                <div class="custom-select-menu" id="matSelectMenu">
+                    <div class="cso selected" data-value="">
+                        <span class="cso-dot"></span>
+                        <span class="cso-label">All Materials</span>
+                    </div>
+                    <div class="cso" data-value="plastic">
+                        <span class="cso-dot"></span>
+                        <span>🥤</span><span class="cso-label">Plastic</span>
+                    </div>
+                    <div class="cso" data-value="paper">
+                        <span class="cso-dot"></span>
+                        <span>📄</span><span class="cso-label">Paper</span>
+                    </div>
+                    <div class="cso" data-value="glass">
+                        <span class="cso-dot"></span>
+                        <span>🍶</span><span class="cso-label">Glass</span>
+                    </div>
+                    <div class="cso" data-value="metal">
+                        <span class="cso-dot"></span>
+                        <span>🔩</span><span class="cso-label">Metal</span>
+                    </div>
+                    <div class="cso" data-value="ewaste">
+                        <span class="cso-dot"></span>
+                        <span>💻</span><span class="cso-label">E-Waste</span>
+                    </div>
+                    <div class="cso" data-value="organic">
+                        <span class="cso-dot"></span>
+                        <span>🌱</span><span class="cso-label">Organic</span>
+                    </div>
+                </div>
+            </div>
             <div class="filter-search">
                 <i class="fas fa-search"></i>
                 <input type="text" id="pickupSearch" placeholder="Search name, area, driver...">
@@ -540,6 +748,7 @@
 ══════════════════════════════════════════ */
 const MAT_ICONS     = { plastic:'🥤', paper:'📄', glass:'🍶', metal:'🔩', ewaste:'💻', organic:'🌱' };
 const STATUS_LABELS = { enroute:'En Route', assigned:'Assigned', collected:'Collected', delayed:'Delayed' };
+const KNOWN_MATS    = ['plastic','paper','glass','metal','ewaste','organic'];
 
 let PICKUPS       = [];
 let currentStatus = 'all';
@@ -547,19 +756,26 @@ let currentMat    = '';
 let currentSearch = '';
 let viewMode      = 'grid';
 
-// Add this near the top of your script
 const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
+/* ── Sanitise one pickup from the API so rendering never crashes ── */
+function normaliseMaterials(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw
+        .filter(m => typeof m === 'string' && m.trim() !== '' && m !== 'undefined')
+        .map(m => m.trim().toLowerCase());
+}
+
+/* ── Auth check ── */
 (function checkAuth() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const ecoUser = localStorage.getItem('ecoUser');
+    const ecoUser    = localStorage.getItem('ecoUser');
     if (isLoggedIn !== 'true' || !ecoUser) {
         setTimeout(() => {
             if (localStorage.getItem('isLoggedIn') !== 'true') {
                 window.location.href = 'login.html';
             }
         }, 100);
-        return;
     }
 })();
 
@@ -568,60 +784,56 @@ function populateSidebar(data) {
     const initials = name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
     const nameEl   = document.getElementById('sidebarName');
     if (nameEl) nameEl.textContent = name;
-    ['sidebarAvatar', 'topbarAvatar'].forEach(id => {
+    ['sidebarAvatar','topbarAvatar'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = initials;
     });
 }
 
-/* ══════════════════════════════════════════
-   DATA — EXACT SAME PATTERN AS REQUESTS
-══════════════════════════════════════════ */
 async function loadLivePickups() {
     try {
-        const res = await fetch('/api/requests'); // ← same endpoint
+        const res = await fetch('http://127.0.0.1:8000/company/pending-pickups', { credentials: 'include' });
         if (res.status === 401) { window.location.href = '/login.html'; return; }
         if (!res.ok) { console.warn('Pickups fetch failed:', res.status); return; }
-        PICKUPS = await res.json();
+        const data = await res.json();
+
+        const colors = ['#9b59b6','#3498db','#e67e22','#1abc9c','#e74c3c','#2ecc71'];
+        PICKUPS = data.map(p => ({
+            ...p,
+            materials: normaliseMaterials(p.materials),        /* FIX: clean materials */
+            initials:  (p.name || '??').trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2),
+            avatarBg:  colors[(p.name || '').charCodeAt(0) % colors.length]
+        }));
+
         render();
     } catch (e) {
         console.warn('Pickups fetch error:', e);
     }
 }
-/* ══════════════════════════════════════════
-   FILTERS — EXACT SAME PATTERN
-══════════════════════════════════════════ */
-// FIXED
+
 function getFiltered() {
     const s = currentSearch.toLowerCase();
     return PICKUPS.filter(p => {
-        const statusOk = p.status === 'assigned';
+        const statusOk = currentStatus === 'all' || p.status === currentStatus;
         const matOk    = !currentMat || p.materials.includes(currentMat);
-        const searchOk = !s || p.name.toLowerCase().includes(s)
-                            || p.address.toLowerCase().includes(s)
-                            || (p.area || '').toLowerCase().includes(s)
-                            || (p.driver || '').toLowerCase().includes(s);
+        const searchOk = !s
+            || (p.name || '').toLowerCase().includes(s)
+            || (p.address || '').toLowerCase().includes(s)
+            || (p.phone || '').toLowerCase().includes(s);
         return statusOk && matOk && searchOk;
     });
 }
 
-
-// FIXED
-function updateSummary(filtered) {
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    set('sumTotal',   filtered.length);
-    set('sumEnroute', filtered.filter(p => p.status === 'enroute').length);
-    set('sumAssigned',filtered.filter(p => p.status === 'assigned').length);
-    set('sumWeight',  filtered.reduce((s, p) => s + (p.weight || 0), 0) + ' kg');
+function updateSummary() {
+    set('sumTotal',    PICKUPS.length);
+    set('sumEnroute',  PICKUPS.filter(p => p.status === 'enroute').length);
+    set('sumAssigned', PICKUPS.filter(p => p.status === 'assigned').length);
+    set('sumWeight',   PICKUPS.reduce((s, p) => s + (p.weight || 0), 0) + ' kg');
 }
 
-/* ══════════════════════════════════════════
-   RENDER — EXACT SAME PATTERN
-══════════════════════════════════════════ */
-// FIXED — delete renderGrid entirely, keep renderCards
 function render() {
+    updateSummary();
     const filtered = getFiltered();
-    updateSummary(filtered);
     const html = viewMode === 'grid' ? renderCards(filtered) : renderList(filtered);
     const container = document.getElementById('resultsContainer');
     if (container) container.innerHTML = html;
@@ -635,64 +847,70 @@ function emptyState() {
     </div>`;
 }
 
-function renderGrid(filtered) {
-    if (!filtered.length) return emptyState();
-
-    const groups = filtered.reduce((acc, r) => {
-        (acc[r.area] = acc[r.area] || []).push(r);
-        return acc;
-    }, {});
-
-    return Object.entries(groups).map(([area, items]) => {
-        const totalKg = items.reduce((s, r) => s + r.weight, 0);
-        return `
-        <div class="area-section">
-            <div class="area-header">
-                <div class="area-icon">📍</div>
-                <div>
-                    <div class="area-name">${area}</div>
-                    <div class="area-meta">${totalKg} kg total est. weight</div>
-                </div>
-                <div class="area-count">${items.length} request${items.length !== 1 ? 's' : ''}</div>
-            </div>
-            <div class="requests-grid">
-                ${items.map(r => renderCard(r)).join('')}
-            </div>
-        </div>`;
-    }).join('');
+/* ── FIX: mat tag helper — unknown types get neutral styling ── */
+function matTagHTML(m) {
+    const knownClass = KNOWN_MATS.includes(m) ? m : 'unknown';
+    const icon       = MAT_ICONS[m] || '📦';
+    const label      = m.charAt(0).toUpperCase() + m.slice(1);
+    return `<span class="mat-tag ${knownClass}">${icon} ${label}</span>`;
 }
 
 function renderCards(filtered) {
     if (!filtered.length) return emptyState();
     return `<div class="pickups-grid">${filtered.map(p => `
-        <div class="pickup-card ${p.status === 'delayed' ? 'delayed' : ''}" onclick="openDrawer('${p.id}')">
+        <div class="pickup-card${p.status === 'delayed' ? ' delayed' : ''}" onclick="openDrawer('${p.id}')">
+
+            <!-- TOP ROW: avatar | name+id | status badge -->
             <div class="pc-top">
-                <div class="pc-user">
-                    <div class="pc-avatar" style="background:${p.avatarBg || '#9b59b6'}">${p.initials || '??'}</div>
-                    <div><div class="pc-name">${p.name}</div><div class="pc-id">${p.id}</div></div>
+                <div class="pc-avatar" style="background:${p.avatarBg || '#9b59b6'}">${p.initials || '??'}</div>
+                <div class="pc-name-block">
+                    <div class="pc-name" title="${p.name || ''}">${p.name || '—'}</div>
+                    <div class="pc-id">${p.id || ''}</div>
                 </div>
-                <span class="pc-status ${p.status}">${STATUS_LABELS[p.status]}</span>
+                <span class="pc-status ${p.status || ''}">${STATUS_LABELS[p.status] || p.status || ''}</span>
             </div>
-            <div class="pc-location"><i class="fas fa-map-marker-alt"></i>${p.address}</div>
+
+            <!-- ADDRESS -->
+            <div class="pc-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${p.address || '—'}</span>
+            </div>
+
+            <!-- PHONE (only if present) -->
+            ${p.phone ? `
             <div class="pc-driver">
-                <i class="fas fa-id-badge"></i>
-                <span class="driver-name">${p.driver}</span>
-                <span class="driver-eta">${p.eta}</span>
-            </div>
+                <i class="fas fa-phone" style="color:var(--blue);"></i>
+                <span class="driver-name">${p.phone}</span>
+            </div>` : ''}
+
+            <!-- MATERIALS — FIX: skip undefined/empty, fallback to neutral tag -->
             <div class="pc-materials">
-                ${p.materials.map(m => `<span class="mat-tag ${m}">${MAT_ICONS[m]} ${m.charAt(0).toUpperCase()+m.slice(1)}</span>`).join('')}
+                ${p.materials.length
+                    ? p.materials.map(m => matTagHTML(m)).join('')
+                    : `<span class="mat-tag unknown">📦 Not specified</span>`
+                }
             </div>
+
+            <!-- FOOTER: weight + date -->
             <div class="pc-footer">
-                <div class="pc-weight">${p.weight} <span>kg est.</span></div>
+                <div class="pc-weight">${p.weight ?? '—'}<span>kg est.</span></div>
                 <div class="pc-date">
-                    <i class="fas fa-calendar-alt" style="margin-right:4px;color:var(--green);font-size:10px;"></i>
-                    ${new Date(p.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+                    <i class="fas fa-calendar-alt" style="color:var(--green);font-size:10px;"></i>
+                    ${p.scheduled_date ? new Date(p.scheduled_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}
                 </div>
             </div>
+
+            <!-- ACTIONS — always at bottom via margin-top:auto -->
             <div class="pc-actions" onclick="event.stopPropagation()">
-                <button class="pc-btn view" onclick="openDrawer('${p.id}')"><i class="fas fa-eye"></i> View Details</button>
-                ${p.status !== 'collected' ? `<button class="pc-btn cancel" onclick="openCancelModal('${p.id}',event)"><i class="fas fa-ban"></i> Cancel</button>` : ''}
+                <button class="pc-btn view" onclick="openDrawer('${p.id}')">
+                    <i class="fas fa-eye"></i> View Details
+                </button>
+                ${p.status !== 'collected' ? `
+                <button class="pc-btn cancel" onclick="openCancelModal('${p.id}',event)">
+                    <i class="fas fa-ban"></i> Cancel
+                </button>` : ''}
             </div>
+
         </div>
     `).join('')}</div>`;
 }
@@ -702,13 +920,13 @@ function renderList(filtered) {
     return `<div class="pickups-list">${filtered.map(p => `
         <div class="pickup-list-item" onclick="openDrawer('${p.id}')">
             <div class="pli-avatar" style="background:${p.avatarBg || '#9b59b6'}">${p.initials || '??'}</div>
-            <div class="pli-name">${p.name}</div>
-            <div class="pli-area"><i class="fas fa-map-marker-alt" style="color:var(--green);margin-right:4px;font-size:10px;"></i>${p.area}</div>
-            <div class="pli-driver"><i class="fas fa-truck" style="color:var(--blue);margin-right:5px;font-size:11px;"></i>${p.driver}</div>
-            <div class="pli-mats">${p.materials.map(m=>`<span class="pli-mat mat-tag ${m}">${MAT_ICONS[m]}</span>`).join('')}</div>
-            <div class="pli-weight">${p.weight} kg</div>
-            <div class="pli-date">${new Date(p.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
-            <div class="pli-status"><span class="pc-status ${p.status}">${STATUS_LABELS[p.status]}</span></div>
+            <div class="pli-name" title="${p.name || ''}">${p.name || '—'}</div>
+            <div class="pli-area"><i class="fas fa-map-marker-alt" style="color:var(--green);margin-right:4px;font-size:10px;"></i>${p.address || '—'}</div>
+            <div class="pli-driver"><i class="fas fa-phone" style="color:var(--blue);margin-right:5px;font-size:11px;"></i>${p.phone || '—'}</div>
+            <div class="pli-mats">${p.materials.map(m => `<span class="pli-mat mat-tag ${KNOWN_MATS.includes(m) ? m : 'unknown'}">${MAT_ICONS[m] || '📦'}</span>`).join('') || '<span class="pli-mat mat-tag unknown">📦</span>'}</div>
+            <div class="pli-weight">${p.weight ?? '—'} kg</div>
+            <div class="pli-date">${p.scheduled_date ? new Date(p.scheduled_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</div>
+            <div class="pli-status"><span class="pc-status ${p.status || ''}">${STATUS_LABELS[p.status] || p.status || '—'}</span></div>
             <div class="pli-actions" onclick="event.stopPropagation()">
                 <button class="pli-btn view-btn-list" onclick="openDrawer('${p.id}')"><i class="fas fa-eye"></i></button>
                 ${p.status !== 'collected' ? `<button class="pli-btn cancel-btn-list" onclick="openCancelModal('${p.id}',event)"><i class="fas fa-ban"></i></button>` : ''}
@@ -718,21 +936,12 @@ function renderList(filtered) {
 }
 
 /* ══════════════════════════════════════════
-   UI FUNCTIONS (Drawer, Modal, Toast)
+   DRAWER
 ══════════════════════════════════════════ */
-function toggleDropdown() {
-    document.getElementById('profileDropdown').classList.toggle('show');
-}
-document.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('profileDropdown');
-    const avatar = document.getElementById('topbarAvatar');
-    if (dropdown && !dropdown.contains(e.target) && e.target !== avatar) {
-        dropdown.classList.remove('show');
-    }
-});
-
 function openDrawer(id) {
-    const p = PICKUPS.find(x => x.id === id);
+    // coerce both sides to string — API may return numeric IDs
+    const p = PICKUPS.find(x => String(x.id) === String(id));
+    if (!p) { console.warn('openDrawer: no pickup found for id', id, '— PICKUPS:', PICKUPS.map(x=>x.id)); return; }
     if (!p) return;
 
     const titleEl = document.getElementById('drawerTitle');
@@ -742,28 +951,21 @@ function openDrawer(id) {
     if (bodyEl) bodyEl.innerHTML = `
         <div class="user-profile-row">
             <div class="up-avatar" style="background:${p.avatarBg || '#9b59b6'}">${p.initials || '??'}</div>
-            <div>
-                <div class="up-name">${p.name}</div>
-                <div class="up-meta">${p.phone || '—'} · Joined ${p.joined || '—'}</div>
+            <div style="flex:1;min-width:0;">
+                <div class="up-name">${p.name || '—'}</div>
+                <div class="up-meta">${p.phone || '—'}</div>
             </div>
-            <div class="up-score">
-                <div class="score-val">${p.score || 0}</div>
-                <div class="score-lbl">Eco Score</div>
-            </div>
+            <span class="pc-status ${p.status || ''}">${STATUS_LABELS[p.status] || p.status || ''}</span>
         </div>
-
-        <span class="pc-status ${p.status}" style="margin-bottom:20px;display:inline-flex;">
-            ${STATUS_LABELS[p.status] || p.status}
-        </span>
 
         <div class="db-section">
             <div class="db-title">Pickup Details</div>
             <div class="db-grid" style="margin-bottom:12px;">
-                <div class="db-item"><div class="dl">Request ID</div><div class="dv">${p.id}</div></div>
-                <div class="db-item"><div class="dl">Est. Weight</div><div class="dv">${p.weight || '—'} kg</div></div>
-                <div class="db-item"><div class="dl">Area</div><div class="dv">${p.area || '—'}</div></div>
-                <div class="db-item"><div class="dl">Pickup Date</div>
-                    <div class="dv">${p.date ? new Date(p.date).toLocaleDateString('en-US', { month:'long', day:'numeric' }) : '—'}</div>
+                <div class="db-item"><div class="dl">Request ID</div><div class="dv">${p.id || '—'}</div></div>
+                <div class="db-item"><div class="dl">Est. Weight</div><div class="dv">${p.weight ?? '—'} kg</div></div>
+                <div class="db-item"><div class="dl">Phone</div><div class="dv">${p.phone || '—'}</div></div>
+                <div class="db-item"><div class="dl">Scheduled Date</div>
+                    <div class="dv">${p.scheduled_date ? new Date(p.scheduled_date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '—'}</div>
                 </div>
             </div>
             <div class="db-item">
@@ -773,28 +975,12 @@ function openDrawer(id) {
         </div>
 
         <div class="db-section">
-            <div class="db-title">Assigned Driver</div>
-            <div class="driver-row">
-                <div class="driver-icon"><i class="fas fa-id-badge"></i></div>
-                <div class="driver-info">
-                    <h4>${p.driver || 'Unassigned'}</h4>
-                    <p>${p.vehicle || '—'}</p>
-                </div>
-                <div class="driver-eta">
-                    <div class="eta-val">${p.eta || '—'}</div>
-                    <div class="eta-lbl">ETA</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="db-section">
             <div class="db-title">Materials</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                ${(p.materials || []).map(m => `
-                    <span class="mat-tag ${m}" style="font-size:13px;padding:8px 14px;">
-                        ${MAT_ICONS[m] || ''} ${m.charAt(0).toUpperCase() + m.slice(1)}
-                    </span>
-                `).join('')}
+                ${p.materials.length
+                    ? p.materials.map(m => `<span class="mat-tag ${KNOWN_MATS.includes(m) ? m : 'unknown'}" style="font-size:13px;padding:8px 14px;">${MAT_ICONS[m] || '📦'} ${m.charAt(0).toUpperCase()+m.slice(1)}</span>`).join('')
+                    : `<span class="mat-tag unknown" style="font-size:13px;padding:8px 14px;">📦 Not specified</span>`
+                }
             </div>
         </div>
 
@@ -802,21 +988,15 @@ function openDrawer(id) {
         <div class="db-section">
             <div class="db-title">User Notes</div>
             <div class="db-item">
-                <div class="dv" style="font-size:12.5px;font-weight:400;color:var(--text-secondary);line-height:1.6;">
-                    ${p.notes}
-                </div>
+                <div class="dv" style="font-size:12.5px;font-weight:400;color:var(--text-secondary);line-height:1.6;">${p.notes}</div>
             </div>
         </div>` : ''}
     `;
 
     const cancelBtn = document.getElementById('drawerCancelBtn');
     if (cancelBtn) {
-        if (p.status === 'collected') {
-            cancelBtn.style.display = 'none';
-        } else {
-            cancelBtn.style.display = '';
-            cancelBtn.onclick = (e) => openCancelModal(p.id, e);
-        }
+        cancelBtn.style.display = p.status === 'collected' ? 'none' : '';
+        if (p.status !== 'collected') cancelBtn.onclick = (e) => openCancelModal(p.id, e);
     }
 
     document.getElementById('drawerOverlay')?.classList.add('show');
@@ -836,18 +1016,22 @@ function showToast(msg, type = 'success') {
     setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
-//cancel stuff
+/* ══════════════════════════════════════════
+   CANCEL MODAL
+══════════════════════════════════════════ */
 let cancelTargetId = null;
 
 function openCancelModal(id, e) {
     e?.stopPropagation();
     cancelTargetId = id;
-    const p = PICKUPS.find(x => x.id === id);
+    const p = PICKUPS.find(x => String(x.id) === String(id));
     const infoEl = document.getElementById('modalPickupInfo');
     if (infoEl && p) infoEl.innerHTML = `<i class="fas fa-calendar-times"></i> <strong>${p.name}</strong> — ${p.address}`;
     document.querySelectorAll('.reason-chip').forEach(c => c.classList.remove('active'));
-    document.getElementById('reasonText').value = '';
-    document.getElementById('modalConfirmBtn').disabled = true;
+    const reasonText = document.getElementById('reasonText');
+    if (reasonText) reasonText.value = '';
+    const confirmBtn = document.getElementById('modalConfirmBtn');
+    if (confirmBtn) confirmBtn.disabled = true;
     document.getElementById('cancelModalOverlay')?.classList.add('show');
 }
 
@@ -857,17 +1041,27 @@ function closeModalOutside(e) {
     }
 }
 
+function toggleDropdown() {
+    document.getElementById('profileDropdown')?.classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('profileDropdown');
+    const avatar   = document.getElementById('topbarAvatar');
+    if (dropdown && !dropdown.contains(e.target) && e.target !== avatar) {
+        dropdown.classList.remove('show');
+    }
+});
+
 /* ══════════════════════════════════════════
-   SIDEBAR & EVENT LISTENERS — EXACT SAME
+   SIDEBAR
 ══════════════════════════════════════════ */
 function initSidebar() {
-    // [Same sidebar code as your requests page]
     const sidebar       = document.getElementById('sidebar');
     const mainContent   = document.getElementById('mainContent');
     const sidebarToggle = document.getElementById('sidebarToggle');
     const mobileToggle  = document.getElementById('mobileToggle');
     const overlay       = document.getElementById('sidebarOverlay');
-    
+
     if (sidebarToggle) {
         const icon = sidebarToggle.querySelector('i');
         sidebarToggle.addEventListener('click', () => {
@@ -903,9 +1097,11 @@ function initSidebar() {
     });
 }
 
+/* ══════════════════════════════════════════
+   EVENT LISTENERS
+══════════════════════════════════════════ */
 function initEventListeners() {
 
-    // ── Status filter chips ──
     document.getElementById('statusFilters')?.addEventListener('click', e => {
         const chip = e.target.closest('.filter-chip');
         if (!chip) return;
@@ -915,19 +1111,49 @@ function initEventListeners() {
         render();
     });
 
-    // ── Material dropdown ──
-    document.getElementById('matFilter')?.addEventListener('change', e => {
-        currentMat = e.target.value;
+    /* ── Custom material dropdown ── */
+    const trigger  = document.getElementById('matSelectTrigger');
+    const menu     = document.getElementById('matSelectMenu');
+    const label    = document.getElementById('matSelectLabel');
+
+    trigger?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = menu.classList.contains('open');
+        // close any other open dropdowns first
+        menu.classList.toggle('open', !isOpen);
+        trigger.classList.toggle('open', !isOpen);
+    });
+
+    menu?.addEventListener('click', (e) => {
+        const opt = e.target.closest('.cso');
+        if (!opt) return;
+        // update selected state
+        menu.querySelectorAll('.cso').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        // update label
+        const val = opt.dataset.value;
+        currentMat = val;
+        // show icon+name in trigger
+        const icon = opt.querySelector('span:nth-child(2)');
+        const name = opt.querySelector('.cso-label');
+        label.textContent = val ? `${icon?.textContent || ''} ${name?.textContent || ''}`.trim() : 'All Materials';
+        // close
+        menu.classList.remove('open');
+        trigger.classList.remove('open');
         render();
     });
 
-    // ── Search ──
+    // close on outside click
+    document.addEventListener('click', () => {
+        menu?.classList.remove('open');
+        trigger?.classList.remove('open');
+    });
+
     document.getElementById('pickupSearch')?.addEventListener('input', e => {
         currentSearch = e.target.value;
         render();
     });
 
-    // ── View toggle ──
     document.getElementById('gridViewBtn')?.addEventListener('click', () => {
         viewMode = 'grid';
         document.getElementById('gridViewBtn').classList.add('active');
@@ -942,52 +1168,35 @@ function initEventListeners() {
         render();
     });
 
-    // ── Cancel modal — reason chips ──
     document.getElementById('reasonChips')?.addEventListener('click', e => {
         const chip = e.target.closest('.reason-chip');
         if (!chip) return;
         document.querySelectorAll('.reason-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
-        document.getElementById('modalConfirmBtn').disabled = false;
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        if (confirmBtn) confirmBtn.disabled = false;
     });
 
-    // ── Cancel modal — keep button ──
     document.getElementById('modalKeepBtn')?.addEventListener('click', () => {
         document.getElementById('cancelModalOverlay')?.classList.remove('show');
     });
 
-    // ── Cancel modal — confirm button ──
-document.getElementById('modalConfirmBtn')?.addEventListener('click', async () => {
-    if (!cancelTargetId) return;
-
-    try {
-        const res = await fetch(`/requests/${cancelTargetId}/cancel`, {
-            method: 'PATCH'
-        });
-
-        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-
-        const pickup = PICKUPS.find(p => p.id === cancelTargetId);
-        if (pickup) pickup.status = 'pending';
-
-        document.getElementById('cancelModalOverlay')?.classList.remove('show');
-        closeDrawerDirect();
-        render();
-        showToast('Pickup cancelled', 'success');
-
-    } catch (err) {
-        console.error('Cancel failed:', err);
-        showToast('Failed to cancel', 'error');
-    } finally {
-        cancelTargetId = null;
-    }
-});
-
-    // ── Logout ──
-    document.getElementById('logoutSidebar')?.addEventListener('click', async e => {
-        e.preventDefault();
-        await fetch('/logout', { method: 'POST' }).catch(() => {});
-        window.location.href = '/login.html';
+    document.getElementById('modalConfirmBtn')?.addEventListener('click', async () => {
+        if (!cancelTargetId) return;
+        try {
+            const res = await fetch(`/api/requests/${cancelTargetId}/cancel`, { method: 'PATCH' });
+            if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+            PICKUPS = PICKUPS.filter(p => String(p.id) !== String(cancelTargetId));
+            document.getElementById('cancelModalOverlay')?.classList.remove('show');
+            closeDrawerDirect();
+            render();
+            showToast('Pickup cancelled', 'success');
+        } catch (err) {
+            console.error('Cancel failed:', err);
+            showToast('Failed to cancel', 'error');
+        } finally {
+            cancelTargetId = null;
+        }
     });
 
     document.getElementById('logoutDropdown')?.addEventListener('click', async () => {
@@ -995,7 +1204,6 @@ document.getElementById('modalConfirmBtn')?.addEventListener('click', async () =
         window.location.href = '/login.html';
     });
 
-    // ── Date ──
     const dateEl = document.getElementById('currentDate');
     if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -1003,13 +1211,17 @@ document.getElementById('modalConfirmBtn')?.addEventListener('click', async () =
 }
 
 /* ══════════════════════════════════════════
-   BOOT — EXACT SAME PATTERN
+   INIT
 ══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initEventListeners();
-    render(); // show empty state immediately while auth loads
-    checkAuth(); // fetch /me → populateSidebar → loadLivePickups
+    render();
+    const ecoUser = localStorage.getItem('ecoUser');
+    if (ecoUser) {
+        try { populateSidebar(JSON.parse(ecoUser)); } catch(e) {}
+    }
+    loadLivePickups();
 });
 </script>
 <script src="logout.js"></script>

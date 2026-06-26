@@ -3,6 +3,4 @@
 __pycache__/
 *.pyc
 *.db
-db_config.py
-email_verification.py
-alembic.ini
+.vscode/
