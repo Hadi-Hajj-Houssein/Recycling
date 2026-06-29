@@ -25,7 +25,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://127.0.0.1:8000", 
-        "http://127.0.0.1:5500", 
+        "http://127.0.0.1:5500",
+        "https://recycling-kx0n.onrender.com", 
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -64,5 +65,5 @@ app.include_router(company_pending_pickups.router)
 
 @app.get("/")
 def home():
-    return {"message": "Server is running"}
+    return {"message": "Server is running aloooo tetsttt "}
 
