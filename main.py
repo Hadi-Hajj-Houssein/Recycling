@@ -67,3 +67,4 @@ app.include_router(company_pending_pickups.router)
 def home():
     return {"message": "Server is running aloooo tetsttt "}
 
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
