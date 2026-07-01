@@ -618,7 +618,7 @@
         localStorage.setItem('isLoggedIn', 'true');
 
         setTimeout(() => {
-            window.location.href = '/dashboard.html';
+            window.location.href = `${API_BASE}/dashboard.html`;
         }, 800);
     }
 
@@ -668,7 +668,6 @@
         const formData = new FormData();
         formData.append('email', email.value);
         formData.append('password', password.value);
-
         try {
             const response = await fetch(`${API_BASE}/login`, {
                 method: 'POST',
