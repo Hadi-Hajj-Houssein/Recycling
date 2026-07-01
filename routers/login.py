@@ -61,6 +61,9 @@ def login(
     if not password or len(password) < 6:
         raise HTTPException(status_code=400, detail="Invalid credentials")
     
+    # ✅ 2.5 TRUNCATE PASSWORD TO 72 BYTES (bcrypt limit)
+    password = password[:72]
+    
     # ✅ 3. Check USER table first
     user = db.query(User).filter(User.email == email).first()
     if user and pwd_context.verify(password, user.password):
