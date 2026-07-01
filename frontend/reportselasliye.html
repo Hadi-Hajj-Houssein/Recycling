@@ -1016,7 +1016,7 @@ async function fetchReportData() {
         ...(state.dateTo ? { date_to: state.dateTo } : {})
     });
     try {
-        const res = await apiFetch(`http://127.0.0.1:8000/reports?${params}`);
+        const res = await apiFetch(`https://recycling-kx0n.onrender.com/reports?${params}`);
         if (res && res.ok) {
             return await res.json();
         }

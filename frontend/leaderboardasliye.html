@@ -657,7 +657,7 @@ const BADGES = [
 // ═══════ FETCH (with fallback) ═══════
 async function fetchLeaderboard() {
     try {
-        const res = await fetch(`http://127.0.0.1:8000/leaderboard?scope=${state.scope}&period=${state.period}`, {
+        const res = await fetch(`https://recycling-kx0n.onrender.com/leaderboard?scope=${state.scope}&period=${state.period}`, {
             credentials: 'include', headers: authHeaders()
         });
         if (res.status === 401) { window.location.href = 'login.html'; return; }

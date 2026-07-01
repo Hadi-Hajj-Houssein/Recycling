@@ -545,7 +545,7 @@ async function fetchItems() {
   if (data) { items = data; renderAll(); }
 }
 async function fetchCompanies() {
-  var data = await apiRequest("http://127.0.0.1:8000/companies");
+  var data = await apiRequest("https://recycling-kx0n.onrender.com/companies");
   if (data) {
     companies = data; 
   }

@@ -792,7 +792,7 @@ function populateSidebar(data) {
 
 async function loadLivePickups() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/company/pending-pickups', { credentials: 'include' });
+        const res = await fetch('https://recycling-kx0n.onrender.com/company/pending-pickups', { credentials: 'include' });
         if (res.status === 401) { window.location.href = '/login.html'; return; }
         if (!res.ok) { console.warn('Pickups fetch failed:', res.status); return; }
         const data = await res.json();

@@ -6,7 +6,7 @@
 <script>
 document.getElementById("pickupBtn").addEventListener("click", async () => {
     try {
-        const res = await fetch("http://127.0.0.1:8000/me", {
+        const res = await fetch("https://recycling-kx0n.onrender.com/me", {
             method: "GET",
             credentials: "include"// the browser attaches your login cookies to this request. This is how the server knows who you are.
         });
@@ -410,7 +410,7 @@ document.getElementById('currentDate').textContent =
   new Date().toLocaleDateString('en-US',{ weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-var API_BASE   = 'http://127.0.0.1:8000/recyclables';
+var API_BASE   = 'https://recycling-kx0n.onrender.com/recyclables';
 
 var TYPES = {
   plastic:     { emoji:'🥤', label:'Plastic',     color:'#2ecc71', bg:'rgba(46,204,113,0.12)'  },
@@ -723,7 +723,7 @@ mt.addEventListener('click', function(){ sidebar.classList.add('mobile-open'); o
 ov.addEventListener('click', function(){ sidebar.classList.remove('mobile-open'); ov.classList.remove('active'); document.body.style.overflow=''; });
 document.getElementById('logoutSidebar').addEventListener('click', async function(e){
   e.preventDefault();
-  await fetch('http://127.0.0.1:8000/logout',{ method:'POST', credentials:'include' }).catch(function(){});
+  await fetch('https://recycling-kx0n.onrender.com/logout',{ method:'POST', credentials:'include' }).catch(function(){});
   localStorage.clear();
   window.location.replace('login.html');
 });

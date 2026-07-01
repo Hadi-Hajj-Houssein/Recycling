@@ -518,7 +518,7 @@ async function checkAuth() {
     if (isLoggedIn !== 'true' || !ecoUser) {
         setTimeout(() => {
             if (localStorage.getItem('isLoggedIn') !== 'true') {
-                window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
+                window.location.href = 'https://recycling-kx0n.onrender.com/frontend/login.html';
             }
         }, 100);
         return;
@@ -541,14 +541,14 @@ function populateSidebar(data) {
 ══════════════════════════════════════════ */async function loadLiveRequests() {
     console.log('Loading requests...');
     try {
-        const res = await fetch('http://127.0.0.1:8000/company/user_requests', {
+        const res = await fetch('https://recycling-kx0n.onrender.com/company/user_requests', {
             credentials: 'include'
         });
         
         console.log('Response:', res);
         
         if (res.status === 401) {
-            window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
+            window.location.href = 'https://recycling-kx0n.onrender.com/frontend/login.html';
             return;
         }
         if (!res.ok) {
@@ -816,7 +816,7 @@ function closeDrawerDirect() {
 
 async function acceptRequest(id) {
     try {
-        const res = await fetch(`http://127.0.0.1:8000/company/${id}/assign`, {
+        const res = await fetch(`https://recycling-kx0n.onrender.com/company/${id}/assign`, {
             method: "PATCH",
             credentials: 'include' 
         });
@@ -842,7 +842,7 @@ async function acceptRequest(id) {
 
 async function declineRequest(id) {
     try {
-        const res = await fetch(`http://127.0.0.1:8000/company/${id}/decline`, {
+        const res = await fetch(`https://recycling-kx0n.onrender.com/company/${id}/decline`, {
             method: "PATCH",
             credentials: 'include'
         });

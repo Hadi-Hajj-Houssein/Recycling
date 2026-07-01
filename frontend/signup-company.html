@@ -613,7 +613,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     formData.append('confirmPassword', confirmPassword);
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/signup-company', {
+        const response = await fetch('https://recycling-kx0n.onrender.com/signup-company', {
             method: 'POST',
             body: formData // Sends as multipart/form-data
         });

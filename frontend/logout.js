@@ -3,8 +3,8 @@
    Import this in EVERY HTML file that needs authentication
    ══════════════════════════════════════════════════════════════════ */
 
-const API_BASE = 'http://127.0.0.1:8000';
-const FRONTEND_BASE = 'http://127.0.0.1:5500/frontend';
+const API_BASE = 'https://recycling-kx0n.onrender.com';
+const FRONTEND_BASE = 'https://recycling-kx0n.onrender.com/frontend';
 
 // ✅ RUN THIS ONCE on page load
 document.addEventListener('DOMContentLoaded', () => {

@@ -576,7 +576,7 @@ window.onload = function() {
 async function checkAuth() {
     try {
         console.log("Checking auth...");
-        const res = await fetch('http://127.0.0.1:8000/me', {
+        const res = await fetch('https://recycling-kx0n.onrender.com/me', {
             credentials: 'include' 
         });
         
@@ -613,7 +613,7 @@ checkAuth();
 // ✅ LOAD DATA
 async function loadPickups() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/pickups', {
+        const res = await fetch('https://recycling-kx0n.onrender.com/pickups', {
             credentials: 'include'
         });
 
