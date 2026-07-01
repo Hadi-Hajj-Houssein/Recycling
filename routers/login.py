@@ -9,7 +9,7 @@ from models.company import Company
 from functionalities.auth import create_access_token
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 TOKEN_EXPIRE_MINUTES = 120
 
