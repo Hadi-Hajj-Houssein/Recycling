@@ -1,3 +1,4 @@
+API_BASE = "https://recycling-kx0n.onrender.com";
 async function apiRequest(url, method = 'GET', body = null) {
     const options = {
         method: method,
@@ -10,10 +11,10 @@ async function apiRequest(url, method = 'GET', body = null) {
         options.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`http://127.0.0.1:8000${url}`, options);
+    const response = await fetch(`${API_BASE}${url}`, options);
 
     if (response.status === 401) {
-        window.location.href = 'http://127.0.0.1:5500/frontend/login.html';
+        window.location.href = `${API_BASE}/login.html`;
         return null;
     }
 
