@@ -8,7 +8,7 @@ ALGORITHM = "HS256"
 def create_access_token(data: dict, expires_minutes: int = 120):
     payload = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=expires_minutes)
-    payload["exp"] = expire
+    payload["exp"] =  int(expire.timestamp())
     return jwt.encode(payload, NGU, algorithm=ALGORITHM)
 
 def decode_token(token: str):
