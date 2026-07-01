@@ -569,9 +569,10 @@
     </div>
 
     <script>
+    API_BASE= "https://recycling-kx0n.onrender.com";
     function togglePass(fieldId, btn) {
         const field = document.getElementById(fieldId);
-        const icon = btn.querySelector('i');
+        const icon = btn.querySelector('i');d
 
         if (field.type === 'password') {
             field.type = 'text';
@@ -669,7 +670,7 @@
         formData.append('password', password.value);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/login', {
+            const response = await fetch(`${API_BASE}/login`, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include'
@@ -704,8 +705,8 @@
 
             setTimeout(() => {
                 window.location.href = data.role === 'company'
-                    ? 'http://127.0.0.1:5500/frontend/company_dashboard.html'
-                    : 'http://127.0.0.1:5500/frontend/dashboard.html';
+                    ? `${API_BASE}/company_dashboard.html`
+                    : `${API_BASE}/dashboard.html`;
             }, 1000);
 
         } catch (err) {
