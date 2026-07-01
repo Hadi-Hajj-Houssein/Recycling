@@ -7,9 +7,11 @@ from db_main import SessionLocal
 from models.user import User
 from models.company import Company
 from functionalities.auth import create_access_token
+from passlib.context import CryptContext
 
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 TOKEN_EXPIRE_MINUTES = 120
 
