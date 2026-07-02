@@ -86,8 +86,10 @@ def send_code(data: EmailRequest):
         server.login(SENDER_EMAIL, APP_PASSWORD)
         server.sendmail(SENDER_EMAIL, data.email, msg.as_string())
         server.quit()
+        print(f"📧 Code {code} sent to {data.email}")
         return {"message": "Verification code sent"}
     except Exception as e:
+        print(f"❌ Email error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
 
 @router.post("/verify-code")
