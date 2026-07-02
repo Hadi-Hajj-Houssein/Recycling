@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
 import smtplib
 import random
 from email.mime.text import MIMEText
-from pydantic import BaseModel
 from db_main import SessionLocal
 from models.user import User
 from models.company import Company
 from email_verification import SENDER_EMAIL, APP_PASSWORD
+
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def get_db():
     db = SessionLocal()
@@ -19,6 +19,15 @@ def get_db():
         yield db
     finally:
         db.close()
+
+verification_codes = {}
+
+class EmailRequest(BaseModel):
+    email: EmailStr
+
+class VerifyRequest(BaseModel):
+    email: EmailStr
+    code: str
 
 @router.post("/signup-user")
 def signup(
@@ -28,7 +37,6 @@ def signup(
     confirmPassword: str = Form(...),
     db: Session = Depends(get_db)
 ):
-    print("wsolet")
     try:
         if len(password) < 8 or len(password) > 72:
             raise HTTPException(status_code=400, detail="password between 8 and 72 characters")
@@ -52,30 +60,15 @@ def signup(
         db.commit()
         db.refresh(new_user)
 
-        print(f"--- DATABASE SUCCESS: Created {new_user.username} with ID {new_user.id} ---")
+        print(f"✅ User created: {new_user.username} (ID: {new_user.id})")
         return {"message": "User created successfully", "user_id": new_user.id}
 
     except HTTPException as e:
         raise e
     except Exception as e:
         db.rollback()
-        print(f"!!! DATABASE ERROR !!!: {str(e)}")
+        print(f"❌ Database error: {str(e)}")
         raise HTTPException(status_code=500, detail="System error")
-    
-
-# verificatiosn code mnel user 
-# Add these imports at the top
-
-verification_codes = {}
-SENDER_EMAIL = "ecocycle0000@gmail.com"
-APP_PASSWORD  = "smimkwwukyjsdcjt"
-
-class EmailRequest(BaseModel):
-    email: EmailStr
-
-class VerifyRequest(BaseModel):
-    email: EmailStr
-    code: str
 
 @router.post("/send-code")
 def send_code(data: EmailRequest):
